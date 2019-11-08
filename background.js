@@ -1,33 +1,17 @@
 
 const menu = {
-    parent: {
-        title: `Go to &parent`,
-        onclick: goto_parent,
-    },
-    family: {
-        title: `Select tab &family`,
-        onclick: select_family,
-    },
-    plus_siblings: {
-        title: `Select tab and &siblings`,
-        onclick: select_plus_siblings,
-    },
-    plus_children: {
-        title: `Select &tab and children`,
-        onclick: select_plus_children,
-    },
-    children: {
-        title: `Select &children`,
-        onclick: select_children,
-    },
+    goto_parent: `Go to &parent`,
+    select_family: `Select tab &family`,
+    select_plus_siblings: `Select tab and &siblings`,
+    select_plus_children: `Select &tab and children`,
+    select_children: `Select &children`,
 }
 
 for (const id in menu) {
-    const item = menu[id];
     browser.contextMenus.create({
         id,
-        title: item.title,
-        onclick: item.onclick,
+        title: menu[id],
+        onclick: window[id],
         contexts: ['tab'],
     });
 }

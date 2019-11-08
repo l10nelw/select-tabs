@@ -7,12 +7,12 @@ Select a tab's parent, siblings, children, or the whole family. If you often ope
 Tab Selector adds a context menu that appears when you right-click a tab (a.k.a. the target tab). The menu items are:
 
 - **Go to parent** &mdash; Go to the tab where the target was spawned from.
-- **Select tab family** &mdash; Select the parent tab and all its descendants, including the target.
-- **Select tab and siblings** &mdash; Basically "Select tab family", excluding the parent tab.
+- **Select tab family** &mdash; Select the parent tab and all its descendants, including the target. If it has no parent, "Select tab and children" is invoked.
+- **Select tab and siblings** &mdash; Select the target, its siblings, and all their descendants. If it has no parent, you end up with all tabs selected.
 - **Select tab and children** &mdash; Select the target and its descendants.
 - **Select children** &mdash; Select the target's descendants.
 
-For every tab selected, its children (tabs spawned from it) will also be selected, and their children, and so on. In other words, selection of tab descendants is always implied.
+Note that for every tab selected, its children (tabs spawned from it) will also be selected, and their children, and so on. In other words, selection of tab descendants is always implied.
 
 ### Why would I want this?
 

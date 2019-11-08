@@ -1,6 +1,6 @@
 {
   "manifest_version": 2,
-  "name": "Tab Selector",
+  "name": "&Tab Selector",
   "description": "Select a tab's parent, siblings, children, or the whole family.",
   "version": "0.1.0",
   "icons": {

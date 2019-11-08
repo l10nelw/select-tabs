@@ -51,16 +51,16 @@ async function select_plus_siblings(_, tab) {
     select(descendantTabs);
 }
 
+async function select_plus_children(_, tab) {
+    const descendantTabs = (await get_descendants(tab.id)).concat(tab);
+    select(descendantTabs);
+}
+
 async function select_children(_, tab) {
     const descendantTabs = await get_descendants(tab.id);
     if (descendantTabs.length) {
         select(descendantTabs);
     }
-}
-
-async function select_plus_children(_, tab) {
-    const descendantTabs = (await get_descendants(tab.id)).concat(tab);
-    select(descendantTabs);
 }
 
 function select(tabs) {

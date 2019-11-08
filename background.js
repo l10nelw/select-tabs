@@ -41,6 +41,7 @@ function goto_parent(_, tab) {
 
 async function select_family(_, tab) {
     const openerTabId = tab.openerTabId;
+    if (!openerTabId) return;
     const [openerTab, descendantTabs] = await Promise.all([browser.tabs.get(openerTabId), get_descendants(openerTabId)]);
     select(descendantTabs.concat(openerTab));
 }

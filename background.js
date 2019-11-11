@@ -30,21 +30,21 @@ async function select_parent_descendants(_, tab) {
     const parentTabId = tab.openerTabId;
     if (parentTabId) {
         const tabPromises = [browser.tabs.get(parentTabId), getDescendants(parentTabId)];
-        const descendantTabs = (await Promise.all(tabPromises)).flat();
-        select(descendantTabs);
+        const familyTabs = (await Promise.all(tabPromises)).flat();
+        select(familyTabs);
     } else {
         select_tab_descendants(_, tab);
     }
 }
 
-    const descendantTabs = await getDescendants(tab.openerTabId);
-    select(descendantTabs);
 async function select_siblings_descendants(_, tab) {
+    const familyTabs = await getDescendants(tab.openerTabId);
+    select(familyTabs);
 }
 
 async function select_tab_descendants(_, tab) {
-    const descendantTabs = [tab].concat(await getDescendants(tab.id));
-    select(descendantTabs);
+    const familyTabs = [tab].concat(await getDescendants(tab.id));
+    select(familyTabs);
 }
 
 async function select_descendants(_, tab) {
@@ -56,11 +56,11 @@ async function select_descendants(_, tab) {
 
 async function select_site_descendants(_, tab) {
     const siteTabs = getSiteTabs(tab);
-    let descendantTabs = [].concat(siteTabs);
+    let familyTabs = [].concat(siteTabs);
     for (const tab of siteTabs) {
-        descendantTabs = descendantTabs.concat(await getDescendants(tab.id));
+        familyTabs = familyTabs.concat(await getDescendants(tab.id));
     }
-    select(descendantTabs);
+    select(familyTabs);
 }
 
 async function select_site(_, tab) {

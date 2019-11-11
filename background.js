@@ -6,6 +6,8 @@ const menu = {
     select_tab_siblings_descendants: `Tab, &Siblings and Descendants`,
     select_tab_descendants: `&Tab and Descendants`,
     select_descendants: `&Descendants`,
+    select_site: `Sa&me Site Tabs`,
+    select_site_descendants: `Sam&e Site Tabs and Descendants`,
 }
 
 for (const id in menu) {
@@ -51,6 +53,19 @@ async function select_descendants(_, tab) {
     }
 }
 
+async function select_site_descendants(_, tab) {
+    const siteTabs = getSiteTabs(tab);
+    let descendantTabs = [].concat(siteTabs);
+    for (const tab of siteTabs) {
+        descendantTabs = descendantTabs.concat(await getDescendants(tab.id));
+    }
+    select(descendantTabs);
+}
+
+async function select_site(_, tab) {
+    select(await getSiteTabs(tab));
+}
+
 function select(tabs) {
     browser.tabs.highlight({ tabs: tabs.map(t => t.index) });
 }
@@ -62,4 +77,11 @@ async function getDescendants(tabId) {
         descendantTabs = descendantTabs.concat(await getDescendants(tab.id));
     }
     return descendantTabs;
+}
+
+async function getSiteTabs(tab) {
+    const host = (new URL(tab.url)).hostname;
+    if (host) {
+        return await browser.tabs.query({ currentWindow: true, url: `*://${host}/*` });
+    }
 }

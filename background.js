@@ -29,8 +29,9 @@ function select_parent(_, tab) {
 async function select_parent_descendants(_, tab) {
     const parentTabId = tab.openerTabId;
     if (parentTabId) {
-        const [parentTab, descendantTabs] = await Promise.all([browser.tabs.get(parentTabId), getDescendants(parentTabId)]);
-        select(descendantTabs.concat(parentTab));
+        const tabPromises = [browser.tabs.get(parentTabId), getDescendants(parentTabId)];
+        const descendantTabs = (await Promise.all(tabPromises)).flat();
+        select(descendantTabs);
     } else {
         select_tab_descendants(_, tab);
     }
@@ -42,7 +43,7 @@ async function select_siblings_descendants(_, tab) {
 }
 
 async function select_tab_descendants(_, tab) {
-    const descendantTabs = (await getDescendants(tab.id)).concat(tab);
+    const descendantTabs = [tab].concat(await getDescendants(tab.id));
     select(descendantTabs);
 }
 

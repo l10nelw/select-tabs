@@ -2,8 +2,8 @@
 
 const menu = {
     select_parent: `&Parent`,
-    select_tab_parent_descendants: `Tab, Pa&rent and Descendants`,
-    select_tab_siblings_descendants: `Tab, &Siblings and Descendants`,
+    select_parent_descendants: `P&arent and Descendants`,
+    select_siblings_descendants: `&Siblings and Descendants`,
     select_tab_descendants: `&Tab and Descendants`,
     select_descendants: `&Descendants`,
     select_site: `Sa&me Site Tabs`,
@@ -26,7 +26,7 @@ function select_parent(_, tab) {
     }
 }
 
-async function select_tab_parent_descendants(_, tab) {
+async function select_parent_descendants(_, tab) {
     const parentTabId = tab.openerTabId;
     if (parentTabId) {
         const [parentTab, descendantTabs] = await Promise.all([browser.tabs.get(parentTabId), getDescendants(parentTabId)]);
@@ -36,9 +36,9 @@ async function select_tab_parent_descendants(_, tab) {
     }
 }
 
-async function select_tab_siblings_descendants(_, tab) {
     const descendantTabs = await getDescendants(tab.openerTabId);
     select(descendantTabs);
+async function select_siblings_descendants(_, tab) {
 }
 
 async function select_tab_descendants(_, tab) {

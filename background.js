@@ -1,89 +1,88 @@
 'use strict';
 
-const menu = {
-    // Menu item id/Function name   // Title
-    selectParent:                   '&Parent',
-    selectParentAndDescendants:     'P&arent and Descendants',
-    selectSiblingsAndDescendants:   '&Siblings and Descendants',
-    selectTargetAndDescendants:     '&Tab and Descendants',
-    selectDescendants:              '&Descendants',
-    selectSite:                     'Sa&me Site Tabs',
-    selectSiteAndDescendants:       'Sam&e Site Tabs and Descendants',
-}
+init();
 
-for (const id in menu) {
-    browser.contextMenus.create({
-        id,
-        title: menu[id],
-        onclick: window[id],
-        contexts: ['tab'],
-    });
-}
+function init() {
+    const MENU = {
+        // FunctionName/MenuItemId      Title
+        getParentTab:                   '&Parent',
+        getParentAndDescendantTabs:     'P&arent and Descendants',
+        getSiblingAndDescendantTabs:    '&Siblings and Descendants',
+        getTargetAndDescendantTabs:     '&Tab and Descendants',
+        getDescendantTabs:              '&Descendants',
+        getSiteTabs:                    'Sam&e Site Tabs',
+        getSiteAndDescendantTabs:       'Sa&me Site Tabs and Descendants',
+    };
+    const contexts = ['tab'];
 
-function selectParent(_, tab) {
-    const parentTabId = tab.openerTabId;
-    if (parentTabId) {
-        browser.tabs.update(parentTabId, { active: true });
+    for (const id in MENU) {
+        const getTabs = window[id];
+        browser.contextMenus.create({
+            contexts,
+            id,
+            title: MENU[id],
+            onclick: async (info, tab) => select(await getTabs(tab)),
+        });
     }
-}
-
-async function selectParentAndDescendants(_, tab) {
-    const parentTabId = tab.openerTabId;
-    if (parentTabId) {
-        const tabPromises = [browser.tabs.get(parentTabId), getDescendants(parentTabId)];
-        const familyTabs = (await Promise.all(tabPromises)).flat();
-        select(familyTabs);
-    } else {
-        selectTargetAndDescendants(_, tab);
-    }
-}
-
-async function selectSiblingsAndDescendants(_, tab) {
-    const familyTabs = await getDescendants(tab.openerTabId);
-    select(familyTabs);
-}
-
-async function selectTargetAndDescendants(_, tab) {
-    const familyTabs = [tab].concat(await getDescendants(tab.id));
-    select(familyTabs);
-}
-
-async function selectDescendants(_, tab) {
-    const descendantTabs = await getDescendants(tab.id);
-    if (descendantTabs.length) {
-        select(descendantTabs);
-    }
-}
-
-async function selectSiteAndDescendants(_, tab) {
-    const siteTabs = getSiteTabs(tab);
-    let familyTabs = [].concat(siteTabs);
-    for (const tab of siteTabs) {
-        familyTabs = familyTabs.concat(await getDescendants(tab.id));
-    }
-    select(familyTabs);
-}
-
-async function selectSite(_, tab) {
-    select(await getSiteTabs(tab));
 }
 
 function select(tabs) {
-    browser.tabs.highlight({ tabs: tabs.map(t => t.index) });
+    if (!tabs?.length) return;
+    const tabIndexes = tabsWithFocusedTabFirst(tabs).map(tab => tab.index);
+    browser.tabs.highlight({ tabs: tabIndexes, populate: false });
 }
 
-async function getDescendants(tabId) {
-    const childTabs = await browser.tabs.query({ currentWindow: true, openerTabId: tabId });
-    let descendantTabs = [].concat(childTabs);
-    for (const tab of childTabs) {
-        descendantTabs = descendantTabs.concat(await getDescendants(tab.id));
+// tabs.highlight() focuses (activates) the first tab, so if there's a focused tab in the array it should be moved to the start.
+function tabsWithFocusedTabFirst(tabs) {
+    const focusedTabIndex = tabs.findIndex(tab => tab.active);
+    if (focusedTabIndex > 0) { // If focused tab is in selection and not first
+        [tabs[0], tabs[focusedTabIndex]] = [tabs[focusedTabIndex], tabs[0]]; // Swap with first
+    }
+    return tabs;
+}
+
+async function getParentTab(tab) {
+    const openerTabId = tab.openerTabId;
+    if (openerTabId) return [await browser.tabs.get(openerTabId)];
+}
+
+async function getParentAndDescendantTabs(tab) {
+    const openerTabId = tab.openerTabId;
+    if (openerTabId) {
+        const tabPromises = [browser.tabs.get(openerTabId), getDescendantTabs(openerTabId)];
+        return (await Promise.all(tabPromises)).flat();
+    } else {
+        return getTargetAndDescendantTabs(tab);
+    }
+}
+
+async function getSiblingAndDescendantTabs(tab) {
+    return await getDescendantTabs(tab.openerTabId); // Selects all tabs if no parent
+}
+
+async function getTargetAndDescendantTabs(tab) {
+    return [tab, ...await getDescendantTabs(tab)];
+}
+
+async function getDescendantTabs(tab_or_tabId) {
+    const tabId = tab_or_tabId?.id || tab_or_tabId;
+    const descendantTabs = await browser.tabs.query({ currentWindow: true, openerTabId: tabId });
+    for (const tab of [...descendantTabs]) {
+        descendantTabs.push(...await getDescendantTabs(tab));
     }
     return descendantTabs;
 }
 
 async function getSiteTabs(tab) {
     const host = (new URL(tab.url)).hostname;
-    if (host) {
-        return await browser.tabs.query({ currentWindow: true, url: `*://${host}/*` });
+    if (host) return await browser.tabs.query({ currentWindow: true, url: `*://${host}/*` });
+}
+
+async function getSiteAndDescendantTabs(tab) {
+    const siteTabs = await getSiteTabs(tab);
+    if (!siteTabs) return;
+    for (const tab of [...siteTabs]) {
+        siteTabs.push(...await getDescendantTabs(tab));
     }
+    return siteTabs;
 }

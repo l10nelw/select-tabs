@@ -1,88 +1,41 @@
-'use strict';
+import * as GetTabs from './gettabs.js';
 
 init();
 
 function init() {
     const MENU = {
-        // FunctionName/MenuItemId      Title
-        getParentTab:                   '&Parent',
-        getParentAndDescendantTabs:     'P&arent and Descendants',
-        getSiblingAndDescendantTabs:    '&Siblings and Descendants',
-        getTargetAndDescendantTabs:     '&Tab and Descendants',
-        getDescendantTabs:              '&Descendants',
-        getSiteTabs:                    'Sam&e Site Tabs',
-        getSiteAndDescendantTabs:       'Sa&me Site Tabs and Descendants',
+        // function/menuItemId  title
+        parent:                 '&Parent Tab',
+        parent__descendants:    'P&arent Tab and Descendants',
+        siblings__descendants:  '&Sibling Tabs and Descendants',
+        target__descendants:    '&This Tab and Descendants',
+        descendants:            '&Descendants',
+        sameHost:               'Sa&me Domain Tabs',
+        sameHost__descendants:  'Sam&e Domain Tabs and Descendants',
     };
     const contexts = ['tab'];
 
-    for (const id in MENU) {
-        const getTabs = window[id];
+    for (const [id, title] of Object.entries(MENU)) {
         browser.contextMenus.create({
             contexts,
             id,
-            title: MENU[id],
-            onclick: async (info, tab) => select(await getTabs(tab)),
+            title,
+            onclick: async (info, tab) => select(await GetTabs[id](tab)),
         });
     }
 }
 
 function select(tabs) {
     if (!tabs?.length) return;
-    const tabIndexes = tabsWithFocusedTabFirst(tabs).map(tab => tab.index);
+    const tabIndexes = activeTabFirst(tabs).map(tab => tab.index);
     browser.tabs.highlight({ tabs: tabIndexes, populate: false });
 }
 
-// tabs.highlight() focuses (activates) the first tab, so if there's a focused tab in the array it should be moved to the start.
-function tabsWithFocusedTabFirst(tabs) {
-    const focusedTabIndex = tabs.findIndex(tab => tab.active);
-    if (focusedTabIndex > 0) { // If focused tab is in selection and not first
-        [tabs[0], tabs[focusedTabIndex]] = [tabs[focusedTabIndex], tabs[0]]; // Swap with first
+// tabs.highlight() focuses (activates) the first tab, so if there's a active tab in the array it should be moved to the start.
+function activeTabFirst(tabs) {
+    const activeTabIndex = tabs.findIndex(tab => tab.active);
+    if (activeTabIndex > 0) {
+        [tabs[0], tabs[activeTabIndex]] = [tabs[activeTabIndex], tabs[0]]; // Swap with first
     }
     return tabs;
-}
-
-async function getParentTab(tab) {
-    const openerTabId = tab.openerTabId;
-    if (openerTabId) return [await browser.tabs.get(openerTabId)];
-}
-
-async function getParentAndDescendantTabs(tab) {
-    const openerTabId = tab.openerTabId;
-    if (openerTabId) {
-        const tabPromises = [browser.tabs.get(openerTabId), getDescendantTabs(openerTabId)];
-        return (await Promise.all(tabPromises)).flat();
-    } else {
-        return getTargetAndDescendantTabs(tab);
-    }
-}
-
-async function getSiblingAndDescendantTabs(tab) {
-    return await getDescendantTabs(tab.openerTabId); // Selects all tabs if no parent
-}
-
-async function getTargetAndDescendantTabs(tab) {
-    return [tab, ...await getDescendantTabs(tab)];
-}
-
-async function getDescendantTabs(tab_or_tabId) {
-    const tabId = tab_or_tabId?.id || tab_or_tabId;
-    const descendantTabs = await browser.tabs.query({ currentWindow: true, openerTabId: tabId });
-    for (const tab of [...descendantTabs]) {
-        descendantTabs.push(...await getDescendantTabs(tab));
-    }
-    return descendantTabs;
-}
-
-async function getSiteTabs(tab) {
-    const host = (new URL(tab.url)).hostname;
-    if (host) return await browser.tabs.query({ currentWindow: true, url: `*://${host}/*` });
-}
-
-async function getSiteAndDescendantTabs(tab) {
-    const siteTabs = await getSiteTabs(tab);
-    if (!siteTabs) return;
-    for (const tab of [...siteTabs]) {
-        siteTabs.push(...await getDescendantTabs(tab));
-    }
-    return siteTabs;
 }

@@ -1,18 +1,13 @@
 {
   "manifest_version": 2,
-  "name": "&Tab Selector",
-  "description": "Select a tab's parent, siblings, children, or the whole family.",
-  "version": "0.1.0",
-  "icons": {
-    "64": "icon.png"
-  },
+  "name": "Tab Selector",
+  "description": "Select related tabs easily; a tab's parent, siblings and descendants, or all tabs of the same website.",
+  "version": "1.0",
   "permissions": [
     "contextMenus",
     "tabs"
   ],
   "background": {
-    "scripts": [
-      "background.js"
-    ]
+    "page": "background.html"
   }
 }

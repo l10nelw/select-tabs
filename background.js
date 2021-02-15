@@ -7,7 +7,6 @@ function init() {
         // function/menuItemId  title
         parent:                 '&Parent Tab',
         parent__descendants:    'P&arent Tab and Descendants',
-        siblings__descendants:  '&Sibling Tabs and Descendants',
         target__descendants:    '&This Tab and Descendants',
         descendants:            '&Descendants',
         sameHost:               'Sa&me Domain Tabs',

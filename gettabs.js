@@ -13,10 +13,6 @@ export async function parent__descendants(tab) {
     }
 }
 
-export function siblings__descendants(tab) {
-    return descendants(tab.openerTabId); // Selects all tabs if no parent
-}
-
 export async function target__descendants(tab) {
     return [tab, ...await descendants(tab)];
 }

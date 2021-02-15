@@ -19,22 +19,28 @@ function init() {
             contexts,
             id,
             title,
-            onclick: async (info, tab) => select(await GetTabs[id](tab)),
+            onclick: (_, tab) => select(GetTabs[id], tab),
         });
     }
 }
 
-function select(tabs) {
+async function select(getter, targetTab) {
+    const tabs = await getter(targetTab);
     if (!tabs?.length) return;
-    const tabIndexes = activeTabFirst(tabs).map(tab => tab.index);
+    const tabIndexes = activeTabFirst(tabs, targetTab).map(tab => tab.index);
     browser.tabs.highlight({ tabs: tabIndexes, populate: false });
 }
 
-// tabs.highlight() focuses (activates) the first tab, so if there's a active tab in the array it should be moved to the start.
-function activeTabFirst(tabs) {
-    const activeTabIndex = tabs.findIndex(tab => tab.active);
+// Move an already active tab or the targeted tab, if either is available, to the start of the tabs array.
+// Sets up array for tabs.highlight(), which activates the first tab in array.
+function activeTabFirst(tabs, targetTab) {
+    let activeTabIndex = tabs.findIndex(tab => tab.active);
+    if (activeTabIndex === -1) {
+        const { id } = targetTab;
+        activeTabIndex = tabs.findIndex(tab => tab.id === id);
+    }
     if (activeTabIndex > 0) {
-        [tabs[0], tabs[activeTabIndex]] = [tabs[activeTabIndex], tabs[0]]; // Swap with first
+        [ tabs[0], tabs[activeTabIndex] ] = [ tabs[activeTabIndex], tabs[0] ];
     }
     return tabs;
 }

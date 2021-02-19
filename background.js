@@ -4,13 +4,13 @@ init();
 
 function init() {
     const MENU = {
-        // function/menuItemId  title
-        parent:                 '&Parent Tab',
-        parent__descendants:    'P&arent Tab and Descendants',
-        target__descendants:    '&This Tab and Descendants',
+        // function/menuItemId: title
+        parent:                 '&Parent',
+        parent__descendants:    'P&arent && Descendants',
+        target__descendants:    '&This && Descendants',
         descendants:            '&Descendants',
-        sameHost:               'Sa&me Domain Tabs',
-        sameHost__descendants:  'Sam&e Domain Tabs and Descendants',
+        sameHost:               '&Same Subdomain',
+        sameHost__descendants:  'Sa&me Subdomain && Descendants',
     };
     const contexts = ['tab'];
 

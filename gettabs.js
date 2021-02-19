@@ -13,6 +13,17 @@ export async function parent__descendants(tab) {
     }
 }
 
+export async function siblings(tab) {
+    const { openerTabId } = tab;
+    return openerTabId ?
+        queryTabs({ openerTabId }) :
+        (await queryTabs()).filter(tab => !tab.openerTabId);
+}
+
+export function siblings__descendants(tab) {
+    return descendants(tab.openerTabId);
+}
+
 export async function target__descendants(tab) {
     return [tab, ...await descendants(tab)];
 }

@@ -7,6 +7,8 @@ function init() {
         // function/menuItemId: title
         parent:                 '&Parent',
         parent__descendants:    'P&arent && Descendants',
+        siblings:               'This && Sibli&ngs',
+        siblings__descendants:  'This && Siblin&gs && Descendants',
         target__descendants:    '&This && Descendants',
         descendants:            '&Descendants',
         sameHost:               '&Same Subdomain',

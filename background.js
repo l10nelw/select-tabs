@@ -11,6 +11,8 @@ function init() {
         siblings__descendants:  'This && Siblin&gs && Descendants',
         target__descendants:    '&This && Descendants',
         descendants:            '&Descendants',
+        left:                   'To the &Left',
+        right:                  'To the &Right',
         sameHost:               '&Same Subdomain',
         sameHost__descendants:  'Sa&me Subdomain && Descendants',
     };

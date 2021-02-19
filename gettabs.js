@@ -37,7 +37,18 @@ export async function descendants(tab_or_tabId) {
     return descendantTabs;
 }
 
-export async function sameHost(tab) {
+export async function left(tab) {
+    const tabs = (await queryTabs()).slice(0, tab.index);
+    const last = tabs.length - 1;
+    [ tabs[0], tabs[last] ] = [ tabs[last], tabs[0] ]; // Activate tab adjacent to target to avoid any scrolling to the start
+    return tabs;
+}
+
+export async function right(tab) {
+    return (await queryTabs()).slice(tab.index + 1);
+}
+
+export function sameHost(tab) {
     const host = (new URL(tab.url)).hostname;
     if (host) return queryTabs({ url: `*://${host}/*` });
 }

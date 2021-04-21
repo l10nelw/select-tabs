@@ -1,9 +1,11 @@
 import * as GetTabs from './gettabs.js';
 
-init();
+buildMenu();
 
-function init() {
-    const MENU = {
+function buildMenu() {
+	const parentId = 'selecttabs';
+	const parentTitle = '&Select Tabs';
+    const menuItems = {
         // function/menuItemId: title
         parent:                 '&Parent',
         parent__descendants:    'P&arent && Descendants',
@@ -18,9 +20,15 @@ function init() {
     };
     const contexts = ['tab'];
 
-    for (const [id, title] of Object.entries(MENU)) {
+	browser.contextMenus.create({
+		contexts,
+		id: parentId,
+		title: parentTitle,
+	});
+    for (const [id, title] of Object.entries(menuItems)) {
         browser.contextMenus.create({
             contexts,
+			parentId,
             id,
             title,
             onclick: (_, tab) => select(GetTabs[id], tab),

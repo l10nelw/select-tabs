@@ -33,14 +33,11 @@ export async function descendants(tab_or_tabId) {
 }
 
 export async function left(tab) {
-    const tabs = (await queryTabs()).slice(0, tab.index);
-    const last = tabs.length - 1;
-    [ tabs[0], tabs[last] ] = [ tabs[last], tabs[0] ]; // Activate tab adjacent to target to avoid any scrolling to the start
-    return tabs;
+    return (await queryTabs()).slice(0, tab.index + 1);
 }
 
 export async function right(tab) {
-    return (await queryTabs()).slice(tab.index + 1);
+    return (await queryTabs()).slice(tab.index);
 }
 
 export function sameHost(tab) {

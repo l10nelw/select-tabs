@@ -53,6 +53,13 @@ export async function sameHost__descendants(tab) {
     return tabs;
 }
 
+export async function sameHost__cluster(tab) {
+    // A sameHost cluster contains tabs that are neighbours of the target tab and each other
+    const tabs = await sameHost(tab);
+    const tabIndex = tab.index;
+    const arrayIndex = tabs.findIndex(tab => tab.index === tabIndex);
+    const difference = tabIndex - arrayIndex;
+    return tabs.filter((tab, i) => i + difference === tab.index); // Cluster tabs share the same difference between tab and query-array indexes
 }
 
 const getTab = id => browser.tabs.get(id);

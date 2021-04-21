@@ -5,19 +5,14 @@ export async function parent(tab) {
 
 export async function parent__descendants(tab) {
     const { openerTabId } = tab;
-    if (openerTabId) {
-        const tabPromises = [getTab(openerTabId), descendants(openerTabId)];
-        return (await Promise.all(tabPromises)).flat();
-    } else {
-        return target__descendants(tab);
-    }
+    return openerTabId ? (await Promise.all([ getTab(openerTabId), descendants(openerTabId) ])).flat()
+        : target__descendants(tab);
 }
 
 export async function siblings(tab) {
     const { openerTabId } = tab;
-    return openerTabId ?
-        queryTabs({ openerTabId }) :
-        (await queryTabs()).filter(tab => !tab.openerTabId);
+    return openerTabId ? queryTabs({ openerTabId }) // If target tab has parent, get all tabs with same parent
+        : (await queryTabs()).filter(tab => !tab.openerTabId); // Else, get all parentless tabs
 }
 
 export function siblings__descendants(tab) {
@@ -30,11 +25,11 @@ export async function target__descendants(tab) {
 
 export async function descendants(tab_or_tabId) {
     const tabId = tab_or_tabId?.id || tab_or_tabId;
-    const descendantTabs = await queryTabs({ openerTabId: tabId });
-    for (const tab of descendantTabs) {
-        descendantTabs.push(...await descendants(tab));
+    const tabs = await queryTabs({ openerTabId: tabId });
+    for (const tab of tabs) {
+        tabs.push(...await descendants(tab));
     }
-    return descendantTabs;
+    return tabs;
 }
 
 export async function left(tab) {
@@ -54,12 +49,13 @@ export function sameHost(tab) {
 }
 
 export async function sameHost__descendants(tab) {
-    const siteTabs = await sameHost(tab);
-    if (!siteTabs) return;
-    for (const tab of siteTabs) {
-        siteTabs.push(...await descendants(tab));
+    const tabs = await sameHost(tab);
+    for (const tab of tabs) {
+        tabs.push(...await descendants(tab));
     }
-    return siteTabs;
+    return tabs;
+}
+
 }
 
 const getTab = id => browser.tabs.get(id);

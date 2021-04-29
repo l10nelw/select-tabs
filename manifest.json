@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
-  "name": "Tab Selector",
-  "description": "Select related tabs easily; a tab's parent, siblings and descendants, or all tabs of the same website.",
+  "name": "Select Tabs",
+  "description": "Quickly select multiple tabs: same website, to the left or right, parent/siblings/descendants, and more.",
   "version": "1.0",
   "permissions": [
     "contextMenus",
@@ -9,5 +9,10 @@
   ],
   "background": {
     "page": "background.html"
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "selecttabs@lionelw"
+    }
   }
 }

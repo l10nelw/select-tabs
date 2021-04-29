@@ -11,7 +11,7 @@ export async function parent__descendants(tab) {
 
 export async function siblings(tab) {
     const { openerTabId } = tab;
-    return openerTabId ? queryTabs({ openerTabId }) // If target tab has parent, get all tabs with same parent
+    return openerTabId ? children(openerTabId) // If target tab has parent, get all tabs with same parent
         : (await queryTabs()).filter(tab => !tab.openerTabId); // Else, get all parentless tabs
 }
 
@@ -25,11 +25,9 @@ export async function target__descendants(tab) {
 
 export async function descendants(tab_or_tabId) {
     const tabId = tab_or_tabId?.id || tab_or_tabId;
-    const tabs = await queryTabs({ openerTabId: tabId });
-    for (const tab of tabs) {
-        tabs.push(...await descendants(tab));
-    }
-    return tabs;
+	const childTabs = await children(tabId);
+    const descendantTabs = (await Promise.all( childTabs.map(descendants) )).flat();
+	return childTabs.concat(descendantTabs);
 }
 
 export async function left(tab) {
@@ -45,12 +43,10 @@ export function sameSite(tab) {
     if (host) return queryTabs({ url: `*://${host}/*` });
 }
 
-    for (const tab of tabs) {
-        tabs.push(...await descendants(tab));
-    }
-    return tabs;
 export async function sameSite__descendants(tab) {
     const tabs = await sameSite(tab);
+	const descendantTabs = (await Promise.all( tabs.map(descendants) )).flat();
+	return tabs.concat(descendantTabs);
 }
 
 export async function sameSite__cluster(tab) {
@@ -59,8 +55,9 @@ export async function sameSite__cluster(tab) {
     const tabIndex = tab.index;
     const arrayIndex = tabs.findIndex(tab => tab.index === tabIndex);
     const difference = tabIndex - arrayIndex;
-    return tabs.filter((tab, i) => i + difference === tab.index); // Cluster tabs share the same difference between tab and query-array indexes
+    return tabs.filter((tab, i) => i + difference === tab.index); // Cluster tabs share the same difference between tab and tabs-array indexes
 }
 
 const getTab = id => browser.tabs.get(id);
 const queryTabs = critieria => browser.tabs.query({ ...critieria, currentWindow: true });
+const children = openerTabId => queryTabs({ openerTabId });

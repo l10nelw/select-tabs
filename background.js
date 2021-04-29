@@ -3,17 +3,16 @@ import * as GetTabs from './gettabs.js';
 buildMenu({
 	// function/menuItemId: title
 	sameSite:               '&Same Site',
-	sameSite__descendants:  'Sa&me Site && Descendants',
+	sameSite__descendants:  'Sa&me Site and Descendants',
 	sameSite__cluster:      'Same Site &Cluster',
 	_0:                     '',
 	left:                   'To the &Left',
 	right:                  'To the &Right',
 	_1:                     '',
 	parent:                 '&Parent',
-	parent__descendants:    'P&arent && Descendants',
-	siblings:               'This && Sibli&ngs',
-	siblings__descendants:  'This && Siblin&gs && Descendants',
-	target__descendants:    '&This && Descendants',
+	parent__descendants:    'P&arent and Descendants',
+	siblings:               'S&iblings',
+	siblings__descendants:  'Si&blings and Descendants',
 	descendants:            '&Descendants',
 });
 

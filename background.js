@@ -1,39 +1,49 @@
 import * as GetTabs from './gettabs.js';
 
-buildMenu();
+buildMenu({
+	// function/menuItemId: title
+	sameSite:               '&Same Site',
+	sameSite__descendants:  'Sa&me Site && Descendants',
+	sameSite__cluster:      'Same Site &Cluster',
+	_0:                     '',
+	left:                   'To the &Left',
+	right:                  'To the &Right',
+	_1:                     '',
+	parent:                 '&Parent',
+	parent__descendants:    'P&arent && Descendants',
+	siblings:               'This && Sibli&ngs',
+	siblings__descendants:  'This && Siblin&gs && Descendants',
+	target__descendants:    '&This && Descendants',
+	descendants:            '&Descendants',
+});
 
-function buildMenu() {
-	const parentId = 'selecttabs';
-	const parentTitle = '&Select Tabs';
-    const menuItems = {
-        // function/menuItemId: title
-        parent:                 '&Parent',
-        parent__descendants:    'P&arent && Descendants',
-        siblings:               'This && Sibli&ngs',
-        siblings__descendants:  'This && Siblin&gs && Descendants',
-        target__descendants:    '&This && Descendants',
-        descendants:            '&Descendants',
-        left:                   'To the &Left',
-        right:                  'To the &Right',
-		sameSite:               '&Same Site',
-		sameSite__descendants:  'Sa&me Site && Descendants',
-		sameSite__cluster:      'Same Site &Cluster',
-    };
+function buildMenu(menuItems) {
     const contexts = ['tab'];
-
+	const parentId = 'selecttabs';
+	
 	browser.contextMenus.create({
 		contexts,
 		id: parentId,
-		title: parentTitle,
+		title: '&Select Tabs',
 	});
+	
     for (const [id, title] of Object.entries(menuItems)) {
-        browser.contextMenus.create({
-            contexts,
-			parentId,
-            id,
-            title,
-            onclick: (_, tab) => select(GetTabs[id], tab),
-        });
+		const isMenuItem = title.length;
+		if (isMenuItem) {
+			browser.contextMenus.create({
+				contexts,
+				parentId,
+				title,
+				onclick: (info, tab) => select(GetTabs[id], tab),				
+			});
+		}
+		else {
+			browser.contextMenus.create({
+				contexts,
+				parentId,
+				type: 'separator',
+			});
+		}
     }
 }
 
@@ -44,7 +54,7 @@ async function select(getter, targetTab) {
     browser.tabs.highlight({ tabs: tabIndexes, populate: false });
 }
 
-// Move an already active tab or the targeted tab, if either is available, to the start of the tabs array.
+// Move an already active tab or the targeted tab to the start of the tabs array, if either is available.
 // Sets up array for tabs.highlight(), which activates the first tab in array.
 function activeTabFirst(tabs, targetTab) {
     let activeTabIndex = tabs.findIndex(tab => tab.active);

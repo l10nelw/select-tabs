@@ -40,22 +40,22 @@ export async function right(tab) {
     return (await queryTabs()).slice(tab.index);
 }
 
-export function sameHost(tab) {
+export function sameSite(tab) {
     const host = (new URL(tab.url)).hostname;
     if (host) return queryTabs({ url: `*://${host}/*` });
 }
 
-export async function sameHost__descendants(tab) {
-    const tabs = await sameHost(tab);
     for (const tab of tabs) {
         tabs.push(...await descendants(tab));
     }
     return tabs;
+export async function sameSite__descendants(tab) {
+    const tabs = await sameSite(tab);
 }
 
-export async function sameHost__cluster(tab) {
-    // A sameHost cluster contains tabs that are neighbours of the target tab and each other
-    const tabs = await sameHost(tab);
+export async function sameSite__cluster(tab) {
+    // A sameSite cluster contains tabs that are neighbours of the target tab and each other
+    const tabs = await sameSite(tab);
     const tabIndex = tab.index;
     const arrayIndex = tabs.findIndex(tab => tab.index === tabIndex);
     const difference = tabIndex - arrayIndex;

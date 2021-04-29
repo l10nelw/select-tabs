@@ -15,9 +15,9 @@ function buildMenu() {
         descendants:            '&Descendants',
         left:                   'To the &Left',
         right:                  'To the &Right',
-        sameHost:               '&Same Subdomain',
-        sameHost__descendants:  'Sa&me Subdomain && Descendants',
-        sameHost__cluster:      'Same Subdomain &Cluster',
+		sameSite:               '&Same Site',
+		sameSite__descendants:  'Sa&me Site && Descendants',
+		sameSite__cluster:      'Same Site &Cluster',
     };
     const contexts = ['tab'];
 

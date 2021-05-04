@@ -1,6 +1,6 @@
-    if (host) return queryTabs({ url: `*://${host}/*` });
 export function sameSite({ url }) {
     const host = (new URL(url)).hostname;
+    return queryTabs({ url: host ? `*://${host}/*` : url });
 }
 
 export async function sameSite__descendants(tab) {

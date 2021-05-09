@@ -3,10 +3,17 @@ const queryTabs = properties => browser.tabs.query({ ...properties, currentWindo
 
 /* URL-based commands */
 
-export function sameSite({ url }) {
-    const host = (new URL(url)).hostname;
-    return queryTabs({ url: host ? `*://${host}/*` : url });
+export async function sameSite({ url, isInReaderMode }) {
+    if (isInReaderMode) url = getReaderUrl(url);
+    const host = getHost(url);
+    return host ? (await Promise.all([ queryTabs({ url: `*://${host}/*` }), getReaderTabsWithHost(host) ])).flat()
+        : queryTabs({ url });
 }
+
+const getHost = url => (new URL(url)).hostname;
+const READER_HEAD = 'about:reader?url=';
+const getReaderUrl = url => decodeURIComponent( url.slice(READER_HEAD.length) );
+const getReaderTabsWithHost = async host => (await queryTabs({ url: READER_HEAD + '*' })).filter(tab => getHost(getReaderUrl(tab.url)) === host);
 
 export async function sameSite__descendants(tab) {
     const tabs = await sameSite(tab);

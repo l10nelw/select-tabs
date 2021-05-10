@@ -1,8 +1,12 @@
 {
   "manifest_version": 2,
   "name": "Select Tabs",
-  "description": "Quickly select multiple tabs: same website, to the left or right, parent/siblings/descendants, and more.",
-  "version": "1.0",
+  "description": "Quickly select multiple tabs: tabs of the same website, tabs to the left or right, parent/sibling/descendant tabs, and more.",
+  "version": "1.1",
+  "icons": {
+    "48": "selecttabs.svg",
+    "96": "selecttabs.svg"
+  },
   "permissions": [
     "contextMenus",
     "tabs"

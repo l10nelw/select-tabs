@@ -63,7 +63,8 @@ export async function siblings({ openerTabId }) {
 }
 
 export function siblings__descendants({ openerTabId }) {
-    return getDescendantTabs(openerTabId);
+    return openerTabId ? getDescendantTabs(openerTabId)
+        : queryTabs();
 }
 
 async function getDescendantTabs(tab_or_tabId) {

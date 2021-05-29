@@ -9,23 +9,23 @@ buildMenu({
     left:                   'To the &Left',
     right:                  'To the &Right',
     _1:                     '',
+    descendants:            '&Descendants',
     parent:                 '&Parent',
     parent__descendants:    'P&arent and Descendants',
     siblings:               'S&iblings',
     siblings__descendants:  'Si&blings and Descendants',
-    descendants:            '&Descendants',
 });
 
 function buildMenu(menuItems) {
     const contexts = ['tab'];
     const parentId = 'selecttabs';
-    
+
     browser.contextMenus.create({
         contexts,
         id: parentId,
         title: '&Select Tabs',
     });
-    
+
     for (const [id, title] of Object.entries(menuItems)) {
         const isMenuItem = title.length;
         if (isMenuItem) {
@@ -33,7 +33,7 @@ function buildMenu(menuItems) {
                 contexts,
                 parentId,
                 title,
-                onclick: (info, tab) => selectTabs(GetTabs[id], tab),               
+                onclick: (info, tab) => selectTabs(GetTabs[id], tab),
             });
         }
         else {

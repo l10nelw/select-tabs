@@ -43,6 +43,10 @@ export async function right({ index }) {
 
 /* Tab-tree commands */
 
+export async function descendants(tab) {
+    return [tab, ...await getDescendantTabs(tab)];
+}
+
 export async function parent({ openerTabId }) {
     if (openerTabId) return [await getTab(openerTabId)];
 }
@@ -60,10 +64,6 @@ export async function siblings({ openerTabId }) {
 
 export function siblings__descendants({ openerTabId }) {
     return getDescendantTabs(openerTabId);
-}
-
-export async function descendants(tab) {
-    return [tab, ...await getDescendantTabs(tab)];
 }
 
 async function getDescendantTabs(tab_or_tabId) {

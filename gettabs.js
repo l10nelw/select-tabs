@@ -1,4 +1,4 @@
-const queryTabs = properties => browser.tabs.query({ ...properties, currentWindow: true, pinned: false });
+const queryTabs = properties => browser.tabs.query({ currentWindow: true, ...properties });
 
 
 /* URL-based commands */

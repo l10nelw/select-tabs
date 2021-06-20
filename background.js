@@ -47,11 +47,17 @@ function buildMenu(menuItems) {
 }
 
 async function selectTabs(getter, targetTab) {
-    const tabs = await getter(targetTab);
+    const tabs = removePinned(await getter(targetTab));
     if (!tabs?.length) return;
     prepActiveTab(tabs, targetTab);
     const tabIndexes = tabs.map(tab => tab.index);
     browser.tabs.highlight({ tabs: tabIndexes, populate: false });
+}
+
+function removePinned(tabs) {
+    const unpinnedIndex = tabs.findIndex(tab => !tab.pinned);
+    if (unpinnedIndex === -1) return [];
+    return tabs.slice(unpinnedIndex);
 }
 
 // Move the active tab or target tab to the start of the tabs array, if either is available.

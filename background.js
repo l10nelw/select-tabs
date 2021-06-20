@@ -47,7 +47,10 @@ function buildMenu(menuItems) {
 }
 
 async function selectTabs(getter, targetTab) {
-    const tabs = removePinned(await getter(targetTab));
+    let tabs = await getter(targetTab);
+    if (getter !== GetTabs.parent) { // Make exception for Parent command
+        tabs = removePinned(tabs);
+    }
     if (!tabs?.length) return;
     prepActiveTab(tabs, targetTab);
     const tabIndexes = tabs.map(tab => tab.index);

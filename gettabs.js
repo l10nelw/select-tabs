@@ -50,7 +50,8 @@ export async function descendants(tab) {
 }
 
 export async function parent({ openerTabId }) {
-    if (openerTabId) return [await getTab(openerTabId)];
+    return openerTabId ? [await getTab(openerTabId)]
+        : [];
 }
 
 export async function parent__descendants(tab) {

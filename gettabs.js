@@ -4,18 +4,26 @@ const queryTabs = properties => browser.tabs.query({ currentWindow: true, ...pro
 /* URL-based commands */
 
 export async function sameSite({ url, isInReaderMode }) {
-    if (isInReaderMode) url = getReaderUrl(url);
+    if (isInReaderMode)
+        url = getReaderUrl(url);
     const { protocol, host } = new URL(url);
-    if (protocol === 'file:') return queryTabs({ url: 'file:///*' });
-    if (protocol === 'moz-extension:') return queryTabs({ url: `moz-extension://${host}/*` });
-    if (host) return (await Promise.all([ queryTabs({ url: `*://${host}/*` }), getReaderTabsWithHost(host) ])).flat();
+    if (protocol === 'file:')
+        return queryTabs({ url: 'file:///*' });
+    if (protocol === 'moz-extension:')
+        return queryTabs({ url: `moz-extension://${host}/*` });
+    if (host)
+        return (
+            await Promise.all([ queryTabs({ url: `*://${host}/*` }), getReaderTabsWithHost(host) ])
+        ).flat();
     return queryTabs({ url: `${protocol}*` });
 }
 
 const READER_HEAD = 'about:reader?url=';
 const getReaderUrl = url => decodeURIComponent( url.slice(READER_HEAD.length) );
 const getHost = url => (new URL(url)).host;
-const getReaderTabsWithHost = async host => (await queryTabs({ url: `${READER_HEAD}*` })).filter(tab => getHost(getReaderUrl(tab.url)) === host);
+const getReaderTabsWithHost = async host =>
+    (await queryTabs({ url: `${READER_HEAD}*` }))
+    .filter(tab => getHost(getReaderUrl(tab.url)) === host);
 
 export async function sameSite__descendants(tab) {
     const tabs = await sameSite(tab);
@@ -28,7 +36,9 @@ export async function sameSite__cluster(tab) {
     const tabIndex = tab.index;
     const arrayIndex = tabs.findIndex(tab => tab.index === tabIndex);
     const difference = tabIndex - arrayIndex;
-    return tabs.filter((tab, index) => tab.index === index + difference); // Cluster tabs share same difference between tab and tabs-array indexes
+    return tabs.filter(
+        (tab, index) => tab.index === index + difference
+    ); // Cluster tabs share same difference between tab and tabs-array indexes
 }
 
 

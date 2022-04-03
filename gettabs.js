@@ -6,24 +6,24 @@ const queryTabs = properties => browser.tabs.query({ currentWindow: true, ...pro
 export async function sameSite({ url, isInReaderMode }) {
     if (isInReaderMode)
         url = getReaderUrl(url);
-    const { protocol, host } = new URL(url);
+    const { protocol, hostname } = new URL(url);
     if (protocol === 'file:')
         return queryTabs({ url: 'file:///*' });
     if (protocol === 'moz-extension:')
-        return queryTabs({ url: `moz-extension://${host}/*` });
-    if (host)
+        return queryTabs({ url: `moz-extension://${hostname}/*` });
+    if (hostname)
         return (
-            await Promise.all([ queryTabs({ url: `*://${host}/*` }), getReaderTabsWithHost(host) ])
+            await Promise.all([ queryTabs({ url: `*://${hostname}/*` }), getReaderTabsByHostname(hostname) ])
         ).flat();
     return queryTabs({ url: `${protocol}*` });
 }
 
 const READER_HEAD = 'about:reader?url=';
 const getReaderUrl = url => decodeURIComponent( url.slice(READER_HEAD.length) );
-const getHost = url => (new URL(url)).host;
-const getReaderTabsWithHost = async host =>
+const getHostname = url => (new URL(url)).hostname;
+const getReaderTabsByHostname = async hostname =>
     (await queryTabs({ url: `${READER_HEAD}*` }))
-    .filter(tab => getHost(getReaderUrl(tab.url)) === host);
+    .filter(tab => getHostname(getReaderUrl(tab.url)) === hostname);
 
 export async function sameSite__descendants(tab) {
     const tabs = await sameSite(tab);

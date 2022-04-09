@@ -23,12 +23,6 @@ export async function sameSite({ url, isInReaderMode }) {
     return queryTabs({ url: `${protocol}*` });
 }
 
-export async function sameSite__descendants(tab) {
-    const tabs = await sameSite(tab);
-    const descendantTabs = (await Promise.all( tabs.map(getDescendantTabs) )).flat();
-    return tabs.concat(descendantTabs);
-}
-
 export async function sameSite__cluster(tab) {
     const tabs = await sameSite(tab);
     const tabIndex = tab.index;
@@ -37,6 +31,12 @@ export async function sameSite__cluster(tab) {
     return tabs.filter(
         (tab, index) => tab.index === index + difference
     ); // Cluster tabs share same difference between tab and tabs-array indexes
+}
+
+export async function sameSite__descendants(tab) {
+    const tabs = await sameSite(tab);
+    const descendantTabs = (await Promise.all( tabs.map(getDescendantTabs) )).flat();
+    return tabs.concat(descendantTabs);
 }
 
 

@@ -1,6 +1,3 @@
-const queryTabs = properties => browser.tabs.query({ currentWindow: true, ...properties });
-
-
 /* URL-based commands */
 
 export async function duplicate({ url, isInReaderMode }) {
@@ -25,13 +22,6 @@ export async function sameSite({ url, isInReaderMode }) {
         ).flat();
     return queryTabs({ url: `${protocol}*` });
 }
-
-const READER_HEAD = 'about:reader?url=';
-const getReaderUrl = url => decodeURIComponent( url.slice(READER_HEAD.length) );
-const getHostname = url => (new URL(url)).hostname;
-const getReaderTabsByHostname = async hostname =>
-    (await queryTabs({ url: `${READER_HEAD}*` }))
-    .filter(tab => getHostname(getReaderUrl(tab.url)) === hostname);
 
 export async function sameSite__descendants(tab) {
     const tabs = await sameSite(tab);
@@ -88,6 +78,9 @@ export function siblings__descendants({ openerTabId }) {
         : queryTabs();
 }
 
+
+/* Helpers */
+
 async function getDescendantTabs(tab_or_tabId) {
     const tabId = tab_or_tabId?.id || tab_or_tabId;
     const childTabs = await getChildTabs(tabId);
@@ -95,5 +88,13 @@ async function getDescendantTabs(tab_or_tabId) {
     return childTabs.concat(descendantTabs);
 }
 
+const queryTabs = properties => browser.tabs.query({ currentWindow: true, ...properties });
 const getTab = id => browser.tabs.get(id);
 const getChildTabs = openerTabId => queryTabs({ openerTabId });
+
+const READER_HEAD = 'about:reader?url=';
+const getReaderUrl = url => decodeURIComponent( url.slice(READER_HEAD.length) );
+const getHostname = url => (new URL(url)).hostname;
+const getReaderTabsByHostname = async hostname =>
+    (await queryTabs({ url: `${READER_HEAD}*` }))
+    .filter(tab => getHostname(getReaderUrl(tab.url)) === hostname);

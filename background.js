@@ -2,6 +2,7 @@ import * as GetTabs from './gettabs.js';
 
 buildMenu({
     // function/menuItemId: title
+    duplicate:              'D&uplicate',
     sameSite:               '&Same Site',
     sameSite__descendants:  'Sa&me Site and Descendants',
     sameSite__cluster:      'Same Site &Cluster',

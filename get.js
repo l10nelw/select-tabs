@@ -1,3 +1,9 @@
+/**
+ * Tab-getting functions a.k.a. commands
+ * (tab) => (tabs)
+**/
+
+
 /* URL-based commands */
 
 export async function duplicate({ url, isInReaderMode }) {

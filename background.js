@@ -1,4 +1,4 @@
-import * as GetTabs from './gettabs.js';
+import * as Getter from './get.js';
 
 buildMenu({
     'URL-based': {
@@ -48,7 +48,7 @@ function buildMenu(menuGroupDict) {
             contexts,
             parentId,
             title,
-            onclick: (_, tab) => selectTabs(GetTabs[id], tab),
+            onclick: (_, tab) => selectTabs(Getter[id], tab),
         });
     }
 
@@ -63,7 +63,7 @@ function buildMenu(menuGroupDict) {
 
 async function selectTabs(getter, targetTab) {
     let tabs = await getter(targetTab);
-    if (getter !== GetTabs.parent)
+    if (getter !== Getter.parent)
         tabs = removePinned(tabs); // Allow pinned tabs only for Parent command
     if (!tabs?.length)
         return;

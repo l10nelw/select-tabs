@@ -63,10 +63,16 @@ function buildMenu(menuGroupDict) {
 
 async function selectTabs(getter, targetTab) {
     let tabs = await getter(targetTab);
-    if (getter !== Getter.parent)
-        tabs = removePinned(tabs); // Allow pinned tabs only for Parent command
+
+    if (targetTab.pinned || getter === Getter.parent) {
+        // Allow selecting pinned tabs
+    } else {
+        tabs = removePinned(tabs);
+    }
+
     if (!tabs?.length)
         return;
+
     prepActiveTab(tabs, targetTab);
     const tabIndexes = tabs.map(tab => tab.index);
     browser.tabs.highlight({ tabs: tabIndexes, populate: false });

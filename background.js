@@ -24,6 +24,12 @@ buildMenu({
 function buildMenu(menuGroupDict) {
     const contexts = ['tab'];
     const parentId = 'selecttabs';
+    const parentTitle = '&Select Tabs';
+
+    const addRoot = ()          => browser.contextMenus.create({ contexts, id: parentId, title: parentTitle });
+    const addItem = (id, title) => browser.contextMenus.create({ contexts, parentId, id, title });
+    const addSeparator = ()     => browser.contextMenus.create({ contexts, parentId, type: 'separator' });
+
     addRoot();
 
     const menuGroups = Object.values(menuGroupDict);
@@ -34,32 +40,11 @@ function buildMenu(menuGroupDict) {
         for (const [id, title] of menuGroupItems)
             addItem(id, title);
     }
-
-    function addRoot() {
-        browser.contextMenus.create({
-            contexts,
-            id: parentId,
-            title: '&Select Tabs',
-        });
-    }
-
-    function addItem(id, title) {
-        browser.contextMenus.create({
-            contexts,
-            parentId,
-            title,
-            onclick: (_, tab) => selectTabs(Getter[id], tab),
-        });
-    }
-
-    function addSeparator() {
-        browser.contextMenus.create({
-            contexts,
-            parentId,
-            type: 'separator',
-        });
-    }
 }
+
+browser.contextMenus.onClicked.addListener(
+    ({ menuItemId }, tab) => selectTabs(Getter[menuItemId], tab)
+);
 
 async function selectTabs(getter, targetTab) {
     let tabs = await getter(targetTab);

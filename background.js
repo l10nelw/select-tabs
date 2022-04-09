@@ -1,49 +1,63 @@
 import * as GetTabs from './gettabs.js';
 
 buildMenu({
-    // function/menuItemId: title
-    duplicate:              'D&uplicate',
-    sameSite:               '&Same Site',
-    sameSite__cluster:      'Same Site &Cluster',
-    sameSite__descendants:  'Sa&me Site and Descendants',
-    _0:                     '',
-    left:                   'To the &Left',
-    right:                  'To the &Right',
-    _1:                     '',
-    descendants:            '&Descendants',
-    parent:                 '&Parent',
-    parent__descendants:    'P&arent and Descendants',
-    siblings:               'S&iblings',
-    siblings__descendants:  'Si&blings and Descendants',
+    'URL-based': {
+        duplicate:              'D&uplicate',
+        sameSite:               '&Same Site',
+        sameSite__cluster:      'Same Site &Cluster',
+        sameSite__descendants:  'Sa&me Site and Descendants',
+    },
+    'Directional': {
+        left:                   'To the &Left',
+        right:                  'To the &Right',
+    },
+    'Tab-tree': {
+        descendants:            '&Descendants',
+        parent:                 '&Parent',
+        parent__descendants:    'P&arent and Descendants',
+        siblings:               'S&iblings',
+        siblings__descendants:  'Si&blings and Descendants',
+    },
 });
 
-function buildMenu(menuItems) {
+// menuGroupDict is an dict of group titles mapped to dicts of getter names mapped to getter titles
+function buildMenu(menuGroupDict) {
     const contexts = ['tab'];
     const parentId = 'selecttabs';
+    addRoot();
 
-    browser.contextMenus.create({
-        contexts,
-        id: parentId,
-        title: '&Select Tabs',
-    });
+    const menuGroups = Object.values(menuGroupDict);
+    for (let i = 0, n = menuGroups.length; i < n; i++) {
+        const menuGroupItems = Object.entries(menuGroups[i]);
+        if (i > 0 && menuGroupItems.length)
+            addSeparator(); // A separator prefaces each non-first, non-empty group
+        for (const [id, title] of menuGroupItems)
+            addItem(id, title);
+    }
 
-    for (const [id, title] of Object.entries(menuItems)) {
-        const isMenuItem = title.length;
-        if (isMenuItem) {
-            browser.contextMenus.create({
-                contexts,
-                parentId,
-                title,
-                onclick: (info, tab) => selectTabs(GetTabs[id], tab),
-            });
-        }
-        else {
-            browser.contextMenus.create({
-                contexts,
-                parentId,
-                type: 'separator',
-            });
-        }
+    function addRoot() {
+        browser.contextMenus.create({
+            contexts,
+            id: parentId,
+            title: '&Select Tabs',
+        });
+    }
+
+    function addItem(id, title) {
+        browser.contextMenus.create({
+            contexts,
+            parentId,
+            title,
+            onclick: (_, tab) => selectTabs(GetTabs[id], tab),
+        });
+    }
+
+    function addSeparator() {
+        browser.contextMenus.create({
+            contexts,
+            parentId,
+            type: 'separator',
+        });
     }
 }
 

@@ -9,6 +9,7 @@
   },
   "permissions": [
     "contextMenus",
+    "storage",
     "tabs"
   ],
   "background": {

@@ -13,7 +13,7 @@
     "tabs"
   ],
   "background": {
-    "page": "background.html"
+    "page": "background/background.html"
   },
   "options_ui": {
     "page": "options/options.html",

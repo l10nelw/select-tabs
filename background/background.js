@@ -1,6 +1,6 @@
 import * as Getter from './get.js';
 import selectTabs from './select.js';
-import menuData from './menudata.js';
+import menuData from '../menudata.js';
 
 init();
 

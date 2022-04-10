@@ -23,9 +23,9 @@ export async function sameSite({ url, isInReaderMode }) {
     if (protocol === 'moz-extension:')
         return queryTabs({ url: `moz-extension://${hostname}/*` });
     if (hostname)
-        return (
-            await Promise.all([ queryTabs({ url: `*://${hostname}/*` }), getReaderTabsByHostname(hostname) ])
-        ).flat();
+        return (await Promise.all(
+            [ queryTabs({ url: `*://${hostname}/*` }), getReaderTabsByHostname(hostname) ]
+        )).flat();
     return queryTabs({ url: `${protocol}*` });
 }
 

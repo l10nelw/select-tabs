@@ -12,6 +12,11 @@ async function init() {
     browser.contextMenus.onClicked.addListener(
         ({ menuItemId }, tab) => selectTabs(Getter[menuItemId], tab)
     );
+
+    browser.runtime.onMessage.addListener(async request => {
+        if (request === 'preferences')
+            return preferences;
+    });
 }
 
 // menuGroupDict is an dict of group titles mapped to dicts of getter names mapped to getter titles

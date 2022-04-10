@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <style>
+      body {
+        padding: 0 1em;
+      }
+      section {
+        margin-bottom: 2em;
+      }
+      h3 {
+        margin-top: 0;
+        margin-bottom: .5em;
+      }
+      .check-field + h3 {
+        margin-top: 1em;
+      }
+      .check-field {
+        display: flex;
+        align-items: center;
+        gap: .5em;
+      }
+      button {
+        margin-bottom: 1em;
+        padding: .1em 1em;
+        font-size: 1.1em;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <form>
+      <section id="commands">
+        <h2>Available commands</h2>
+      </section>
+      <button>Save preferences</button>
+    </form>
+
+    <template>
+      <h3></h3>
+      <label class="check-field">
+        <input type="checkbox" class="command" checked> <span></span>
+      </label>
+    </template>
+
+    <script src="options.js" type="module"></script>
+  </body>
+</html>

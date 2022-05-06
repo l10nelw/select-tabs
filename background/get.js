@@ -31,11 +31,11 @@ export async function sameSite({ url, isInReaderMode }) {
 
 export async function sameSite__cluster(tab) {
     const tabs = await sameSite(tab);
-    const tabIndex = tab.index;
-    const arrayIndex = tabs.findIndex(tab => tab.index === tabIndex);
-    const difference = tabIndex - arrayIndex;
+    const targetTabIndex = tab.index;
+    const targetArrayIndex = tabs.findIndex(tab => tab.index === targetTabIndex);
+    const difference = targetTabIndex - targetArrayIndex;
     return tabs.filter(
-        (tab, index) => tab.index === index + difference
+        (tab, arrayIndex) => tab.index === arrayIndex + difference
     ); // Cluster tabs share same difference between tab and tabs-array indexes
 }
 

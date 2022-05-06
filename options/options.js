@@ -32,10 +32,11 @@ import menuData from '../menudata.js';
     }
 })();
 
-const $form = document.body.querySelector('form');
-$form.addEventListener('submit', async () => {
+document.body.querySelector('form')
+.addEventListener('submit', async () => {
+    // Save and restart
     const disabledCommands = [];
-    for (const $field of $form.elements) {
+    for (const $field of this.elements) {
         if ($field.classList.contains('command') && !$field.checked)
             disabledCommands.push($field.name);
     }

@@ -8,12 +8,8 @@ export default async function selectTabs(getter, targetTab) {
     if (!tabs?.length)
         return;
 
-    // Move the active tab or target tab to the start of the tabs array, if either is available
-    // Sets up array for tabs.highlight(), which activates (focuses) the first tab in array
     prepActiveTab(tabs, targetTab);
-
-    const tabIndexes = tabs.map(tab => tab.index);
-    browser.tabs.highlight({ tabs: tabIndexes, populate: false });
+    browser.tabs.highlight({ tabs: tabs.map(tab => tab.index), populate: false });
 }
 
 function removePinned(tabs) {
@@ -21,6 +17,9 @@ function removePinned(tabs) {
     return (unpinnedIndex === -1) ? [] : tabs.slice(unpinnedIndex);
 }
 
+// Move the active tab or target tab to the start of the tabs array, if either is available
+// Mutates array; sets it up for tabs.highlight(), which activates (focuses) the first tab in array
+// In other words: keep active tab active, or activate target tab, or activate first tab in selection
 function prepActiveTab(tabs, targetTab) {
     if (tabs.length <= 1)
         return;
@@ -30,5 +29,5 @@ function prepActiveTab(tabs, targetTab) {
         activeTabIndex = tabs.findIndex(tab => tab.id === targetTabId);
     }
     if (activeTabIndex >= 1)
-        [ tabs[0], tabs[activeTabIndex] ] = [ tabs[activeTabIndex], tabs[0] ];
+        [ tabs[0], tabs[activeTabIndex] ] = [ tabs[activeTabIndex], tabs[0] ]; // Swap with first tab
 }

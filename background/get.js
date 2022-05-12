@@ -58,13 +58,8 @@ const getReaderTabsByHostname = async hostname =>
 
 /* Directional commands */
 
-export async function left({ index }) {
-    return (await queryTabs()).slice(0, index + 1);
-}
-
-export async function right({ index }) {
-    return (await queryTabs()).slice(index);
-}
+export const left  = async ({ index }) => (await queryTabs()).slice(0, index + 1);
+export const right = async ({ index }) => (await queryTabs()).slice(index);
 
 
 /* Tab-tree commands */
@@ -101,7 +96,7 @@ async function getDescendantTabs(tab_or_tabId) {
     return childTabs.concat(descendantTabs);
 }
 
-const getTab = id => browser.tabs.get(id);
+const getTab = tabId => browser.tabs.get(tabId);
 const getChildTabs = openerTabId => queryTabs({ openerTabId });
 
 

@@ -9,7 +9,7 @@ export default {
         left:                   'To the &Left',
         right:                  'To the &Right',
     },
-    'Tab-tree': {
+    'Tab tree': {
         descendants:            '&Descendants',
         parent:                 '&Parent',
         parent__descendants:    'P&arent and Descendants',

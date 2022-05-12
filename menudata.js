@@ -16,4 +16,10 @@ export default {
         siblings:               'S&iblings',
         siblings__descendants:  'Si&blings and Descendants',
     },
+    'Time-based': {
+        pastHour:               'Accessed in the Past &Hour',
+        past24Hours:            'Accessed in the Past 24 H&ours',
+        today:                  'Accessed &Today',
+        yesterday:              'Accessed &Yesterday',
+    }
 }

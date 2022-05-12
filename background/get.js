@@ -1,6 +1,7 @@
 /**
  * Tab-getting functions a.k.a. commands
  * (tab) => (tabs)
+ * () => (tabs)
 **/
 
 const queryTabs = properties => browser.tabs.query({ currentWindow: true, ...properties });
@@ -103,3 +104,33 @@ async function getDescendantTabs(tab_or_tabId) {
 const getTab = id => browser.tabs.get(id);
 const getChildTabs = openerTabId => queryTabs({ openerTabId });
 
+
+/* Time-based commands */
+
+const MINUTE = 1000 * 60;
+const HOUR = MINUTE * 60;
+const DAY = HOUR * 24;
+
+export const pastHour = () => accessedWithinPeriod(HOUR);
+export const past24Hours = () => accessedWithinPeriod(DAY);
+export const today = () => accessedOnDay(0);
+export const yesterday = () => accessedOnDay(-1);
+
+async function accessedWithinPeriod(period) {
+    const now = Date.now();
+    return (await queryTabs()).filter(tab => (now - tab.lastAccessed) <= period);
+}
+
+async function accessedOnDay(offset) {
+    const date = new Date();
+    if (offset)
+        date.setDate(date.getDate() + offset);
+    const day = date.getDate();
+    const month = date.getMonth();
+    const year = date.getFullYear();
+    const isLastAccessedAtDate = tab => {
+        const tabDate = new Date(tab.lastAccessed);
+        return tabDate.getDate() === day && tabDate.getMonth() === month && tabDate.getFullYear() === year;
+    };
+    return (await queryTabs()).filter(isLastAccessedAtDate);
+}

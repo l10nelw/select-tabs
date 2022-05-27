@@ -12,7 +12,6 @@ export default {
     'Tab tree': {
         descendants:            '&Descendants',
         parent:                 '&Parent',
-        parent__descendants:    'P&arent and Descendants',
         siblings:               'S&iblings',
         siblings__descendants:  'Si&blings and Descendants',
     },

@@ -73,12 +73,6 @@ export async function parent({ openerTabId }) {
         : [];
 }
 
-export async function parent__descendants(tab) {
-    const { openerTabId } = tab;
-    return openerTabId ? (await Promise.all([ getTab(openerTabId), getDescendantTabs(openerTabId) ])).flat()
-        : descendants(tab);
-}
-
 export async function siblings({ openerTabId }) {
     return openerTabId ? getChildTabs(openerTabId) // If target tab has parent, get all tabs with same parent
         : (await queryTabs()).filter(tab => !tab.openerTabId); // Else, get all parentless tabs

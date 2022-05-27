@@ -1,6 +1,6 @@
 export default {
     'URL-based': {
-        duplicate:              'D&uplicate',
+        duplicates:             'D&uplicates',
         sameSite:               '&Same Site',
         sameSite__cluster:      'Same Site &Cluster',
         sameSite__descendants:  'Sa&me Site and Descendants',

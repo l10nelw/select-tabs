@@ -9,7 +9,7 @@ const queryTabs = properties => browser.tabs.query({ currentWindow: true, ...pro
 
 /* URL-based commands */
 
-export async function duplicate({ url, isInReaderMode }) {
+export async function duplicates({ url, isInReaderMode }) {
     if (isInReaderMode)
         url = getReaderUrl(url);
     const { protocol, hostname, pathname, search } = new URL(url);

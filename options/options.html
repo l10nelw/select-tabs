@@ -6,14 +6,17 @@
       body {
         padding: 0 1em;
       }
-      section {
-        margin-bottom: 2em;
+      fieldset {
+        margin: 1em 0;
       }
-      h3 {
+      legend > * {
+        margin: 0;
+      }
+      h4 {
         margin-top: 0;
         margin-bottom: .5em;
       }
-      .check-field + h3 {
+      .check-field + h4 {
         margin-top: 1em;
       }
       .check-field {
@@ -31,20 +34,19 @@
   </head>
   <body>
     <form>
-      <section id="commands">
-        <h2>Available commands</h2>
+      <fieldset id="commands">
+        <legend><h3>Available commands</h3></legend>
         <p>View the Details tab or <a href="https://addons.mozilla.org/firefox/addon/select-tabs/">the add-on page</a> for descriptions of each command.</p>
-      </section>
+        <template>
+          <h4></h4>
+          <label class="check-field">
+            <input type="checkbox" class="command" checked> <span></span>
+          </label>
+        </template>
+      </fieldset>
+
       <button>Save preferences</button>
     </form>
-
-    <template>
-      <h3></h3>
-      <label class="check-field">
-        <input type="checkbox" class="command" checked> <span></span>
-      </label>
-    </template>
-
     <script src="options.js" type="module"></script>
   </body>
 </html>

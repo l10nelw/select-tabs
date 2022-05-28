@@ -5,7 +5,7 @@ import menuData from '../menudata.js';
     const disabledCommandSet = new Set(preferences?.disabledCommands);
 
     const $commands = document.getElementById('commands');
-    const $template = document.body.querySelector('template').content;
+    const $template = $commands.querySelector('template').content;
     const template = {
         $heading: $template.firstElementChild,
         $checkField: $template.querySelector('label'),

@@ -100,17 +100,17 @@ const MINUTE = 1000 * 60;
 const HOUR = MINUTE * 60;
 const DAY = HOUR * 24;
 
-export const pastHour = () => accessedWithinPeriod(HOUR);
-export const past24Hours = () => accessedWithinPeriod(DAY);
-export const today = () => accessedOnDay(0);
-export const yesterday = () => accessedOnDay(-1);
+export const pastHour = () => getTabsAccessedWithinPeriod(HOUR);
+export const past24Hours = () => getTabsAccessedWithinPeriod(DAY);
+export const today = () => getTabsAccessedOnDay(0);
+export const yesterday = () => getTabsAccessedOnDay(-1);
 
-async function accessedWithinPeriod(period) {
+async function getTabsAccessedWithinPeriod(period) {
     const now = Date.now();
     return (await queryTabs()).filter(tab => (now - tab.lastAccessed) <= period);
 }
 
-async function accessedOnDay(offset) {
+async function getTabsAccessedOnDay(offset) {
     const date = new Date();
     if (offset)
         date.setDate(date.getDate() + offset);

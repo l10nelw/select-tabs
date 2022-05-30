@@ -4,19 +4,12 @@ import menuData from '../menudata.js';
 
 (async function init() {
     const preferences = await browser.storage.sync.get();
-
     buildMenu(menuData, new Set(preferences.disabledCommands));
-
-    browser.contextMenus.onClicked.addListener(
-        ({ menuItemId }, tab) => selectTabs(GetTabs[menuItemId], tab)
-    );
-
-    browser.runtime.onMessage.addListener(async request => {
-        // May be requested by the options frame
-        if (request === 'preferences')
-            return preferences;
-    });
 })();
+
+browser.contextMenus.onClicked.addListener(({ menuItemId }, tab) =>
+    selectTabs(GetTabs[menuItemId], tab));
+
 
 // menuGroupDict is an dict of { group titles : { getter names : getter titles } }
 function buildMenu(menuGroupDict, disabledItemSet) {

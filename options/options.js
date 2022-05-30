@@ -1,7 +1,7 @@
 import menuData from '../menudata.js';
 
 (async function populateForm() {
-    const preferences = await browser.runtime.sendMessage('preferences');
+    const preferences = await browser.storage.sync.get();
     const disabledCommandSet = new Set(preferences?.disabledCommands);
 
     const $commands = document.getElementById('commands');

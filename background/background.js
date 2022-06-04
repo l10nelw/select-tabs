@@ -5,6 +5,16 @@ import menuData from '../menudata.js';
 (async function init() {
     const preferences = await browser.storage.sync.get();
 
+    hydrateCommandDescriptions(menuData);
+
+    browser.commands.onCommand.addListener(async (command) => {
+        const currentTab = await browser.tabs.query({ currentWindow: true, active: true });
+
+        if (Array.isArray(currentTab) && currentTab.length) {
+            selectTabs(GetTabs[command], currentTab[0]);
+        }
+    });
+
     buildMenu(menuData, new Set(preferences.disabledCommands));
 
     browser.contextMenus.onClicked.addListener(
@@ -54,5 +64,13 @@ function buildMenu(menuGroupDict, disabledItemSet) {
             addItem(id, title);
 
         first = false;
+    }
+}
+
+function hydrateCommandDescriptions(groups) {
+    for (const [group, commands] of Object.entries(groups)) {
+        for (const [name, title] of Object.entries(commands)) {
+            browser.commands.update({ name, description: `${group}: ${title.replace('&', '')}` });
+        }
     }
 }

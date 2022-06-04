@@ -23,5 +23,21 @@
     "gecko": {
       "id": "selecttabs@lionelw"
     }
+  },
+  "commands": {
+    "duplicates": {},
+    "sameSite": {},
+    "sameSite__cluster": {},
+    "sameSite__descendants": {},
+    "left": {},
+    "right": {},
+    "descendants": {},
+    "parent": {},
+    "siblings": {},
+    "siblings__descendants": {},
+    "pastHour": {},
+    "past24Hours": {},
+    "today": {},
+    "yesterday": {}
   }
 }

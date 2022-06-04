@@ -123,3 +123,8 @@ async function getTabsAccessedOnDay(offset) {
     };
     return (await queryTabs()).filter(isLastAccessedAtDate);
 }
+
+/* Clear selection */
+export async function clearSelection(targetTab) {
+  return [ targetTab ];
+}

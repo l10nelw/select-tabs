@@ -20,5 +20,8 @@ export default {
         past24Hours:            'Accessed in the Past 24 H&ours',
         today:                  'Accessed &Today',
         yesterday:              'Accessed &Yesterday',
+    },
+    'Clear': {
+        clearSelection:         'Clear selectio&n',
     }
 }

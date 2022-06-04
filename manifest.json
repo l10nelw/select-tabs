@@ -38,6 +38,7 @@
     "pastHour": {},
     "past24Hours": {},
     "today": {},
-    "yesterday": {}
+    "yesterday": {},
+    "clearSelection": {}
   }
 }

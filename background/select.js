@@ -1,15 +1,26 @@
+import { parent as getParent } from './get.js';
+
 export default async function selectTabs(getter, targetTab) {
-    let tabs = await getter(targetTab);
+    let tabsToSelect = await getter(targetTab);
 
-    // Allow selecting pinned tabs only if target is pinned or getter is `parent`
-    if (!(targetTab.pinned || getter.name === 'parent'))
-        tabs = removePinned(tabs);
+    const isParentGetter = getter.name.includes('parent');
+    const doIncludePinned = targetTab.pinned || isParentGetter; // Conditions for including pinned tabs
 
-    if (!tabs?.length)
+    if (!doIncludePinned)
+        tabsToSelect = removePinned(tabsToSelect);
+
+    const tabCount = tabsToSelect.length;
+
+    if (!tabCount)
         return;
 
-    prepActiveTab(tabs, targetTab);
-    browser.tabs.highlight({ tabs: tabs.map(tab => tab.index), populate: false });
+    // Focus on target's parent if relevant, otherwise:
+    // focus on either currently focused tab, target, or leftmost tab
+    const parentTab = (isParentGetter && tabCount >= 1) && (await getParent(targetTab))[0];
+    const keepCurrentFocus = !parentTab;
+    prepTabToFocus(tabsToSelect, keepCurrentFocus, parentTab || targetTab);
+
+    browser.tabs.highlight({ tabs: tabsToSelect.map(tab => tab.index), populate: false });
 }
 
 function removePinned(tabs) {
@@ -17,17 +28,21 @@ function removePinned(tabs) {
     return (unpinnedIndex === -1) ? [] : tabs.slice(unpinnedIndex);
 }
 
-// Move the active tab or target tab to the start of the tabs array, if either is available
-// Mutates array; sets it up for tabs.highlight(), which activates (focuses) the first tab in array
-// In other words: keep active tab active, or activate target tab, or activate first tab in selection
-function prepActiveTab(tabs, targetTab) {
+// Set up `tabs` array for tabs.highlight(), which focuses (activates) the first tab in array.
+// Moves a particular tab, if available, to the start of the `tabs` array.
+// That tab is either: the currently focused tab if `keepCurrentFocus` is true, or the given `tab`.
+// If neither is available, nothing is moved; the first tab in the array is "prepped" for focus.
+function prepTabToFocus(tabs, keepCurrentFocus, tab) {
     if (tabs.length <= 1)
         return;
-    let activeTabIndex = tabs.findIndex(tab => tab.active);
-    if (activeTabIndex === -1) {
-        const targetTabId = targetTab.id;
-        activeTabIndex = tabs.findIndex(tab => tab.id === targetTabId);
+
+    let indexToFocus = keepCurrentFocus ? tabs.findIndex(t => t.active) : -1;
+
+    if (indexToFocus === -1) {
+        const tabId = tab.id;
+        indexToFocus = tabs.findIndex(t => t.id === tabId);
     }
-    if (activeTabIndex >= 1)
-        [ tabs[0], tabs[activeTabIndex] ] = [ tabs[activeTabIndex], tabs[0] ]; // Swap with first tab
+
+    if (indexToFocus >= 1)
+        [ tabs[0], tabs[indexToFocus] ] = [ tabs[indexToFocus], tabs[0] ]; // Swap with first tab
 }

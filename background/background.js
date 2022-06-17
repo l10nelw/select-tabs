@@ -7,26 +7,20 @@ import menuData from '../menudata.js';
 
     hydrateCommandDescriptions(menuData);
 
-    browser.commands.onCommand.addListener(async (command) => {
-        const currentTab = await browser.tabs.query({ currentWindow: true, active: true });
-
-        if (Array.isArray(currentTab) && currentTab.length) {
-            selectTabs(GetTabs[command], currentTab[0]);
-        }
-    });
-
     buildMenu(menuData, new Set(preferences.disabledCommands));
-
-    browser.contextMenus.onClicked.addListener(
-        ({ menuItemId }, tab) => selectTabs(GetTabs[menuItemId], tab)
-    );
-
-    browser.runtime.onMessage.addListener(async request => {
-        // May be requested by the options frame
-        if (request === 'preferences')
-            return preferences;
-    });
 })();
+
+browser.commands.onCommand.addListener(async (command) => {
+    const currentTab = await browser.tabs.query({ currentWindow: true, active: true });
+
+    if (Array.isArray(currentTab) && currentTab.length) {
+        selectTabs(GetTabs[command], currentTab[0]);
+    }
+});
+
+browser.contextMenus.onClicked.addListener(({ menuItemId }, tab) =>
+    selectTabs(GetTabs[menuItemId], tab));
+
 
 // menuGroupDict is an dict of { group titles : { getter names : getter titles } }
 function buildMenu(menuGroupDict, disabledItemSet) {

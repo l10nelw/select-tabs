@@ -1,4 +1,5 @@
-import menuData from '../menudata.js';
+import MENU_DICT from '../menudata.js';
+import { cleanTitle } from '../utils.js';
 
 (async function populateForm() {
     const preferences = await browser.storage.sync.get();
@@ -20,11 +21,11 @@ import menuData from '../menudata.js';
         const $input = $field.querySelector('input');
         $input.name = name;
         $input.checked = checked;
-        $field.querySelector('span').textContent = title.replace('&', '');
+        $field.querySelector('span').textContent = cleanTitle(title);
         $commands.append($field);
     };
 
-    for (const [groupTitle, commandDict] of Object.entries(menuData)) {
+    for (const [groupTitle, commandDict] of Object.entries(MENU_DICT)) {
         $commands.addHeading(groupTitle);
         for (const [name, title] of Object.entries(commandDict)) {
             $commands.addField(name, title, !disabledCommandSet.has(name));

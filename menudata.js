@@ -22,7 +22,7 @@ export default {
         today:                  'Accessed &Today',
         yesterday:              'Accessed &Yesterday',
     },
-    'Clear': {
-        clearSelection:         'Clear selectio&n',
+    'Other': {
+        focused:                'Clear selection (&Z)',
     }
 }

@@ -100,7 +100,7 @@ const getTab = tabId => browser.tabs.get(tabId);
 const getChildTabs = openerTabId => queryTabs({ openerTabId });
 
 
-/* Time-based commands */
+/* Temporal commands */
 
 const MINUTE = 1000 * 60;
 const HOUR = MINUTE * 60;
@@ -130,7 +130,6 @@ async function getTabsAccessedOnDay(offset) {
     return (await queryTabs()).filter(isLastAccessedAtDate);
 }
 
-/* Clear selection */
-export async function clearSelection(targetTab) {
-  return [ targetTab ];
-}
+/* Other commands */
+
+export const focused = () => queryTabs({ active: true });

@@ -1,29 +1,31 @@
 import * as GetTabs from './get.js'; // Tab getters (menu commands)
 import selectTabs from './select.js'; // Selects tabs returned by getter
-import menuData from '../menudata.js';
+import MENU_DICT from '../menudata.js';
+import { cleanTitle } from '../utils.js';
 
 (async function init() {
     const preferences = await browser.storage.sync.get();
-
-    hydrateCommandDescriptions(menuData);
-
-    buildMenu(menuData, new Set(preferences.disabledCommands));
+    setCommandDescriptions(MENU_DICT);
+    buildMenu(MENU_DICT, new Set(preferences.disabledCommands));
 })();
 
-browser.commands.onCommand.addListener(async (command) => {
-    const currentTab = await browser.tabs.query({ currentWindow: true, active: true });
-
-    if (Array.isArray(currentTab) && currentTab.length) {
-        selectTabs(GetTabs[command], currentTab[0]);
-    }
+browser.contextMenus.onClicked.addListener(({ menuItemId }, targetTab) => {
+    selectTabs(GetTabs[menuItemId], targetTab);
 });
 
-browser.contextMenus.onClicked.addListener(({ menuItemId }, tab) =>
-    selectTabs(GetTabs[menuItemId], tab));
+browser.commands.onCommand.addListener(async (command) => {
+    const focusedTab = (await browser.tabs.query({ currentWindow: true, active: true }))[0];
+    selectTabs(GetTabs[command], focusedTab);
+});
 
+function setCommandDescriptions(groupDict) {
+    for (const [group, commandDict] of Object.entries(groupDict))
+        for (const [name, title] of Object.entries(commandDict))
+            browser.commands.update({ name, description: `${group}: ${cleanTitle(title)}` });
+}
 
 // menuGroupDict is an dict of { group titles : { getter names : getter titles } }
-function buildMenu(menuGroupDict, disabledItemSet) {
+function buildMenu(groupDict, disabledItemSet) {
     const contexts = ['tab'];
     const parentId = 'selecttabs';
     const parentTitle = '&Select Tabs';
@@ -41,9 +43,9 @@ function buildMenu(menuGroupDict, disabledItemSet) {
 
     addRoot();
 
-    const menuGroups = Object.values(menuGroupDict);
+    const groups = Object.values(groupDict);
     let first = true;
-    for (let group of menuGroups) {
+    for (let group of groups) {
         group = new Map(Object.entries(group));
 
         // Filter out disabled items to get correct group size
@@ -58,13 +60,5 @@ function buildMenu(menuGroupDict, disabledItemSet) {
             addItem(id, title);
 
         first = false;
-    }
-}
-
-function hydrateCommandDescriptions(groups) {
-    for (const [group, commands] of Object.entries(groups)) {
-        for (const [name, title] of Object.entries(commands)) {
-            browser.commands.update({ name, description: `${group}: ${title.replace('&', '')}` });
-        }
     }
 }

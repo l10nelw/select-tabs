@@ -33,12 +33,13 @@
     "right": {},
     "descendants": {},
     "parent": {},
+    "parent__descendants": {},
     "siblings": {},
     "siblings__descendants": {},
     "pastHour": {},
     "past24Hours": {},
     "today": {},
     "yesterday": {},
-    "clearSelection": {}
+    "focused": {}
   }
 }

@@ -4,7 +4,7 @@
  * () => (tabs)
 **/
 
-const queryTabs = properties => browser.tabs.query({ currentWindow: true, ...properties });
+const get = properties => browser.tabs.query({ currentWindow: true, ...properties });
 
 
 /* URL-based commands */
@@ -14,7 +14,7 @@ export async function duplicates({ url, isInReaderMode }) {
         url = getReaderUrl(url);
     const { protocol, hostname, pathname, search } = new URL(url);
     url = `${protocol}//${hostname}${pathname}${search}`; // Url pattern cannot include port or hash
-    return queryTabs({ url });
+    return get({ url });
 }
 
 export async function sameSite({ url, isInReaderMode }) {
@@ -22,14 +22,14 @@ export async function sameSite({ url, isInReaderMode }) {
         url = getReaderUrl(url);
     const { protocol, hostname } = new URL(url);
     if (protocol === 'file:')
-        return queryTabs({ url: 'file:///*' });
+        return get({ url: 'file:///*' });
     if (protocol === 'moz-extension:')
-        return queryTabs({ url: `moz-extension://${hostname}/*` });
+        return get({ url: `moz-extension://${hostname}/*` });
     if (hostname)
         return (await Promise.all(
-            [ queryTabs({ url: `*://${hostname}/*` }), getReaderTabsByHostname(hostname) ]
+            [ get({ url: `*://${hostname}/*` }), getReaderTabsByHostname(hostname) ]
         )).flat();
-    return queryTabs({ url: `${protocol}*` });
+    return get({ url: `${protocol}*` });
 }
 
 export async function sameSite__cluster(tab) {
@@ -44,7 +44,7 @@ export async function sameSite__cluster(tab) {
 
 export async function sameSite__descendants(tab) {
     const tabs = await sameSite(tab);
-    const descendantTabs = (await Promise.all( tabs.map(getDescendantTabs) )).flat();
+    const descendantTabs = (await Promise.all( tabs.map(getDescendants) )).flat();
     return tabs.concat(descendantTabs);
 }
 
@@ -52,52 +52,52 @@ const READER_HEAD = 'about:reader?url=';
 const getReaderUrl = url => decodeURIComponent( url.slice(READER_HEAD.length) );
 const getHostname = url => (new URL(url)).hostname;
 const getReaderTabsByHostname = async hostname =>
-    (await queryTabs({ url: `${READER_HEAD}*` }))
+    (await get({ url: `${READER_HEAD}*` }))
     .filter(tab => getHostname(getReaderUrl(tab.url)) === hostname);
 
 
 /* Directional commands */
 
-export const left  = async ({ index }) => (await queryTabs()).slice(0, index + 1);
-export const right = async ({ index }) => (await queryTabs()).slice(index);
+export const left  = async ({ index }) => (await get()).slice(0, index + 1);
+export const right = async ({ index }) => (await get()).slice(index);
 
 
 /* Tab-tree commands */
 
 export async function descendants(tab) {
-    return [tab, ...await getDescendantTabs(tab)];
+    return [tab, ...await getDescendants(tab)];
 }
 
 export async function parent({ openerTabId }) {
-    return openerTabId ? [await getTab(openerTabId)]
+    return openerTabId ? [await getById(openerTabId)]
         : [];
 }
 
 export async function parent__descendants(tab) {
     const { openerTabId } = tab;
-    return openerTabId ? (await Promise.all([ getTab(openerTabId), getDescendantTabs(openerTabId) ])).flat()
+    return openerTabId ? (await Promise.all([ getById(openerTabId), getDescendants(openerTabId) ])).flat()
         : descendants(tab);
 }
 
 export async function siblings({ openerTabId }) {
-    return openerTabId ? getChildTabs(openerTabId) // If target tab has parent, get all tabs with same parent
-        : (await queryTabs()).filter(tab => !tab.openerTabId); // Else, get all parentless tabs
+    return openerTabId ? getChildrenOfId(openerTabId) // If target tab has parent, get all tabs with same parent
+        : (await get()).filter(tab => !tab.openerTabId); // Else, get all parentless tabs
 }
 
 export function siblings__descendants({ openerTabId }) {
-    return openerTabId ? getDescendantTabs(openerTabId)
-        : queryTabs();
+    return openerTabId ? getDescendants(openerTabId)
+        : get();
 }
 
-async function getDescendantTabs(tab_or_tabId) {
+async function getDescendants(tab_or_tabId) {
     const tabId = tab_or_tabId?.id || tab_or_tabId;
-    const childTabs = await getChildTabs(tabId);
-    const descendantTabs = (await Promise.all( childTabs.map(getDescendantTabs) )).flat();
+    const childTabs = await getChildrenOfId(tabId);
+    const descendantTabs = (await Promise.all( childTabs.map(getDescendants) )).flat();
     return childTabs.concat(descendantTabs);
 }
 
-const getTab = tabId => browser.tabs.get(tabId);
-const getChildTabs = openerTabId => queryTabs({ openerTabId });
+const getById = tabId => browser.tabs.get(tabId);
+const getChildrenOfId = openerTabId => get({ openerTabId });
 
 
 /* Temporal commands */
@@ -113,7 +113,7 @@ export const yesterday = () => getTabsAccessedOnDay(-1);
 
 async function getTabsAccessedWithinPeriod(period) {
     const now = Date.now();
-    return (await queryTabs()).filter(tab => (now - tab.lastAccessed) <= period);
+    return (await get()).filter(tab => (now - tab.lastAccessed) <= period);
 }
 
 async function getTabsAccessedOnDay(offset) {
@@ -127,9 +127,9 @@ async function getTabsAccessedOnDay(offset) {
         const tabDate = new Date(tab.lastAccessed);
         return tabDate.getDate() === day && tabDate.getMonth() === month && tabDate.getFullYear() === year;
     };
-    return (await queryTabs()).filter(isLastAccessedAtDate);
+    return (await get()).filter(isLastAccessedAtDate);
 }
 
 /* Other commands */
 
-export const focused = () => queryTabs({ active: true });
+export const focused = () => get({ active: true });

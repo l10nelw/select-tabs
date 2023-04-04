@@ -24,5 +24,6 @@ export default {
     },
     'Other': {
         focused:                'Clear selection (&Z)',
+        unselected:             'In&vert selection',
     }
 }

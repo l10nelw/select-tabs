@@ -40,6 +40,7 @@
     "past24Hours": {},
     "today": {},
     "yesterday": {},
-    "focused": {}
+    "focused": {},
+    "unselected": {}
   }
 }

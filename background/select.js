@@ -4,10 +4,20 @@ export default async function selectTabs(getter, targetTab) {
     let tabsToSelect = await getter(targetTab);
 
     const isParentGetter = getter.name.includes('parent');
-    const doIncludePinned = targetTab.pinned || isParentGetter; // Conditions for including pinned tabs
+    const unpinnedIndex = tabsToSelect.findIndex(tab => !tab.pinned);
 
-    if (!doIncludePinned)
-        tabsToSelect = removePinned(tabsToSelect);
+    // Include pinned tabs if any of these conditions are met
+    const includePinned =
+        targetTab.pinned ||
+        isParentGetter ||
+        // Is "invert selection" command, and pre-command selection had at least one pinned tab
+        getter.name === 'unselected' && (unpinnedIndex < 1 || unpinnedIndex > findMismatchedIndex(tabsToSelect));
+
+    if (!includePinned) {
+        // Remove pinned tabs
+        tabsToSelect = unpinnedIndex === -1 ?
+            [] : tabsToSelect.slice(unpinnedIndex);;
+    }
 
     const tabCount = tabsToSelect.length;
 
@@ -21,11 +31,6 @@ export default async function selectTabs(getter, targetTab) {
     prepTabToFocus(tabsToSelect, keepCurrentFocus, parentTab || targetTab);
 
     browser.tabs.highlight({ tabs: tabsToSelect.map(tab => tab.index), populate: false });
-}
-
-function removePinned(tabs) {
-    const unpinnedIndex = tabs.findIndex(tab => !tab.pinned);
-    return (unpinnedIndex === -1) ? [] : tabs.slice(unpinnedIndex);
 }
 
 // Set up `tabs` array for tabs.highlight(), which focuses (activates) the first tab in array.
@@ -46,3 +51,4 @@ function prepTabToFocus(tabs, keepCurrentFocus, tab) {
     if (indexToFocus >= 1)
         [ tabs[0], tabs[indexToFocus] ] = [ tabs[indexToFocus], tabs[0] ]; // Swap with first tab
 }
+const findMismatchedIndex = tabs => tabs.findIndex((tab, index) => tab.index !== index);

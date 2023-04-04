@@ -132,4 +132,8 @@ async function getTabsAccessedOnDay(offset) {
 
 /* Other commands */
 
+// Deselect all but the focused tab
 export const focused = () => get({ active: true });
+
+// Invert selection
+export const unselected = () => get({ highlighted: false });

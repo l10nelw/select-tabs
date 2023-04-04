@@ -13,9 +13,8 @@ browser.contextMenus.onClicked.addListener(({ menuItemId }, targetTab) => {
     selectTabs(GetTabs[menuItemId], targetTab);
 });
 
-browser.commands.onCommand.addListener(async (command) => {
-    const focusedTab = (await browser.tabs.query({ currentWindow: true, active: true }))[0];
-    selectTabs(GetTabs[command], focusedTab);
+browser.commands.onCommand.addListener(async command => {
+    selectTabs(GetTabs[command], (await GetTabs.focused())[0]);
 });
 
 function setCommandDescriptions(groupDict) {

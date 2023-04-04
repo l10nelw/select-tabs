@@ -1,7 +1,7 @@
 import * as GetTabs from './get.js'; // Tab getters (menu commands)
 import selectTabs from './select.js'; // Selects tabs returned by getter
 import MENU_DICT from '../menudata.js';
-import { cleanTitle } from '../utils.js';
+import { cleanTitle, isOS } from '../utils.js';
 
 (async function init() {
     const preferences = await browser.storage.sync.get();
@@ -40,6 +40,9 @@ function buildMenu(groupDict, disabledItemSet) {
             if (disabledItemSet.has(id))
                 itemMap.delete(id);
         } : null;
+    // If on MacOS, remove unsupported hotkeys
+    const format = isOS('Mac OS') ?
+        cleanTitle : title => title;
 
     addRoot();
 
@@ -57,7 +60,7 @@ function buildMenu(groupDict, disabledItemSet) {
             addSeparator();
 
         for (const [id, title] of group.entries())
-            addItem(id, title);
+            addItem(id, format(title));
 
         first = false;
     }

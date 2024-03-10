@@ -26,9 +26,10 @@ export async function sameSite({ url, isInReaderMode }) {
     if (protocol === 'moz-extension:')
         return get({ url: `moz-extension://${hostname}/*` });
     if (hostname)
-        return (await Promise.all(
-            [ get({ url: `*://${hostname}/*` }), getReaderTabsByHostname(hostname) ]
-        )).flat();
+        return (await Promise.all([
+            get({ url: `*://${hostname}/*` }),
+            getReaderTabsByHostname(hostname),
+        ])).flat();
     return get({ url: `${protocol}*` });
 }
 
@@ -58,8 +59,20 @@ const getReaderTabsByHostname = async hostname =>
 
 /* Directional commands */
 
-export const left  = async ({ index }) => (await get()).slice(0, index + 1);
-export const right = async ({ index }) => (await get()).slice(index);
+export const toStart = async ({ index }) => (await get()).slice(0, index + 1);
+export const toEnd = async ({ index }) => (await get()).slice(index);
+
+export async function addLeft() {
+    const tabs = await get({ highlighted: true });
+    const addTab = await get({ index: tabs[0].index - 1 }).catch(() => []);
+    return tabs.concat(addTab);
+}
+
+export async function addRight() {
+    const tabs = await get({ highlighted: true });
+    const addTab = await get({ index: tabs.at(-1).index + 1 }).catch(() => []);
+    return tabs.concat(addTab);
+}
 
 
 /* Tab-tree commands */

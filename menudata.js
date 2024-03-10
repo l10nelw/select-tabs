@@ -8,13 +8,15 @@ export default {
     'Tab tree': {
         descendants:            '&Descendants',
         parent:                 '&Parent',
-        parent__descendants:    'P&arent and Descendants',
+        parent__descendants:    'Pare&nt and Descendants',
         siblings:               'S&iblings',
         siblings__descendants:  'Si&blings and Descendants',
     },
     'Directional': {
-        left:                   'To the &Left',
-        right:                  'To the &Right',
+        toStart:                'To the St&art',
+        toEnd:                  'To the &End',
+        addLeft:                'Add One &Left',
+        addRight:               'Add One &Right',
     },
     'Temporal': {
         pastHour:               'Accessed in the Past &Hour',

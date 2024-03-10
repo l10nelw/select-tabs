@@ -1,15 +1,18 @@
 export default async function selectTabs(getter, targetTab) {
     let tabsToSelect = await getter(targetTab);
 
-    const isParentGetter = getter.name.includes('parent');
+    const getterName = getter.name;
+    const isParentGetter = getterName.includes('parent');
     const unpinnedIndex = tabsToSelect.findIndex(tab => !tab.pinned);
 
     // Include pinned tabs if any of these conditions are met
     const includePinned =
         targetTab.pinned ||
         isParentGetter ||
+        // Is "add one left/right" command
+        getterName.startsWith('add') ||
         // Is "invert selection" command, and pre-command selection had at least one pinned tab
-        getter.name === 'unselected' && (unpinnedIndex < 1 || unpinnedIndex > findMismatchedIndex(tabsToSelect));
+        getterName === 'unselected' && (unpinnedIndex < 1 || unpinnedIndex > findMismatchedIndex(tabsToSelect));
 
     if (!includePinned) {
         // Remove pinned tabs

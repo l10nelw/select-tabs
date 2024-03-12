@@ -1,5 +1,4 @@
-import MENU_DICT from '../menudata.js';
-import { cleanTitle } from '../utils.js';
+import { getCommandMap, cleanDescription } from '../common.js';
 
 (async function populateForm() {
     const preferences = await browser.storage.sync.get();
@@ -21,15 +20,18 @@ import { cleanTitle } from '../utils.js';
         const $input = $field.querySelector('input');
         $input.name = name;
         $input.checked = checked;
-        $field.querySelector('span').textContent = cleanTitle(title);
+        $field.querySelector('span').textContent = cleanDescription(title);
         $commands.append($field);
     };
 
-    for (const [groupTitle, commandDict] of Object.entries(MENU_DICT)) {
-        $commands.addHeading(groupTitle);
-        for (const [name, title] of Object.entries(commandDict)) {
-            $commands.addField(name, title, !disabledCommandSet.has(name));
+    let currentCategory = '';
+    for (const [id, description] of getCommandMap()) {
+        const [category, title] = description.split(': ');
+        if (category !== currentCategory) {
+            currentCategory = category;
+            $commands.addHeading(category);
         }
+        $commands.addField(id, title, !disabledCommandSet.has(id));
     }
 })();
 

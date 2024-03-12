@@ -25,24 +25,62 @@
     }
   },
   "commands": {
-    "duplicates": {},
-    "sameSite": {},
-    "sameSite__cluster": {},
-    "sameSite__descendants": {},
-    "toStart": {},
-    "toEnd": {},
-    "addLeft": {},
-    "addRight": {},
-    "descendants": {},
-    "parent": {},
-    "parent__descendants": {},
-    "siblings": {},
-    "siblings__descendants": {},
-    "pastHour": {},
-    "past24Hours": {},
-    "today": {},
-    "yesterday": {},
-    "focused": {},
-    "unselected": {}
+    "duplicates": {
+      "description": "URL-based: D&uplicates"
+    },
+    "sameSite": {
+      "description": "URL-based: &Same Site"
+    },
+    "sameSite__cluster": {
+      "description": "URL-based: Same Site &Cluster"
+    },
+    "sameSite__descendants": {
+      "description": "URL-based: Sa&me Site and Descendants"
+    },
+    "descendants": {
+      "description": "Tab tree: &Descendants"
+    },
+    "parent": {
+      "description": "Tab tree: &Parent"
+    },
+    "parent__descendants": {
+      "description": "Tab tree: Pare&nt and Descendants"
+    },
+    "siblings": {
+      "description": "Tab tree: S&iblings"
+    },
+    "siblings__descendants": {
+      "description": "Tab tree: Si&blings and Descendants"
+    },
+    "toStart": {
+      "description": "Directional: To the St&art"
+    },
+    "toEnd": {
+      "description": "Directional: To the &End"
+    },
+    "addLeft": {
+        "description": "Directional: Add One &Left"
+    },
+    "addRight": {
+      "description": "Directional: Add One &Right"
+    },
+    "pastHour": {
+      "description": "Temporal: Accessed in the Past &Hour"
+    },
+    "past24Hours": {
+      "description": "Temporal: Accessed in the Past 24 H&ours"
+    },
+    "today": {
+      "description": "Temporal: Accessed &Today"
+    },
+    "yesterday": {
+      "description": "Temporal: Accessed &Yesterday"
+    },
+    "focused": {
+      "description": "Other: Clear selection (&Z)"
+    },
+    "unselected": {
+      "description": "Other: In&vert selection"
+    }
   }
 }

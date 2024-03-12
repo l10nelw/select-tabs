@@ -1,12 +1,12 @@
 import * as GetTabs from './get.js'; // Tab getters (menu commands)
 import selectTabs from './select.js'; // Selects tabs returned by getter
-import MENU_DICT from '../menudata.js';
-import { cleanTitle, isOS } from '../utils.js';
+import { getCommandMap, cleanDescription, isOS } from '../common.js';
 
 (async function init() {
+    const commandMap = getCommandMap();
     const preferences = await browser.storage.sync.get();
-    setCommandDescriptions(MENU_DICT);
-    buildMenu(MENU_DICT, new Set(preferences.disabledCommands));
+    cleanShortcutDescriptions(commandMap);
+    buildMenu(commandMap, new Set(preferences.disabledCommands));
 })();
 
 browser.contextMenus.onClicked.addListener(({ menuItemId }, targetTab) => {
@@ -17,14 +17,12 @@ browser.commands.onCommand.addListener(async command => {
     selectTabs(GetTabs[command], (await GetTabs.focused())[0]);
 });
 
-function setCommandDescriptions(groupDict) {
-    for (const [group, commandDict] of Object.entries(groupDict))
-        for (const [name, title] of Object.entries(commandDict))
-            browser.commands.update({ name, description: `${group}: ${cleanTitle(title)}` });
+function cleanShortcutDescriptions(commandMap) {
+    for (const [name, description] of commandMap)
+        browser.commands.update({ name, description: cleanDescription(description) });
 }
 
-// menuGroupDict is an dict of { group titles : { getter names : getter titles } }
-function buildMenu(groupDict, disabledItemSet) {
+function buildMenu(commandMap, disabledItemSet) {
     const contexts = ['tab'];
     const parentId = 'selecttabs';
     const parentTitle = '&Select Tabs';
@@ -33,34 +31,24 @@ function buildMenu(groupDict, disabledItemSet) {
     const addItem = (id, title) => browser.contextMenus.create({ contexts, parentId, id, title });
     const addSeparator = ()     => browser.contextMenus.create({ contexts, parentId, type: 'separator' });
 
-    // If there are disabled items, set removeDisabledItem as a function, otherwise set to null
-    const removeDisabledItem = disabledItemSet.size ?
-        (_, id, itemMap) => {
-            if (disabledItemSet.has(id))
-                itemMap.delete(id);
-        } : null;
-    // If on MacOS, remove unsupported hotkeys
-    const format = isOS('Mac OS') ?
-        cleanTitle : title => title;
-
     addRoot();
 
-    const groups = Object.values(groupDict);
-    let first = true;
-    for (let group of groups) {
-        group = new Map(Object.entries(group));
+    // If on MacOS, remove unsupported hotkeys
+    const format = isOS('Mac OS') ?
+        cleanDescription :
+        title => title;
 
-        // Filter out disabled items to get correct group size
-        if (removeDisabledItem)
-            group.forEach(removeDisabledItem);
-
-        // A separator prefaces each non-first, non-empty group
-        if (!first && group.size)
-            addSeparator();
-
-        for (const [id, title] of group.entries())
-            addItem(id, format(title));
-
-        first = false;
+    let currentCategory = '';
+    for (const [id, description] of commandMap) {
+        if (disabledItemSet.has(id))
+            continue;
+        const [category, title] = description.split(': ');
+        // Add seperator at every change of category
+        if (category !== currentCategory) {
+            if (currentCategory)
+                addSeparator();
+            currentCategory = category;
+        }
+        addItem(id, format(title));
     }
 }

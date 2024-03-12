@@ -1,8 +1,7 @@
-import { getCommandMap, cleanDescription } from '../common.js';
+import { getPreferenceDict, getCommandMap, cleanDescription } from '../common.js';
 
 (async function populateForm() {
-    const preferences = await browser.storage.sync.get();
-    const disabledCommandSet = new Set(preferences?.disabledCommands);
+    const preferenceDict = await getPreferenceDict();
 
     const $commands = document.getElementById('commands');
     const $template = $commands.querySelector('template').content;
@@ -31,18 +30,19 @@ import { getCommandMap, cleanDescription } from '../common.js';
             currentCategory = category;
             $commands.addHeading(category);
         }
-        $commands.addField(id, title, !disabledCommandSet.has(id));
+        $commands.addField(id, title, preferenceDict[id]);
     }
 })();
 
 document.body.querySelector('form')
 .addEventListener('submit', async event => {
     // Save and restart
-    const disabledCommands = [];
-    for (const $field of event.target.elements) {
-        if ($field.classList.contains('command') && !$field.checked)
-            disabledCommands.push($field.name);
-    }
-    await browser.storage.sync.set({ disabledCommands });
+
+    const preferenceDict = {};
+    for (const $field of event.target.elements)
+        if ($field.classList.contains('command'))
+            preferenceDict[$field.name] = $field.checked;
+
+    await browser.storage.sync.set(preferenceDict);
     browser.runtime.reload();
 });

@@ -1,4 +1,4 @@
-const MENU_LIST = [
+const COMMANDS = [
     // URL-based
     'duplicates',
     'sameSite',
@@ -25,10 +25,17 @@ const MENU_LIST = [
     'unselected',
 ];
 
+export function getPreferenceDict() {
+    let defaultDict = {};
+    for (const command of COMMANDS)
+        defaultDict[command] = true;
+    return browser.storage.sync.get(defaultDict);
+}
+
 export function getCommandMap() {
     const commandsManifest = browser.runtime.getManifest().commands;
     const map = new Map();
-    for (const id of MENU_LIST)
+    for (const id of COMMANDS)
         map.set(id, commandsManifest[id].description);
     return map;
 }

@@ -1,4 +1,4 @@
-export default async function selectTabs(getter, targetTab) {
+export default async function selectTabs(getter, targetTab, keepCurrent) {
     let tabsToSelect = await getter(targetTab);
 
     const getterName = getter.name;
@@ -18,6 +18,11 @@ export default async function selectTabs(getter, targetTab) {
         // Remove pinned tabs
         tabsToSelect = unpinnedIndex === -1 ?
             [] : tabsToSelect.slice(unpinnedIndex);;
+    }
+
+    if (keepCurrent === true) {
+        const currentTabs = await browser.tabs.query({ currentWindow: true, highlighted: true });
+        tabsToSelect = tabsToSelect.concat(currentTabs);
     }
 
     const tabCount = tabsToSelect.length;

@@ -9,8 +9,14 @@ import { getPreferenceDict, getCommandMap, cleanDescription, isOS } from '../com
     cleanShortcutDescriptions(commandMap);
 })();
 
-browser.contextMenus.onClicked.addListener(({ menuItemId }, targetTab) => {
-    selectTabs(GetTabs[menuItemId], targetTab);
+// On macOS adding a tabel to a selection uses Command, but Ctrl on Windows.
+// Do not accept Ctrl on macOS, which is meant to open context menus.
+function holdingModifier(modifiers) {
+    return modifiers.includes("Command") || modifiers.includes("Ctrl") && !modifiers.includes("MacCtrl");
+}
+
+browser.contextMenus.onClicked.addListener(({ menuItemId, modifiers }, targetTab) => {
+    selectTabs(GetTabs[menuItemId], targetTab, holdingModifier(modifiers));
 });
 
 browser.commands.onCommand.addListener(async command => {

@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "Select Tabs",
   "description": "Select multiple tabs: same site, duplicates, descendants, to the left, to the right, seen today, seen yesterday... and many more.",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "icons": {
     "48": "selecttabs.svg",
     "96": "selecttabs.svg"

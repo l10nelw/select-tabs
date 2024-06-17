@@ -10,7 +10,7 @@ import { getPreferenceDict, getCommandMap, cleanDescription, isOS } from '../com
 })();
 
 browser.contextMenus.onClicked.addListener(({ menuItemId, modifiers }, targetTab) => {
-    selectTabs(GetTabs[menuItemId], targetTab, modifiers.includes("Shift"));
+    selectTabs(GetTabs[menuItemId], targetTab, modifiers.includes('Shift'));
 });
 
 browser.commands.onCommand.addListener(async command => {
@@ -33,8 +33,8 @@ function buildMenu(commandMap, preferenceDict) {
 
     addRoot();
 
-    // If on MacOS, remove unsupported hotkeys
-    const format = isOS('Mac OS') ?
+    // If on MacOS, access keys are not supported so remove their markers
+    const formatTitle = isOS('Mac OS') ?
         cleanDescription :
         title => title;
 
@@ -53,6 +53,6 @@ function buildMenu(commandMap, preferenceDict) {
             currentCategory = category;
         }
 
-        addItem(id, format(title));
+        addItem(id, formatTitle(title));
     }
 }

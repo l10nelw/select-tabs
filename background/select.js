@@ -1,5 +1,7 @@
 export default async function selectTabs(getter, targetTab, keepCurrent) {
     let tabsToSelect = await getter(targetTab);
+    if (!tabsToSelect)
+        return;
 
     const getterName = getter.name;
     const isParentGetter = getterName.includes('parent');
@@ -9,8 +11,8 @@ export default async function selectTabs(getter, targetTab, keepCurrent) {
     const includePinned =
         targetTab.pinned ||
         isParentGetter ||
-        // Is "add one left/right" command
-        getterName.startsWith('add') ||
+        // Is directional "x left/right" command
+        getterName.startsWith('add') || getterName.startsWith('trail') ||
         // Is "invert selection" command, and pre-command selection had at least one pinned tab
         getterName === 'unselected' && (unpinnedIndex < 1 || unpinnedIndex > findMismatchedIndex(tabsToSelect));
 

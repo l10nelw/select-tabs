@@ -59,10 +59,16 @@
       "description": "Directional: To the &End"
     },
     "addLeft": {
-        "description": "Directional: Add One &Left"
+        "description": "Directional: Add &Left"
     },
     "addRight": {
-      "description": "Directional: Add One &Right"
+      "description": "Directional: Add &Right"
+    },
+    "trailLeft": {
+        "description": "Directional: Trail &Left"
+    },
+    "trailRight": {
+      "description": "Directional: Trail &Right"
     },
     "pastHour": {
       "description": "Temporal: Accessed in the Past &Hour"

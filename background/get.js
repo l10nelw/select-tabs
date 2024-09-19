@@ -1,8 +1,8 @@
-/**
- * Tab-getting functions a.k.a. commands
- * (tab) => (tabs)
- * () => (tabs)
-**/
+/*
+ * Tab-getting functions a.k.a. commands.
+ * Most require a target tab argument, some do not.
+ * Returns an array of tabs to be selected, or undefined/null to abort selection.
+ */
 
 const get = properties => browser.tabs.query({ currentWindow: true, ...properties });
 
@@ -74,6 +74,52 @@ export async function addRight() {
     const addTab = await get({ index: tabs.at(-1).index + 1 }).catch(() => []);
     return tabs.concat(addTab);
 }
+
+export async function trailLeft() {
+    const tabsToSelect = await get({ highlighted: true });
+    const focusedTabArrayIndex = tabsToSelect.findIndex(tab => tab.active);
+    const focusedTab = tabsToSelect[focusedTabArrayIndex];
+    const focusedTabIndex = focusedTab.index;
+    if (focusedTabIndex === 0)
+        return;
+    const rightTab = await getByIndex(focusedTabIndex + 1);
+    const leftTabIndex = focusedTabIndex - 1;
+    const leftTab = tabsToSelect.find(tab => tab.index === leftTabIndex) || { index: leftTabIndex };
+    leftTab.active = true;
+    if (!leftTab.highlighted || rightTab?.highlighted) {
+        // Extend trail
+        tabsToSelect.unshift(leftTab); // Add leftTab to selection
+        delete focusedTab.active;
+    } else {
+        // Shrink trail
+        tabsToSelect.splice(focusedTabArrayIndex, 1); // Remove focusedTab from selection
+    }
+    return tabsToSelect;
+}
+
+export async function trailRight() {
+    const tabsToSelect = await get({ highlighted: true });
+    const focusedTabArrayIndex = tabsToSelect.findIndex(tab => tab.active);
+    const focusedTab = tabsToSelect[focusedTabArrayIndex];
+    const focusedTabIndex = focusedTab.index;
+    const rightTab = await getByIndex(focusedTabIndex + 1);
+    if (!rightTab)
+        return;
+    const leftTabIndex = focusedTabIndex - 1;
+    const leftTab = leftTabIndex >= 0 && tabsToSelect.find(tab => tab.index === leftTabIndex);
+    rightTab.active = true;
+    if (!rightTab.highlighted || leftTab?.highlighted) {
+        // Extend trail
+        tabsToSelect.unshift(rightTab); // Add rightTab to selection
+        delete focusedTab.active;
+    } else {
+        // Shrink trail
+        tabsToSelect.splice(focusedTabArrayIndex, 1); // Remove focusedTab from selection
+    }
+    return tabsToSelect;
+}
+
+const getByIndex = async index => (await get({ index }).catch(() => null))?.[0];
 
 
 /* Tab-tree commands */

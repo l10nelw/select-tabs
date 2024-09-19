@@ -15,6 +15,8 @@ const COMMANDS = [
     'toEnd',
     'addLeft',
     'addRight',
+    'trailLeft',
+    'trailRight',
     // Temporal
     'pastHour',
     'past24Hours',

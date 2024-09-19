@@ -12,8 +12,9 @@ const get = properties => browser.tabs.query({ currentWindow: true, ...propertie
 export async function duplicates({ url, isInReaderMode }) {
     if (isInReaderMode)
         url = getReaderUrl(url);
-    const { protocol, hostname, pathname, search } = new URL(url);
-    url = `${protocol}//${hostname}${pathname}${search}`; // Url pattern cannot include port or hash
+    const { protocol, hostname, pathname, search } = new URL(url); // Remove port and hash; they are not queryable
+    url = (protocol === 'about:') ? protocol + pathname
+        : `${protocol}//${hostname}${pathname}${search}`;
     return get({ url });
 }
 

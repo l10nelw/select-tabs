@@ -64,15 +64,17 @@ export const toStart = async ({ index }) => (await get()).slice(0, index + 1);
 export const toEnd = async ({ index }) => (await get()).slice(index);
 
 export async function addLeft() {
-    const tabs = await get({ highlighted: true });
-    const addTab = await get({ index: tabs[0].index - 1 }).catch(() => []);
-    return tabs.concat(addTab);
+    const selectedTabs = await get({ highlighted: true });
+    const firstTabIndex = selectedTabs[0].index;
+    if (firstTabIndex !== 0)
+        return selectedTabs.concat({ index: firstTabIndex - 1 });
 }
 
 export async function addRight() {
-    const tabs = await get({ highlighted: true });
-    const addTab = await get({ index: tabs.at(-1).index + 1 }).catch(() => []);
-    return tabs.concat(addTab);
+    const selectedTabs = await get({ highlighted: true });
+    const tabToAdd = await getByIndex(selectedTabs.at(-1).index + 1);
+    if (tabToAdd)
+        return selectedTabs.concat({ index: tabToAdd.index });
 }
 
 export async function trailLeft() {
@@ -129,8 +131,8 @@ export async function descendants(tab) {
 }
 
 export async function parent({ openerTabId }) {
-    return openerTabId ? [await getById(openerTabId)]
-        : [];
+    if (openerTabId)
+        return [await getById(openerTabId)];
 }
 
 export async function parent__descendants(tab) {

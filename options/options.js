@@ -1,4 +1,4 @@
-import { getPreferenceDict, getCommandMap, cleanDescription } from '../common.js';
+import { getPreferenceDict, getCommandMap, cleanCommandDescription } from '../common.js';
 
 (async function populateForm() {
     const preferenceDict = await getPreferenceDict();
@@ -19,7 +19,7 @@ import { getPreferenceDict, getCommandMap, cleanDescription } from '../common.js
         const $input = $field.querySelector('input');
         $input.name = name;
         $input.checked = checked;
-        $field.querySelector('span').textContent = cleanDescription(title);
+        $field.querySelector('span').textContent = cleanCommandDescription(title);
         $commands.append($field);
     };
 

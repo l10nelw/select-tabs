@@ -31,7 +31,7 @@ export async function sameSite({ url, isInReaderMode }) {
             get({ url: `*://${hostname}/*` }),
             getReaderTabsByHostname(hostname),
         ])).flat();
-    return get({ url: `${protocol}*` });
+    return (await get({ url: `${protocol}*` })).filter(tab => !tab.isInReaderMode);
 }
 
 export async function sameSite__cluster(tab) {

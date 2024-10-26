@@ -312,6 +312,11 @@ async function getTabsAccessedOnDay(offset) {
 /* --- Other commands --- */
 
 /**
+ * @returns {Promise<Tab[]>}
+ */
+export const all = () => get();
+
+/**
  * Deselect all but the focused tab.
  * @returns {Promise<Tab[]>}
  */

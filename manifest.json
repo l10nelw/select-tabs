@@ -82,11 +82,14 @@
     "yesterday": {
       "description": "Temporal: Accessed &Yesterday"
     },
+    "all": {
+      "description": "Other: All (&1)"
+    },
     "focused": {
-      "description": "Other: Clear selection (&Z)"
+      "description": "Other: Clear (&0)"
     },
     "unselected": {
-      "description": "Other: In&vert selection"
+      "description": "Other: In&vert"
     }
   }
 }

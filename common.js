@@ -32,6 +32,7 @@ const ORDERED_COMMANDS = [
     'today',
     'yesterday',
     // Other
+    'all',
     'focused',
     'unselected',
 ];

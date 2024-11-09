@@ -8,7 +8,7 @@
     "96": "selecttabs.svg"
   },
   "permissions": [
-    "contextMenus",
+    "menus",
     "storage",
     "tabs"
   ],
@@ -26,70 +26,70 @@
   },
   "commands": {
     "duplicates": {
-      "description": "URL-based: D&uplicates"
+      "description": "URL-based: Duplicates"
     },
     "sameSite": {
-      "description": "URL-based: &Same Site"
+      "description": "URL-based: Same Site"
     },
     "sameSite__cluster": {
-      "description": "URL-based: Same Site &Cluster"
+      "description": "URL-based: Same Site Cluster"
     },
     "sameSite__descendants": {
-      "description": "URL-based: Sa&me Site and Descendants"
+      "description": "URL-based: Same Site and Descendants"
     },
     "descendants": {
-      "description": "Tab tree: &Descendants"
+      "description": "Tab tree: Descendants"
     },
     "parent": {
-      "description": "Tab tree: &Parent"
+      "description": "Tab tree: Parent"
     },
     "parent__descendants": {
-      "description": "Tab tree: Pare&nt and Descendants"
+      "description": "Tab tree: Parent and Descendants"
     },
     "siblings": {
-      "description": "Tab tree: S&iblings"
+      "description": "Tab tree: Siblings"
     },
     "siblings__descendants": {
-      "description": "Tab tree: Si&blings and Descendants"
+      "description": "Tab tree: Siblings and Descendants"
     },
     "toStart": {
-      "description": "Directional: To the St&art"
+      "description": "Directional: To the Start"
     },
     "toEnd": {
-      "description": "Directional: To the &End"
+      "description": "Directional: To the End"
     },
     "addLeft": {
-        "description": "Directional: Add &Left"
+        "description": "Directional: Add Left"
     },
     "addRight": {
-      "description": "Directional: Add &Right"
+      "description": "Directional: Add Right"
     },
     "trailLeft": {
-        "description": "Directional: Trail &Left"
+        "description": "Directional: Trail Left"
     },
     "trailRight": {
-      "description": "Directional: Trail &Right"
+      "description": "Directional: Trail Right"
     },
     "pastHour": {
-      "description": "Temporal: Accessed in the Past &Hour"
+      "description": "Temporal: Accessed in the Past 1 Hour"
     },
     "past24Hours": {
-      "description": "Temporal: Accessed in the Past 24 H&ours"
+      "description": "Temporal: Accessed in the Past 24 Hours"
     },
     "today": {
-      "description": "Temporal: Accessed &Today"
+      "description": "Temporal: Accessed Today"
     },
     "yesterday": {
-      "description": "Temporal: Accessed &Yesterday"
+      "description": "Temporal: Accessed Yesterday"
     },
     "all": {
-      "description": "Other: All (&1)"
+      "description": "Miscellaneous: All"
     },
     "focused": {
-      "description": "Other: Clear (&0)"
+      "description": "Miscellaneous: Clear"
     },
     "unselected": {
-      "description": "Other: In&vert"
+      "description": "Miscellaneous: Invert"
     }
   }
 }

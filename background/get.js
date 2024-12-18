@@ -13,6 +13,52 @@
 export const get = properties => browser.tabs.query({ currentWindow: true, ...properties });
 
 
+/* --- Text search commands --- */
+
+/**
+ * @param {Tab} [_]
+ * @param {Object} menuClickInfo
+ * @param {string} menuClickInfo.linkText
+ * @returns {Promise<Tab[]?>}
+ */
+export const matchLinkText = (_, { linkText }) => matchText(linkText);
+
+/**
+ * @param {Tab} [_]
+ * @param {Object} menuClickInfo
+ * @param {string} menuClickInfo.selectionText
+ * @returns {Promise<Tab[]?>}
+ */
+export const matchSelectionText = (_, { selectionText }) => matchText(selectionText);
+
+/**
+ * @param {string} text
+ * @returns {Promise<Tab[]?>}
+ */
+async function matchText(text) {
+    text = text.trim().toLowerCase();
+    if (!text)
+        return;
+    /**
+     * @param {Tab} tab
+     * @returns {boolean}
+     */
+    const isMatch = tab => {
+        // Check title
+        if (tab.title.toLowerCase().includes(text))
+            return true;
+        // Check url
+        if (text.includes(' ')) // TODO: Should we check for more characters?
+            return false;
+        let url = tab.url.toLowerCase();
+        if (url.startsWith(READER_HEAD))
+            url = getReaderUrl(url);
+        return url.includes(text);
+    }
+    return (await get()).filter(isMatch);
+}
+
+
 /* --- URL-based commands --- */
 
 /**

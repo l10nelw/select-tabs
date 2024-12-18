@@ -8,6 +8,9 @@
 /** @enum {CommandDict} */
 const BASE_DICT = {
     [parentId]: { contexts: ['tab', 'link'], title: APP_NAME },
+    // Text search
+    matchLinkText: { parentId, contexts: ['link'], category: 'Text search', title: `With Link Text` },
+    matchSelectionText: { contexts: ['selection'], category: 'Text search', title: `${APP_NAME} With "%s"` },
     // URL-based
     duplicates: { parentId, contexts: ['tab', 'link'] },
     sameSite: { parentId, contexts: ['tab', 'link'] },
@@ -40,6 +43,9 @@ const BASE_DICT = {
 /** @type {Object<CommandId, string>} */
 const DEFAULT_ACCESSKEYS = {
     menuRoot: 's',
+    // Text search
+    matchLinkText: 'w',
+    matchSelectionText: 'w',
     // URL-based
     duplicates: 'u',
     sameSite: 's',

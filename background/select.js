@@ -3,11 +3,11 @@
 /**
  * @param {Function} getter
  * @param {Tab} targetTab
- * @param {boolean} keepCurrent
+ * @param {Object} menuClickInfo
  */
-export default async function selectTabs(getter, targetTab, keepCurrent) {
-    /** @type {Tab[]} */
-    let tabsToSelect = await getter(targetTab);
+export default async function selectTabs(getter, targetTab, menuClickInfo) {
+    /** @type {Tab[]?} */
+    let tabsToSelect = await getter(targetTab, menuClickInfo);
     if (!tabsToSelect)
         return;
 
@@ -32,7 +32,8 @@ export default async function selectTabs(getter, targetTab, keepCurrent) {
         tabsToSelect = tabsToSelect.slice(unpinnedIndex);
     }
 
-    if (keepCurrent) {
+    if (menuClickInfo.modifiers.includes('Shift')) {
+        // Keep current selection, combine with new selection
         const currentSelectedTabs = await browser.tabs.query({ currentWindow: true, highlighted: true });
         tabsToSelect = tabsToSelect.concat(currentSelectedTabs);
     }

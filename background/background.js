@@ -10,14 +10,12 @@ browser.menus.onClicked.addListener(onMenuClicked);
 browser.commands.onCommand.addListener(onKeyboardShortcut);
 
 /**
- * @param {Object} info
- * @param {CommandId} info.menuItemId
- * @param {string[]} info.modifiers
  * @listens browser.menus.onClicked
+ * @param {Object} menuClickInfo
  * @param {Tab} targetTab
  */
-function onMenuClicked({ menuItemId, modifiers }, targetTab) {
-    selectTabs(GetTabs[menuItemId], targetTab, modifiers.includes('Shift'));
+function onMenuClicked(menuClickInfo, targetTab) {
+    selectTabs(Getters[menuClickInfo.menuItemId], targetTab, menuClickInfo);
 }
 
 /**

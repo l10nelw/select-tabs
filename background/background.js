@@ -1,4 +1,4 @@
-import * as GetTabs from './get.js'; // Tab getters (menu commands)
+import * as Getters from './get.js'; // Tab getters (menu commands)
 import selectTabs from './select.js'; // Selects tabs returned by getter
 import * as Menu from './menu.js';
 
@@ -23,5 +23,5 @@ function onMenuClicked(menuClickInfo, targetTab) {
  * @param {CommandId} commandId
  */
 async function onKeyboardShortcut(commandId) {
-    selectTabs(GetTabs[commandId], (await GetTabs.focused())[0]);
+    selectTabs(Getters[commandId], (await Getters.focused())[0]);
 }

@@ -129,7 +129,7 @@ const READER_HEAD = 'about:reader?url=';
  * @param {string} url
  * @returns {string}
  */
-const getReaderUrl = url => decodeURIComponent( url.slice(READER_HEAD.length) );
+const getReaderUrl = url => decodeURIComponent(url.slice(READER_HEAD.length));
 /**
  * @param {string} url
  * @returns {string}
@@ -357,19 +357,6 @@ async function getTabsAccessedOnDay(offset) {
 
 /* --- Other commands --- */
 
-/**
- * @returns {Promise<Tab[]>}
- */
-export const all = () => get();
-
-/**
- * Deselect all but the focused tab.
- * @returns {Promise<Tab[]>}
- */
-export const focused = () => get({ active: true });
-
-/**
- * Invert selection.
- * @returns {Promise<Tab[]>}
- */
-export const unselected = () => get({ highlighted: false });
+/** @returns {Promise<Tab[]>} */ export const all = () => get();
+/** @returns {Promise<Tab[]>} */ export const focused = () => get({ active: true });
+/** @returns {Promise<Tab[]>} */ export const unselected = () => get({ highlighted: false });

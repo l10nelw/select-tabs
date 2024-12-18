@@ -2,60 +2,42 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <style>
-      body {
-        padding: 0 1em;
-      }
-      fieldset {
-        margin: 1em 0;
-      }
-      legend > * {
-        margin: 0;
-      }
-      h4 {
-        margin-top: 0;
-        margin-bottom: .5em;
-      }
-      .check-field + h4 {
-        margin-top: 1em;
-      }
-      .check-field {
-        display: flex;
-        align-items: center;
-        gap: .5em;
-      }
-      button {
-        margin-bottom: 2em;
-        padding: .5em 2em;
-        font-size: 1.1em;
-        font-weight: bold;
-      }
-      @media (prefers-color-scheme: dark) {
-        body {
-          background-color: #23222b;
-          color: white;
-          accent-color: #0df;
-        }
-        a {
-          color: #0df;
-        }
-      }
-    </style>
+    <link rel="stylesheet" href="options.css">
   </head>
   <body>
     <form>
-      <fieldset id="commands">
-        <legend><h3>Available commands</h3></legend>
-        <p>View the Details tab or <a href="https://addons.mozilla.org/firefox/addon/select-tabs/">the add-on page</a> for descriptions of each command.</p>
-        <template>
-          <h4></h4>
-          <label class="check-field">
-            <input type="checkbox" class="command" checked> <span></span>
-          </label>
-        </template>
+      <fieldset>
+        <legend>Tips</legend>
+        <ul>
+          <li>See the Details tab or the <a href="https://addons.mozilla.org/firefox/addon/select-tabs/">add-on page</a> for descriptions of each command.</li>
+          <li>To assign keyboard shortcuts, click on ⚙ at the top of this page → <cite>Manage Extension Shortcuts</cite>.</li>
+        </ul>
       </fieldset>
-
-      <button>Save preferences</button>
+      <fieldset>
+        <legend>Commands</legend>
+        <table id="commands">
+          <thead>
+            <tr>
+              <th class="title">Command</th>
+              <th class="showInTabMenu">Show in tab menu</th>
+              <th class="accessKey">Menu access key</th>
+              <th class="shortcut">Keyboard shortcut</th>
+            </tr>
+          </thead>
+          <tbody>
+          </tbody>
+        </table>
+      </fieldset>
+      <button type="submit">Save preferences</button>
+      <template>
+        <tr class="category"><th></th></tr>
+        <tr>
+          <td class="title"><label for=""></label></td>
+          <td class="showInTabMenu"><input type="checkbox" id="" name=""></td>
+          <td class="accessKey"><input type="text" name="" maxlength="1"></td>
+          <td class="shortcut"></td>
+        </tr>
+      </template>
     </form>
     <script src="options.js" type="module"></script>
   </body>

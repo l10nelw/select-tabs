@@ -1,0 +1,72 @@
+body {
+    padding: 0 1em;
+    font-size: 1.2rem;
+}
+
+fieldset {
+    margin-bottom: 1rem;
+}
+legend {
+    font-weight: bold;
+}
+ul {
+    margin: 0;
+    padding-left: 2rem;
+}
+li {
+    margin: 0 0 .5rem;
+}
+button[type="submit"] {
+    width: 100%;
+    margin-bottom: 1rem;
+    text-align: center;
+    padding: .5rem 2rem;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+thead th {
+    vertical-align: bottom;
+    padding-right: 1rem;
+    color: gray;
+}
+tbody tr:first-child td {
+    padding-top: 1rem;
+    border-top: 2px solid gray;
+}
+
+.title label {
+    display: block;
+}
+.category ~ tr .title {
+    padding-left: 1.5rem;
+}
+
+td.showInTabMenu,
+td.accessKey {
+    width: 7rem;
+    padding-left: 1rem;
+}
+.accessKey input {
+    width: 2.5rem;
+    text-align: center;
+}
+
+td.shortcut {
+    padding-left: 1.5rem;
+    font-style: italic;
+}
+
+@media (prefers-color-scheme: dark) {
+
+    body {
+        background-color: #23222b;
+        color: white;
+        accent-color: #0df;
+    }
+
+    a {
+        color: #0df;
+    }
+
+}

@@ -58,7 +58,7 @@ const DEFAULT_ACCESSKEYS = {
     siblings: 'i',
     siblings__descendants: 'b',
     // Directional
-    toStart: 't',
+    toStart: 'a',
     toEnd: 'e',
     // Temporal
     pastHour: '1',
@@ -66,7 +66,7 @@ const DEFAULT_ACCESSKEYS = {
     today: 'o',
     yesterday: 'y',
     // Miscellaneous
-    all: 'a',
+    all: 'l',
     unselected: 'v', // "Invert"
 }
 

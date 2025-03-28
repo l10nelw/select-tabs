@@ -19,7 +19,7 @@ async function populate() {
     /** @type {Element} */ const $headingTemplate = $template.firstElementChild;
     /** @type {Element} */ const $rowTemplate = $template.lastElementChild;
 
-    /** @type {[{ commands: CommandDict, shownTabMenuItems: Set<CommandId> }, Object[]]} */
+    /** @type {[{ commands: CommandDict, shownTabMenuItems: Set<CommandId> }, object[]]} */
     const [{ commands, shownTabMenuItems }, shortcutableCommands] = await Promise.all([ Commands.getData(), browser.commands.getAll() ]);
 
     for (const { name, shortcut } of shortcutableCommands)

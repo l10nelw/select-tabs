@@ -1,19 +1,26 @@
 /**
- * @typedef {Object<string, any>} Tab
+ * @typedef {object.<string, any>} Tab
  * @see {@link https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/Tab}
+*/
+
+/**
+ * Name of a command's implementation function in get.js, and id of its associated menu item.
+ * @typedef {string} CommandId
  */
 
-/** @typedef {string} CommandId */
 /**
- * @typedef {Object} CommandInfo
+ * Superset of the menu item createProperties object. Extra properties indicated as "Select Tabs only".
+ * @see {@link https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/menus/create#createproperties}
+ * @typedef {object.<string, any>} CommandInfo
  * @property {string[]} contexts
- * @property {string} [accessKey]
- * @property {string} [category]
+ * @property {string} [accessKey] - Select Tabs only
+ * @property {string} [category] - Select Tabs only
  * @property {string} [parentId]
- * @property {string} [shortcut]
+ * @property {string} [shortcut] - Select Tabs only
  * @property {string} [title]
  */
-/** @typedef {Object<CommandId, CommandInfo>} CommandDict */
+
+/** @typedef {object.<CommandId, CommandInfo>} CommandDict */
 
 /**
  * Check for OS name in browser's user agent string.

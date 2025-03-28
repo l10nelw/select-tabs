@@ -11,7 +11,7 @@ browser.commands.onCommand.addListener(onKeyboardShortcut);
 
 /**
  * @listens browser.menus.onClicked
- * @param {Object} menuClickInfo
+ * @param {object} menuClickInfo
  * @param {Tab} targetTab
  */
 function onMenuClicked(menuClickInfo, targetTab) {

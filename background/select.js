@@ -3,10 +3,10 @@
 /**
  * @param {Function} getter
  * @param {Tab} targetTab
- * @param {Object} [menuClickInfo]
+ * @param {object} [menuClickInfo]
+ * @param {string[]} menuClickInfo.modifiers
  */
 export default async function selectTabs(getter, targetTab, menuClickInfo) {
-    /** @type {Tab[]?} */
     let tabsToSelect = await getter(targetTab, menuClickInfo);
     if (!tabsToSelect)
         return;
@@ -15,8 +15,7 @@ export default async function selectTabs(getter, targetTab, menuClickInfo) {
     const unpinnedIndex = tabsToSelect.findIndex(tab => !tab.pinned);
 
     // Include pinned tabs if any of these conditions are met
-    /** @type {boolean} */
-    const includePinned =
+    /** @type {boolean} */ const includePinned =
         targetTab.pinned ||
         // Is parent getter
         getterName.startsWith('parent') ||
@@ -24,8 +23,8 @@ export default async function selectTabs(getter, targetTab, menuClickInfo) {
         getterName === 'switchToHere' || getterName.startsWith('cycle') ||
         // Is "add/trail x" command
         getterName.startsWith('add') || getterName.startsWith('trail') ||
-        // Is "invert selection" command, and pre-command selection had at least one pinned tab
-        getterName === 'unselected' && (unpinnedIndex < 1 || unpinnedIndex > findMismatchedIndex(tabsToSelect));
+        // Is "invert selection" command, and we infer that the pre-command selection had at least one pinned tab
+        getterName === 'unselected' && (unpinnedIndex === 0 || unpinnedIndex > findMismatchedIndex(tabsToSelect));
 
     if (!includePinned) {
         // Remove pinned tabs
@@ -40,7 +39,6 @@ export default async function selectTabs(getter, targetTab, menuClickInfo) {
         tabsToSelect = tabsToSelect.concat(currentSelectedTabs);
     }
 
-    /** @type {number} */
     const tabCount = tabsToSelect.length;
 
     if (!tabCount)
@@ -66,6 +64,7 @@ export default async function selectTabs(getter, targetTab, menuClickInfo) {
  * @returns {number}
  */
 const findMismatchedIndex = tabs => tabs.findIndex((tab, arrayIndex) => tab.index !== arrayIndex);
+
 /**
  * @param {Tab[]} tabs
  * @param {number} tabId

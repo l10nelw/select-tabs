@@ -1,11 +1,29 @@
-/** @typedef {import('../common.js').CommandId} CommandId */
-/** @typedef {import('../common.js').CommandInfo} CommandInfo */
-/** @typedef {import('../common.js').CommandDict} CommandDict */
+/*
+To add a command:
+- manifest.json
+    - If command is shortcut-able, add entry in "commands" object. `description` format is "<category>: <title>".
+        - If command has alternate title for vertical tabs, `description` format is "<category>: <title> | <alt title>".
+- commands.js (this file)
+    - Mandatory: Add command's base properties as entry in BASE_DICT. If command has no manifest.json entry, include `category` and `title` properties.
+        - If command has alternate title for vertical tabs, `title` format is "<title> | <alt title>".
+    - Add command's default user-definable properties as entries in DEFAULT_ACCESSKEYS and DEFAULT_SHOWN_TAB_MENUITEMS dicts.
+- get.js
+    - Mandatory: Add command implementation.
+- select.js
+    - Add command's `includePinned` condition if required.
+*/
+
+/** @typedef {import('./common.js').CommandId} CommandId */
+/** @typedef {import('./common.js').CommandInfo} CommandInfo */
+/** @typedef {import('./common.js').CommandDict} CommandDict */
 
 /** @type {string} */ const APP_NAME = browser.runtime.getManifest().name;
 /** @type {string} */ const parentId = 'menuRoot';
 
-/** @enum {CommandDict} */
+/**
+ * Base dict of commands. Each entry requires a `context` property at minimum. See CommandInfo definition.
+ * @type {CommandDict}
+ */
 const BASE_DICT = {
     [parentId]: { contexts: ['tab', 'link'], title: APP_NAME },
     // Text search
@@ -45,7 +63,11 @@ const BASE_DICT = {
     cycleBackward: { parentId, contexts: ['tab'] },
 }
 
-/** @type {Object<CommandId, string>} */
+/**
+ * Dict of default access keys (optional).
+ * Not required, especially for commands expected to be 1) used via keyboard shortcuts and 2) excluded from context menus.
+ * @type {object.<CommandId, string>}
+ */
 const DEFAULT_ACCESSKEYS = {
     menuRoot: 's',
     // Text search
@@ -77,7 +99,10 @@ const DEFAULT_ACCESSKEYS = {
     switchToHere: 'f',
 }
 
-/** @type {CommandId[]} */
+/**
+ * Dict of command names to be shown in the tab context menu by default, in appropriate order grouped by category.
+ * @type {CommandId[]}
+ */
 const DEFAULT_SHOWN_TAB_MENUITEMS = [
     // URL-based
     'duplicates',
@@ -108,12 +133,13 @@ const DEFAULT_SHOWN_TAB_MENUITEMS = [
  */
 export async function getData() {
     const storedContent = await browser.storage.sync.get();
+    /** @type {{ accessKeys: object.<CommandId, string>, shownTabMenuItems: CommandId[] | Set<CommandId> }} */
     let { accessKeys = DEFAULT_ACCESSKEYS, shownTabMenuItems = DEFAULT_SHOWN_TAB_MENUITEMS } = storedContent;
-    shownTabMenuItems = new Set(shownTabMenuItems);
+    shownTabMenuItems = /** @type {Set<CommandId>} */ new Set(shownTabMenuItems);
 
     // Handle legacy storage and convert to new format
     /** @type {boolean} */
-    const hasLegacyStorage = 'duplicates' in storedContent; // Before v4, storedContent was an Object<CommandId, boolean>
+    const hasLegacyStorage = 'duplicates' in storedContent; // Before v4, storedContent was an object.<CommandId, boolean>
     if (hasLegacyStorage) {
         await browser.storage.sync.clear();
         for (const commandId in BASE_DICT)
@@ -121,12 +147,12 @@ export async function getData() {
         browser.storage.sync.set({ accessKeys, shownTabMenuItems: [...shownTabMenuItems] });
     }
 
-    /** @type {Object<CommandId, { description: string }>} */
+    /** @type {object.<CommandId, { description: string }>} */
     const MANIFEST_DICT = browser.runtime.getManifest().commands;
     /** @type {CommandDict} */
     const commands = {};
     for (const [commandId, commandInfo] of Object.entries(BASE_DICT)) {
-        // If command is shortcut-able (defined in manifest), use shortcut description to add category and title
+        // If shortcut-able command, parse description for category and title
         if (commandId in MANIFEST_DICT) {
             const [category, title] = MANIFEST_DICT[commandId].description.split(': ');
             commandInfo.category = category;

@@ -7,7 +7,7 @@
 /** @typedef {import('../common.js').Tab} Tab */
 
 /**
- * @param {Object} properties
+ * @param {object.<string, any>} properties
  * @returns {Promise<Tab[]>}
  */
 export const get = properties => browser.tabs.query({ currentWindow: true, ...properties });
@@ -32,11 +32,12 @@ function setTabFocus(tabsToSelect, tabToFocus) {
     return tabsToSelect;
 }
 
+
 /* --- Text search commands --- */
 
 /**
  * @param {Tab} [_]
- * @param {Object} menuClickInfo
+ * @param {object} menuClickInfo
  * @param {string} menuClickInfo.linkText
  * @returns {Promise<Tab[]?>}
  */
@@ -44,7 +45,7 @@ export const matchLinkText = (_, { linkText }) => matchText(linkText);
 
 /**
  * @param {Tab} [_]
- * @param {Object} menuClickInfo
+ * @param {object} menuClickInfo
  * @param {string} menuClickInfo.selectionText
  * @returns {Promise<Tab[]?>}
  */
@@ -181,7 +182,7 @@ export const toEnd = async ({ index }) => (await get()).slice(index);
  * @returns {Promise<Tab[]?>}
  */
 export async function addLeft() {
-    const selectedTabs = await get({ highlighted: true });
+    const selectedTabs = await selected();
     const firstTabIndex = selectedTabs[0].index;
     if (firstTabIndex !== 0)
         return selectedTabs.concat({ index: firstTabIndex - 1 });
@@ -362,11 +363,11 @@ async function getTabsAccessedOnDay(offset) {
 }
 
 
-/* --- Other commands --- */
+/* --- Miscellaneous commands --- */
 
 /** @returns {Promise<Tab[]>} */ export const all = () => get();
-/** @returns {Promise<Tab[]>} */ export const focused = () => get({ active: true });
-/** @returns {Promise<Tab[]>} */ export const unselected = () => get({ highlighted: false });
+/** @returns {Promise<Tab[]>} */ export const focused = () => get({ active: true }); // "Clear"
+/** @returns {Promise<Tab[]>} */ export const unselected = () => get({ highlighted: false }); // "Invert"
 
 
 /* --- Switch within selection commands --- */

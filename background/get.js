@@ -12,6 +12,25 @@
  */
 export const get = properties => browser.tabs.query({ currentWindow: true, ...properties });
 
+/**
+ * @returns {Promise<Tab[]>}
+ */
+const selected = () => get({ highlighted: true });
+
+/**
+ * Explicitly indicate the tab to focus among the tabs to select.
+ * If the tab is not among the tabs to select, it will increase the selection set by that one tab.
+ * @param {Tab[]} tabsToSelect
+ * @param {Tab} tabToFocus
+ * @returns {Tab[]}
+ * @modifies tabsToSelect, tabToFocus
+ */
+function setTabFocus(tabsToSelect, tabToFocus) {
+    tabToFocus.active = true;
+    if (tabToFocus.id !== tabsToSelect[0].id)
+        tabsToSelect.unshift(tabToFocus); // browser.tabs.highlight() will focus on the first tab in array
+    return tabsToSelect;
+}
 
 /* --- Text search commands --- */
 
@@ -360,3 +379,27 @@ async function getTabsAccessedOnDay(offset) {
 /** @returns {Promise<Tab[]>} */ export const all = () => get();
 /** @returns {Promise<Tab[]>} */ export const focused = () => get({ active: true });
 /** @returns {Promise<Tab[]>} */ export const unselected = () => get({ highlighted: false });
+
+
+/* --- Switch within selection commands --- */
+
+/**
+ * @param {Tab} tab
+ * @returns {Promise<Tab[]>}
+ * @modifies tab
+ */
+export const switchToHere = async tab => setTabFocus(await selected(), tab);
+
+/** @returns {Promise<Tab[]>} */ export const cycleForward = () => cycleInSelection(1);
+/** @returns {Promise<Tab[]>} */ export const cycleBackward = () => cycleInSelection(-1);
+
+/**
+ * @param {number} offset
+ * @returns {Promise<Tab[]>}
+ */
+async function cycleInSelection(offset) {
+    const selectedTabs = await selected();
+    const focusedTabArrayIndex = selectedTabs.findIndex(tab => tab.active);
+    const tab = selectedTabs.at(focusedTabArrayIndex + offset) ?? selectedTabs[0];
+    return setTabFocus(selectedTabs, tab);
+}

@@ -20,7 +20,9 @@ export default async function selectTabs(getter, targetTab, menuClickInfo) {
     const includePinned =
         targetTab.pinned ||
         isParentGetter ||
-        // Is directional "x left/right" command
+        // Is "switch within selection" command
+        getterName === 'switchToHere' || getterName.startsWith('cycle') ||
+        // Is "add/trail x" command
         getterName.startsWith('add') || getterName.startsWith('trail') ||
         // Is "invert selection" command, and pre-command selection had at least one pinned tab
         getterName === 'unselected' && (unpinnedIndex < 1 || unpinnedIndex > findMismatchedIndex(tabsToSelect));

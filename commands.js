@@ -38,6 +38,11 @@ const BASE_DICT = {
     all: { parentId, contexts: ['tab'] },
     focused: { parentId, contexts: ['tab'] },
     unselected: { parentId, contexts: ['tab'] },
+    cluster: { parentId, contexts: ['tab'] },
+    // Switch within selection
+    switchToHere: { parentId, contexts: ['tab'], category: 'Switch within selection', title: 'Switch to Here' },
+    cycleForward: { parentId, contexts: ['tab'] },
+    cycleBackward: { parentId, contexts: ['tab'] },
 }
 
 /** @type {Object<CommandId, string>} */
@@ -68,6 +73,8 @@ const DEFAULT_ACCESSKEYS = {
     // Miscellaneous
     all: 'l',
     unselected: 'v', // "Invert"
+    // Switch focus
+    switchToHere: 'f',
 }
 
 /** @type {CommandId[]} */
@@ -92,6 +99,8 @@ const DEFAULT_SHOWN_TAB_MENUITEMS = [
     // Miscellaneous
     'all',
     'unselected',
+    // Switch focus
+    'switchToHere',
 ]
 
 /**

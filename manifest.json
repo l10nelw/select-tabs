@@ -90,6 +90,18 @@
     },
     "unselected": {
       "description": "Miscellaneous: Invert"
+    },
+    "cycleForward": {
+      "description": "Switch within selection: Cycle Forward",
+      "suggested_key": {
+        "default": "Ctrl+Period"
+      }
+    },
+    "cycleBackward": {
+      "description": "Switch within selection: Cycle Backward",
+      "suggested_key": {
+        "default": "Ctrl+Comma"
+      }
     }
   }
 }

@@ -191,7 +191,7 @@ export async function addLeft() {
  * @returns {Promise<Tab[]?>}
  */
 export async function addRight() {
-    const selectedTabs = await get({ highlighted: true });
+    const selectedTabs = await selected();
     const tabToAdd = await getByIndex(selectedTabs.at(-1).index + 1);
     if (tabToAdd)
         return selectedTabs.concat({ index: tabToAdd.index });
@@ -201,7 +201,7 @@ export async function addRight() {
  * @returns {Promise<Tab[]?>}
  */
 export async function trailLeft() {
-    const tabsToSelect = await get({ highlighted: true });
+    const tabsToSelect = await selected();
     const focusedTabArrayIndex = tabsToSelect.findIndex(tab => tab.active);
     const focusedTab = tabsToSelect[focusedTabArrayIndex];
     const focusedTabIndex = focusedTab.index;
@@ -210,23 +210,16 @@ export async function trailLeft() {
     const rightTab = await getByIndex(focusedTabIndex + 1);
     const leftTabIndex = focusedTabIndex - 1;
     const leftTab = tabsToSelect.find(tab => tab.index === leftTabIndex) || { index: leftTabIndex };
-    leftTab.active = true;
-    if (!leftTab.highlighted || rightTab?.highlighted) {
-        // Extend trail
-        tabsToSelect.unshift(leftTab); // Add leftTab to selection
-        delete focusedTab.active;
-    } else {
-        // Shrink trail
-        tabsToSelect.splice(focusedTabArrayIndex, 1); // Remove focusedTab from selection
-    }
-    return tabsToSelect;
+    if (leftTab.highlighted && !rightTab?.highlighted)
+        tabsToSelect.splice(focusedTabArrayIndex, 1); // Shrink trail by removing focusedTab from selection
+    return setTabFocus(tabsToSelect, leftTab); // Switch focus to leftTab; Adds to selection if not already included, which expands trail
 }
 
 /**
  * @returns {Promise<Tab[]?>}
  */
 export async function trailRight() {
-    const tabsToSelect = await get({ highlighted: true });
+    const tabsToSelect = await selected();
     const focusedTabArrayIndex = tabsToSelect.findIndex(tab => tab.active);
     const focusedTab = tabsToSelect[focusedTabArrayIndex];
     const focusedTabIndex = focusedTab.index;
@@ -235,16 +228,9 @@ export async function trailRight() {
         return;
     const leftTabIndex = focusedTabIndex - 1;
     const leftTab = leftTabIndex >= 0 && tabsToSelect.find(tab => tab.index === leftTabIndex);
-    rightTab.active = true;
-    if (!rightTab.highlighted || leftTab?.highlighted) {
-        // Extend trail
-        tabsToSelect.unshift(rightTab); // Add rightTab to selection
-        delete focusedTab.active;
-    } else {
-        // Shrink trail
-        tabsToSelect.splice(focusedTabArrayIndex, 1); // Remove focusedTab from selection
-    }
-    return tabsToSelect;
+    if (rightTab.highlighted && !leftTab?.highlighted)
+        tabsToSelect.splice(focusedTabArrayIndex, 1); // Shrink trail by removing focusedTab from selection
+    return setTabFocus(tabsToSelect, rightTab); // Switch focus to rightTab; Adds to selection if not already included, which expands trail
 }
 
 /**
@@ -282,9 +268,11 @@ export async function parent({ openerTabId }) {
  */
 export async function parent__descendants(tab) {
     const { openerTabId } = tab;
-    return openerTabId ?
-        (await Promise.all([ getById(openerTabId), getDescendants(openerTabId) ])).flat() :
-        descendants(tab);
+    if (openerTabId) {
+        const [parentTab, descendantTabs] = await Promise.all([ getById(openerTabId), getDescendants(openerTabId) ]);
+        return setTabFocus(descendantTabs, parentTab);
+    }
+    return descendants(tab);
 }
 
 /**

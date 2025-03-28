@@ -11,15 +11,15 @@ export default async function selectTabs(getter, targetTab, menuClickInfo) {
     if (!tabsToSelect)
         return;
 
-    /** @type {string}  */ const getterName = getter.name;
-    /** @type {boolean} */ const isParentGetter = getterName.includes('parent');
-    /** @type {number}  */ const unpinnedIndex = tabsToSelect.findIndex(tab => !tab.pinned);
+    const getterName = getter.name;
+    const unpinnedIndex = tabsToSelect.findIndex(tab => !tab.pinned);
 
     // Include pinned tabs if any of these conditions are met
     /** @type {boolean} */
     const includePinned =
         targetTab.pinned ||
-        isParentGetter ||
+        // Is parent getter
+        getterName.startsWith('parent') ||
         // Is "switch within selection" command
         getterName === 'switchToHere' || getterName.startsWith('cycle') ||
         // Is "add/trail x" command
@@ -50,8 +50,7 @@ export default async function selectTabs(getter, targetTab, menuClickInfo) {
         // Set up tabs for browser.tabs.highlight(), which will activate (put focus on) the first tab in array
         const indexToFocus = (
             // Move any of these available tabs to the start of the array
-            // +1 to found indexes so that -1 (not found) becomes 0 (falsey)
-            isParentGetter && findIdIndex(tabsToSelect, targetTab.openerTabId) + 1 || // Parent tab
+            // +1 to found indexes so that -1 (not found) becomes 0 (falsey), allowing this OR-operation to work
             tabsToSelect.findIndex(tab => tab.active) + 1 || // Currently focused tab
             findIdIndex(tabsToSelect, targetTab.id) + 1 // Target tab
         ) - 1; // Revert 0 to -1

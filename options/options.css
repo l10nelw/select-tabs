@@ -1,6 +1,22 @@
+:root {
+    --accent-color: #0060df;
+}
 body {
     padding: 0 1em;
     font-size: 1.2rem;
+    accent-color: var(--accent-color);
+}
+@media (prefers-color-scheme: dark) {
+    :root {
+        --accent-color: #0df;
+    }
+    body {
+        background-color: #23222b;
+        color: white;
+    }
+}
+a {
+    color: var(--accent-color);
 }
 
 fieldset {
@@ -55,18 +71,9 @@ td.accessKey {
 td.shortcut {
     padding-left: 1.5rem;
     font-style: italic;
-}
 
-@media (prefers-color-scheme: dark) {
-
-    body {
-        background-color: #23222b;
-        color: white;
-        accent-color: #0df;
+    &:not(:empty) {
+        color: var(--accent-color);
+        cursor: pointer;
     }
-
-    a {
-        color: #0df;
-    }
-
 }

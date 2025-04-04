@@ -8,12 +8,13 @@ import * as Commands from '../commands.js';
 /** @type {boolean} */ const SUPPORTS_ACCESSKEYS = !isOS('Mac OS');
 /** @type {Element} */ const $form = document.body.querySelector('form');
 /** @type {Element} */ const $tableBody = $form.querySelector('tbody');
-init();
+populate();
 $form.addEventListener('submit', onFormSubmit);
 $form.addEventListener('input', onFormInput);
 $form.addEventListener('focusin', onFormFocus);
+$form.addEventListener('click', onFormClick);
 
-async function init() {
+async function populate() {
     /** @type {DocumentFragment} */ const $template = $form.querySelector('template').content;
     /** @type {Element} */ const $headingTemplate = $template.firstElementChild;
     /** @type {Element} */ const $rowTemplate = $template.lastElementChild;
@@ -22,7 +23,7 @@ async function init() {
     const [{ commands, shownTabMenuItems }, shortcutableCommands] = await Promise.all([ Commands.getData(), browser.commands.getAll() ]);
 
     for (const { name, shortcut } of shortcutableCommands)
-        commands[name].shortcut = shortcut || '-';
+        commands[name].shortcut = shortcut || '—';
 
     if (SUPPORTS_ACCESSKEYS) {
         commands.matchSelectionText.title = 'With Selected Text';
@@ -104,6 +105,15 @@ async function init() {
         }
         $tableBody.addRow(id, info);
     }
+}
+
+/**
+ * @listens Event#click
+ * @param {Event} event
+ */
+function onFormClick({ target }) {
+    if (target.matches('.shortcut') && target.textContent)
+        browser.commands.openShortcutSettings();
 }
 
 /**

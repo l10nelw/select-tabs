@@ -1,6 +1,7 @@
 import { isOS } from '../common.js';
 import * as Commands from '../commands.js';
 
+/** @typedef {import('../common.js').StoredData} StoredData */
 /** @typedef {import('../common.js').CommandId} CommandId */
 /** @typedef {import('../common.js').CommandInfo} CommandInfo */
 /** @typedef {import('../common.js').CommandDict} CommandDict */
@@ -14,13 +15,19 @@ $form.addEventListener('input', onFormInput);
 $form.addEventListener('focusin', onFormFocus);
 $form.addEventListener('click', onFormClick);
 
+/**
+ * @param {string} type
+ * @returns {string}
+ */
+const relevantProp = type => (type === 'checkbox') ? 'checked' : 'value';
+
 async function populate() {
-    /** @type {DocumentFragment} */ const $template = $form.querySelector('template').content;
+    const $template = $form.querySelector('template').content;
     /** @type {Element} */ const $headingTemplate = $template.firstElementChild;
     /** @type {Element} */ const $rowTemplate = $template.lastElementChild;
 
-    /** @type {[{ commands: CommandDict, shownTabMenuItems: Set<CommandId> }, object[]]} */
-    const [{ commands, shownTabMenuItems }, shortcutableCommands] = await Promise.all([ Commands.getData(), browser.commands.getAll() ]);
+    /** @type {[{ general: object, commands: CommandDict, shownTabMenuItems: Set<CommandId> }, object[]]} */
+    const [{ general, commands, shownTabMenuItems }, shortcutableCommands] = await Promise.all([ Commands.getData(), browser.commands.getAll() ]);
 
     for (const { name, shortcut } of shortcutableCommands)
         commands[name].shortcut = shortcut || '—';
@@ -105,6 +112,12 @@ async function populate() {
         }
         $tableBody.addRow(id, info);
     }
+
+    // General fields
+    for (const [key, value] of Object.entries(general)) {
+        const $field = $form[key];
+        $field[relevantProp($field.type)] = value;
+    }
 }
 
 /**
@@ -137,13 +150,20 @@ async function onFormInput(event) {
 }
 
 /**
- * Save preferences.
+ * Store preferences as StoredData in browser.storage.sync.
  * @listens Event#submit
  * @param {Event} event
  */
 async function onFormSubmit(event) {
     event.preventDefault();
 
+    /** @type {object.<string, any>} */
+    const general = {};
+    for (const $input of $form.querySelectorAll('#general input'))
+        if ($input.checked)
+            general[$input.name] = true;
+
+    /** @type {string[]} */
     const shownTabMenuItems = [];
     for (const $input of $tableBody.querySelectorAll('.showInTabMenu input'))
         if ($input.checked)
@@ -154,6 +174,6 @@ async function onFormSubmit(event) {
         if ($input.value)
             accessKeys[$input.name] = $input.value;
 
-    await browser.storage.sync.set({ shownTabMenuItems, accessKeys });
+    await browser.storage.sync.set(/** @type {StoredData} */ { general, shownTabMenuItems, accessKeys });
     browser.runtime.reload();
 }

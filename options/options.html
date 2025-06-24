@@ -13,9 +13,9 @@
           <li>Holding <kbd>Shift</kbd> while clicking on a menu item command <em>adds</em> the generated selection to the existing one.</li>
         </ul>
       </fieldset>
-      <fieldset>
+      <fieldset id="commands">
         <legend>Commands</legend>
-        <table id="commands">
+        <table>
           <thead>
             <tr>
               <th class="title">Command</th>
@@ -27,6 +27,10 @@
           <tbody>
           </tbody>
         </table>
+      </fieldset>
+      <fieldset id="general">
+        <legend>General</legend>
+        <label><input type="checkbox" name="vertical"> Vertical-oriented command names (For vertical tabs)</label>
       </fieldset>
       <button type="submit">Save preferences</button>
       <template>

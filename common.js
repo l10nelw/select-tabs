@@ -23,6 +23,13 @@
 /** @typedef {object.<CommandId, CommandInfo>} CommandDict */
 
 /**
+ * @typedef StoredData
+ * @property {object.<string, any>} general
+ * @property {CommandId[]} shownTabMenuItems
+ * @property {object.<CommandId, string>} accessKeys
+ */
+
+/**
  * Check for OS name in browser's user agent string.
  * @param {string} osName
  * @returns {boolean}

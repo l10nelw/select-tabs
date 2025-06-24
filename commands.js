@@ -13,6 +13,7 @@ To add a command:
     - Add command's `includePinned` condition if required.
 */
 
+/** @typedef {import('./common.js').StoredData} StoredData */
 /** @typedef {import('./common.js').CommandId} CommandId */
 /** @typedef {import('./common.js').CommandInfo} CommandInfo */
 /** @typedef {import('./common.js').CommandDict} CommandDict */
@@ -129,28 +130,38 @@ const DEFAULT_SHOWN_TAB_MENUITEMS = [
 ]
 
 /**
- * @returns {Promise<{ commands: CommandDict, shownTabMenuItems: Set<CommandId> }>}
+ * @returns {Promise<{ general: object.<string, any>, commands: CommandDict, shownTabMenuItems: Set<CommandId> }>}
  */
 export async function getData() {
-    const storedContent = await browser.storage.sync.get();
-    /** @type {{ accessKeys: object.<CommandId, string>, shownTabMenuItems: CommandId[] | Set<CommandId> }} */
-    let { accessKeys = DEFAULT_ACCESSKEYS, shownTabMenuItems = DEFAULT_SHOWN_TAB_MENUITEMS } = storedContent;
-    shownTabMenuItems = /** @type {Set<CommandId>} */ new Set(shownTabMenuItems);
+    /** @type {StoredData | {}} */
+    const storedData = await browser.storage.sync.get();
+    /** @type {object.<string, any>} */
+    const general = storedData.general ?? {};
+    /** @type {object.<CommandId, string>} */
+    const accessKeys = storedData.accessKeys ?? DEFAULT_ACCESSKEYS;
+    /** @type {Set<CommandId>} */
+    const shownTabMenuItems = new Set(storedData.shownTabMenuItems ?? DEFAULT_SHOWN_TAB_MENUITEMS);
 
     // Handle legacy storage and convert to new format
+    // Remove after 2025?
     /** @type {boolean} */
-    const hasLegacyStorage = 'duplicates' in storedContent; // Before v4, storedContent was an object.<CommandId, boolean>
+    const hasLegacyStorage = 'duplicates' in storedData; // Before v4, storedData was an object.<CommandId, boolean>
     if (hasLegacyStorage) {
         await browser.storage.sync.clear();
         for (const commandId in BASE_DICT)
-            shownTabMenuItems[storedContent[commandId] ? 'add' : 'delete'](commandId);
+            shownTabMenuItems[storedData[commandId] ? 'add' : 'delete'](commandId);
         browser.storage.sync.set({ accessKeys, shownTabMenuItems: [...shownTabMenuItems] });
     }
 
-    /** @type {object.<CommandId, { description: string }>} */
-    const MANIFEST_DICT = browser.runtime.getManifest().commands;
+    // Populate commands object
+
     /** @type {CommandDict} */
     const commands = {};
+    /** @type {object.<CommandId, { description: string }>} */
+    const MANIFEST_DICT = browser.runtime.getManifest().commands;
+    /** @type {{ vertical: boolean }} */
+    const { vertical } = general;
+
     for (const [commandId, commandInfo] of Object.entries(BASE_DICT)) {
         // If shortcut-able command, parse description for category and title
         if (commandId in MANIFEST_DICT) {
@@ -158,10 +169,18 @@ export async function getData() {
             commandInfo.category = category;
             commandInfo.title = title;
         }
+        // Parse title for any alternate title
+        const [title, altTitle] = commandInfo.title.split(' | ');
+        if (altTitle) {
+            commandInfo.title = vertical ? altTitle : title;
+            const description = `${commandInfo.category}: ${commandInfo.title}`;
+            browser.commands.update({ name: commandId, description });
+        }
+
         commandInfo.accessKey = accessKeys[commandId] || '';
         commands[commandId] = commandInfo;
     }
 
     shownTabMenuItems.add(parentId);
-    return { commands, shownTabMenuItems };
+    return { general, commands, shownTabMenuItems };
 }

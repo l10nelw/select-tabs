@@ -273,6 +273,15 @@ const getById = tabId => browser.tabs.get(tabId);
 const getChildrenOfId = openerTabId => get({ openerTabId });
 
 
+/* --- Membership commands --- */
+
+/** @type {Targeted_CanNull_Getter} */ export const sameTabGroup = ({ groupId }) => (groupId !== -1) && get({ groupId });
+/** @type {Targeted_CanNull_Getter} */ export const sameContainer = ({ cookieStoreId }) => isContainerId(cookieStoreId) && get({ cookieStoreId });
+
+const NON_CONTAINER_IDS = ['firefox-default', 'firefox-private'];
+const isContainerId = cookieStoreId => !NON_CONTAINER_IDS.includes(cookieStoreId);
+
+
 /* --- Temporal commands --- */
 
 const HOUR = 1000 * 60 * 60;

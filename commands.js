@@ -41,6 +41,9 @@ const BASE_DICT = {
     parent__descendants: { parentId, contexts: ['tab'] },
     siblings: { parentId, contexts: ['tab'] },
     siblings__descendants: { parentId, contexts: ['tab'] },
+    // Membership
+    sameTabGroup: { parentId, contexts: ['tab'] },
+    sameContainer: { parentId, contexts: ['tab'] },
     // Directional
     toStart: { parentId, contexts: ['tab'] },
     toEnd: { parentId, contexts: ['tab'] },
@@ -77,7 +80,7 @@ const DEFAULT_ACCESSKEYS = {
     // URL-based
     duplicates: 'u',
     sameSite: 's',
-    sameSite__cluster: 'c',
+    sameSite__cluster: 's',
     sameSite__descendants: 'm',
     // Tab tree
     descendants: 'd',
@@ -85,6 +88,9 @@ const DEFAULT_ACCESSKEYS = {
     parent__descendants: 'n',
     siblings: 'i',
     siblings__descendants: 'b',
+    // Membership
+    sameTabGroup: 'g',
+    sameContainer: 'c',
     // Directional
     toStart: 'r',
     toEnd: 'e',
@@ -115,6 +121,9 @@ const DEFAULT_SHOWN_TAB_MENUITEMS = [
     'descendants',
     'parent',
     'parent__descendants',
+    // Membership
+    'sameTabGroup',
+    'sameContainer',
     // Directional
     'toStart',
     'toEnd',

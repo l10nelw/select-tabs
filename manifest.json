@@ -51,6 +51,12 @@
     "siblings__descendants": {
       "description": "Tab tree: Siblings and Descendants"
     },
+    "sameTabGroup": {
+      "description": "Membership: Same Tab Group"
+    },
+    "sameContainer": {
+      "description": "Membership: Same Container"
+    },
     "toStart": {
       "description": "Directional: To the Start"
     },

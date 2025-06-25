@@ -1,7 +1,7 @@
 /*
  * Tab-getting functions a.k.a. commands.
  * Most require a target tab argument, some do not.
- * Returns either an array of tabs to be selected, or undefined/null (to abort selection).
+ * Returns either an array of tabs to be selected, or falsy (to abort selection).
  */
 
 /** @typedef {import('../common.js').Tab} Tab */
@@ -122,16 +122,7 @@ export async function sameSite({ url, isInReaderMode }) {
 }
 
 /** @type {Targeted_NoNull_Getter} */
-export async function sameSite__cluster(tab) {
-    const tabs = await sameSite(tab);
-    const targetTabIndex = tab.index;
-    const targetArrayIndex = tabs.findIndex(tab => tab.index === targetTabIndex);
-    const difference = targetTabIndex - targetArrayIndex;
-    return tabs.filter(
-        // Cluster tabs share same difference between tab and tabs-array indexes
-        (tab, arrayIndex) => tab.index === arrayIndex + difference
-    );
-}
+export const sameSite__cluster = async tab => getCluster(await sameSite(tab), tab);
 
 /** @type {Targeted_NoNull_Getter} */
 export async function sameSite__descendants(tab) {
@@ -324,11 +315,34 @@ async function getTabsAccessedOnDay(offset) {
 }
 
 
-/* --- Miscellaneous commands --- */
+/* --- Selection commands --- */
 
 /** @type {Targetless_NoNull_Getter} */ export const all = () => get();
-/** @type {Targetless_NoNull_Getter} */ export const focused = () => get({ active: true }); //// "Clear"
+/** @type {Targetless_NoNull_Getter} */ export const focused = () => get({ active: true }); // "Clear"
 /** @type {Targetless_NoNull_Getter} */ export const unselected = () => get({ highlighted: false }); // "Invert"
+/** @type {Targeted_NoNull_Getter}   */ export const cluster = async tab => getCluster(await selected(), tab);
+
+/**
+ * Given an array of tabs that may have continuity gaps in their indexes, return only the consecutive-indexes subarray that the targetTab is part of.
+ * Meaning, return a bunch of tabs around the targetTab that must be adjacent to each other.
+ * @param {Tab[]} tabs
+ * @param {Tab} targetTab
+ * @returns {Tab[]}
+ */
+function getCluster(tabs, targetTab) {
+    const targetTabIndex = targetTab.index;
+    const targetArrayIndex = tabs.findIndex(tab => tab.index === targetTabIndex);
+    const difference = targetTabIndex - targetArrayIndex;
+    return tabs.filter(
+        /**
+         * Cluster tabs share same difference between tab and tabs-array indexes.
+         * @param {Tab} tab
+         * @param {number} arrayIndex
+         * @returns {boolean}
+         */
+        (tab, arrayIndex) => tab.index === (arrayIndex + difference)
+    );
+}
 
 
 /* --- Switch within selection commands --- */

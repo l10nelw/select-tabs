@@ -53,7 +53,7 @@ const BASE_DICT = {
     past24Hours: { parentId, contexts: ['tab'] },
     today: { parentId, contexts: ['tab'] },
     yesterday: { parentId, contexts: ['tab'] },
-    // Miscellaneous
+    // Selection
     all: { parentId, contexts: ['tab'] },
     focused: { parentId, contexts: ['tab'] },
     unselected: { parentId, contexts: ['tab'] },
@@ -86,16 +86,17 @@ const DEFAULT_ACCESSKEYS = {
     siblings: 'i',
     siblings__descendants: 'b',
     // Directional
-    toStart: 'a',
+    toStart: 'r',
     toEnd: 'e',
     // Temporal
     pastHour: '1',
     past24Hours: '2',
     today: 'o',
     yesterday: 'y',
-    // Miscellaneous
-    all: 'l',
+    // Selection
+    all: 'a',
     unselected: 'v', // "Invert"
+    cluster: 'l',
     // Switch focus
     switchToHere: 'f',
 }
@@ -122,9 +123,10 @@ const DEFAULT_SHOWN_TAB_MENUITEMS = [
     'past24Hours',
     'today',
     'yesterday',
-    // Miscellaneous
+    // Selection
     'all',
     'unselected',
+    'cluster',
     // Switch focus
     'switchToHere',
 ]

@@ -82,13 +82,16 @@
       "description": "Temporal: Accessed Yesterday"
     },
     "all": {
-      "description": "Miscellaneous: All"
+      "description": "Selection: All"
     },
     "focused": {
-      "description": "Miscellaneous: Clear"
+      "description": "Selection: Clear"
     },
     "unselected": {
-      "description": "Miscellaneous: Invert"
+      "description": "Selection: Invert"
+    },
+    "cluster": {
+      "description": "Selection: Cluster"
     },
     "cycleForward": {
       "description": "Switch within selection: Cycle Forward",

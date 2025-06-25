@@ -33,12 +33,12 @@ async function populate() {
     for (const { name, shortcut } of shortcutableCommands)
         commands[name].shortcut = shortcut || '—';
 
-    if (SUPPORTS_ACCESSKEYS) {
-        commands.matchSelectionText.title = 'With Selected Text';
-    } else {
+    if (!SUPPORTS_ACCESSKEYS) {
+        // Remove accessKey column
         $form.querySelector('.accessKey')?.remove(); // In <thead>
         $headingTemplate.querySelector('.accessKey')?.remove();
         $rowTemplate.querySelector('.accessKey')?.remove();
+        // These commands are not configurable (cannot disable, no access keys)
         delete commands.menuRoot;
         delete commands.matchLinkText;
         delete commands.matchSelectionText;

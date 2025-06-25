@@ -26,10 +26,10 @@ To add a command:
  * @type {CommandDict}
  */
 const BASE_DICT = {
-    [parentId]: { contexts: ['tab', 'link'], title: APP_NAME },
+    [parentId]: { contexts: ['tab', 'link', 'selection'], title: APP_NAME },
     // Text search
-    matchLinkText: { parentId, contexts: ['link'], category: 'Text search', title: `With Link Text` },
-    matchSelectionText: { contexts: ['selection'], category: 'Text search', title: `${APP_NAME} With "%s"` },
+    matchLinkText: { parentId, contexts: ['link'], category: 'Text search', title: `Link Text in Title/URL` },
+    matchSelectionText: { parentId, contexts: ['selection'], category: 'Text search', title: `Selected Text in Title/URL` },
     // URL-based
     duplicates: { parentId, contexts: ['tab', 'link'] },
     sameSite: { parentId, contexts: ['tab', 'link'] },
@@ -72,8 +72,8 @@ const BASE_DICT = {
 const DEFAULT_ACCESSKEYS = {
     menuRoot: 's',
     // Text search
-    matchLinkText: 'w',
-    matchSelectionText: 'w',
+    matchLinkText: 't',
+    matchSelectionText: 't',
     // URL-based
     duplicates: 'u',
     sameSite: 's',

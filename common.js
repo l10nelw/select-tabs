@@ -1,5 +1,15 @@
 /**
- * @typedef {object.<string, any>} Tab
+ * @typedef Tab
+ * @property {boolean} active
+ * @property {string} cookieStoreId
+ * @property {number} groupId
+ * @property {boolean} highlighted
+ * @property {number} index
+ * @property {boolean} isInReaderMode
+ * @property {number} lastAccessed
+ * @property {number} [openerTabId]
+ * @property {string} title
+ * @property {string} url
  * @see {@link https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/Tab}
 */
 
@@ -11,13 +21,14 @@
 /**
  * Superset of the menu item createProperties object. Extra properties indicated as "Select Tabs only".
  * @see {@link https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/menus/create#createproperties}
- * @typedef {object.<string, any>} CommandInfo
+ * @typedef CommandInfo
  * @property {string[]} contexts
- * @property {string} [accessKey] - Select Tabs only
- * @property {string} [category] - Select Tabs only
+ * @property {string} [accessKey] - Added by Select Tabs
+ * @property {string} [category] - Added by Select Tabs
  * @property {string} [parentId]
- * @property {string} [shortcut] - Select Tabs only
+ * @property {string} [shortcut] - Added by Select Tabs
  * @property {string} [title]
+ * @property {'separator'} [type]
  */
 
 /** @typedef {object.<CommandId, CommandInfo>} CommandDict */

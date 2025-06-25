@@ -101,7 +101,7 @@ const DEFAULT_ACCESSKEYS = {
 }
 
 /**
- * Dict of command names to be shown in the tab context menu by default, in appropriate order grouped by category.
+ * Array of command names to be shown in the tab context menu by default, in appropriate order grouped by category.
  * @type {CommandId[]}
  */
 const DEFAULT_SHOWN_TAB_MENUITEMS = [

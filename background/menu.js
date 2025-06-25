@@ -19,11 +19,6 @@ export async function populate() {
     /**
      * @param {CommandId?} id
      * @param {CommandInfo} info
-     * @param {string[]} info.contexts
-     * @param {CommandId} [parentId]
-     * @param {string} info.type
-     * @param {string} info.title
-     * @param {string} [info.accessKey]
      */
     function addItem(id, { contexts, parentId, type, title, accessKey }) {
         const item = { id, contexts, parentId, type };

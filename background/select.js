@@ -1,7 +1,8 @@
 /** @typedef {import('../common.js').Tab} Tab */
+/** @typedef {import('./get.js').Getter} Getter */
 
 /**
- * @param {Function} getter
+ * @param {Getter} getter
  * @param {Tab} targetTab
  * @param {object} [menuClickInfo]
  * @param {string[]} menuClickInfo.modifiers

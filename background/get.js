@@ -5,6 +5,33 @@
  */
 
 /** @typedef {import('../common.js').Tab} Tab */
+/**
+ * @callback ContextMenuClick_Getter
+ * @param {Tab} _
+ * @param {object} menuClickInfo
+ * @param {string} menuClickInfo.linkText
+ * @param {string} menuClickInfo.selectionText
+ * @returns {Promise<Tab[]?>}
+ */
+/**
+ * @callback Targeted_NoNull_Getter
+ * @param {Tab} tab
+ * @returns {Promise<Tab[]>}
+ */
+/**
+ * @callback Targeted_CanNull_Getter
+ * @param {Tab} tab
+ * @returns {Promise<Tab[]?>}
+ */
+/**
+ * @callback Targetless_NoNull_Getter
+ * @returns {Promise<Tab[]>}
+ */
+/**
+ * @callback Targetless_CanNull_Getter
+ * @returns {Promise<Tab[]?>}
+ */
+/** @typedef {ContextMenuClick_Getter | Targeted_NoNull_Getter | Targeted_CanNull_Getter | Targetless_NoNull_Getter | Targeted_CanNull_Getter} Getter */
 
 /**
  * @param {object.<string, any>} properties
@@ -12,9 +39,7 @@
  */
 export const get = properties => browser.tabs.query({ currentWindow: true, ...properties });
 
-/**
- * @returns {Promise<Tab[]>}
- */
+/** @type {Targetless_NoNull_Getter} */
 const selected = () => get({ highlighted: true });
 
 /**
@@ -35,21 +60,8 @@ function setTabFocus(tabsToSelect, tabToFocus) {
 
 /* --- Text search commands --- */
 
-/**
- * @param {Tab} [_]
- * @param {object} menuClickInfo
- * @param {string} menuClickInfo.linkText
- * @returns {Promise<Tab[]?>}
- */
-export const matchLinkText = (_, { linkText }) => matchText(linkText);
-
-/**
- * @param {Tab} [_]
- * @param {object} menuClickInfo
- * @param {string} menuClickInfo.selectionText
- * @returns {Promise<Tab[]?>}
- */
-export const matchSelectionText = (_, { selectionText }) => matchText(selectionText);
+/** @type {ContextMenuClick_Getter} */ export const matchLinkText = (_, { linkText }) => matchText(linkText);
+/** @type {ContextMenuClick_Getter} */ export const matchSelectionText = (_, { selectionText }) => matchText(selectionText);
 
 /**
  * @param {string} text
@@ -81,28 +93,18 @@ async function matchText(text) {
 
 /* --- URL-based commands --- */
 
-/**
- * @param {Tab} tab
- * @param {boolean} tab.isInReaderMode
- * @param {string} tab.url
- * @returns {Promise<Tab[]>}
- */
+/** @type {Targeted_NoNull_Getter} */
 export async function duplicates({ url, isInReaderMode }) {
     if (isInReaderMode)
         url = getReaderUrl(url);
-    const { protocol, hostname, pathname, search } = new URL(url); // Remove port and hash; they are not queryable
+    const { protocol, hostname, pathname, search } = new URL(url); // Ignore port and hash; they are not queryable
     url = (protocol === 'about:') ?
         protocol + pathname :
         `${protocol}//${hostname}${pathname}${search}`;
     return get({ url });
 }
 
-/**
- * @param {Tab} tab
- * @param {boolean} tab.isInReaderMode
- * @param {string} tab.url
- * @returns {Promise<Tab[]>}
- */
+/** @type {Targeted_NoNull_Getter} */
 export async function sameSite({ url, isInReaderMode }) {
     if (isInReaderMode)
         url = getReaderUrl(url);
@@ -119,10 +121,7 @@ export async function sameSite({ url, isInReaderMode }) {
     return (await get({ url: `${protocol}*` })).filter(tab => !tab.isInReaderMode);
 }
 
-/**
- * @param {Tab} tab
- * @returns {Promise<Tab[]>}
- */
+/** @type {Targeted_NoNull_Getter} */
 export async function sameSite__cluster(tab) {
     const tabs = await sameSite(tab);
     const targetTabIndex = tab.index;
@@ -134,10 +133,7 @@ export async function sameSite__cluster(tab) {
     );
 }
 
-/**
- * @param {Tab} tab
- * @returns {Promise<Tab[]>}
- */
+/** @type {Targeted_NoNull_Getter} */
 export async function sameSite__descendants(tab) {
     const tabs = await sameSite(tab);
     const descendantTabs = (await Promise.all( tabs.map(getDescendants) )).flat();
@@ -166,21 +162,10 @@ const getReaderTabsByHostname = async hostname =>
 
 /* --- Directional commands --- */
 
-/**
- * @param {Tab} tab
- * @returns {Promise<Tab[]>}
- */
-export const toStart = async ({ index }) => (await get()).slice(0, index + 1);
+/** @type {Targeted_NoNull_Getter} */ export const toStart = async ({ index }) => (await get()).slice(0, index + 1);
+/** @type {Targeted_NoNull_Getter} */ export const toEnd = async ({ index }) => (await get()).slice(index);
 
-/**
- * @param {Tab} tab
- * @returns {Promise<Tab[]>}
- */
-export const toEnd = async ({ index }) => (await get()).slice(index);
-
-/**
- * @returns {Promise<Tab[]?>}
- */
+/** @type {Targetless_CanNull_Getter} */
 export async function addLeft() {
     const selectedTabs = await selected();
     const firstTabIndex = selectedTabs[0].index;
@@ -188,9 +173,7 @@ export async function addLeft() {
         return selectedTabs.concat({ index: firstTabIndex - 1 });
 }
 
-/**
- * @returns {Promise<Tab[]?>}
- */
+/** @type {Targetless_CanNull_Getter} */
 export async function addRight() {
     const selectedTabs = await selected();
     const tabToAdd = await getByIndex(selectedTabs.at(-1).index + 1);
@@ -198,9 +181,7 @@ export async function addRight() {
         return selectedTabs.concat({ index: tabToAdd.index });
 }
 
-/**
- * @returns {Promise<Tab[]?>}
- */
+/** @type {Targetless_CanNull_Getter} */
 export async function trailLeft() {
     const tabsToSelect = await selected();
     const focusedTabArrayIndex = tabsToSelect.findIndex(tab => tab.active);
@@ -216,9 +197,7 @@ export async function trailLeft() {
     return setTabFocus(tabsToSelect, leftTab); // Switch focus to leftTab; Adds to selection if not already included, which expands trail
 }
 
-/**
- * @returns {Promise<Tab[]?>}
- */
+/** @type {Targetless_CanNull_Getter} */
 export async function trailRight() {
     const tabsToSelect = await selected();
     const focusedTabArrayIndex = tabsToSelect.findIndex(tab => tab.active);
@@ -243,30 +222,20 @@ const getByIndex = async index => (await get({ index }).catch(() => null))?.[0];
 
 /* --- Tab-tree commands --- */
 
-/**
- * @param {Tab} tab
- * @returns {Promise<Tab[]?>}
- */
+/** @type {Targeted_CanNull_Getter} */
 export async function descendants(tab) {
     const descendantTabs = await getDescendants(tab);
     if (descendantTabs.length)
         return descendantTabs.concat(tab);
 }
 
-/**
- * @param {Tab} tab
- * @param {number} tab.openerTabId
- * @returns {Promise<Tab[]?>}
- */
+/** @type {Targeted_CanNull_Getter} */
 export async function parent({ openerTabId }) {
     if (openerTabId)
         return [await getById(openerTabId)];
 }
 
-/**
- * @param {Tab} tab
- * @returns {Promise<Tab[]?>}
- */
+/** @type {Targeted_CanNull_Getter} */
 export async function parent__descendants(tab) {
     const { openerTabId } = tab;
     if (openerTabId) {
@@ -276,22 +245,14 @@ export async function parent__descendants(tab) {
     return descendants(tab);
 }
 
-/**
- * @param {Tab} tab
- * @param {number} tab.openerTabId
- * @returns {Promise<Tab[]>}
- */
+/** @type {Targeted_NoNull_Getter} */
 export async function siblings({ openerTabId }) {
     return openerTabId ?
         getChildrenOfId(openerTabId) : // If target tab has parent, get all tabs with same parent
         (await get()).filter(tab => !tab.openerTabId); // Else, get all parentless tabs
 }
 
-/**
- * @param {Tab} tab
- * @param {number} tab.openerTabId
- * @returns {Promise<Tab[]>}
- */
+/** @type {Targeted_NoNull_Getter} */
 export function siblings__descendants({ openerTabId }) {
     return openerTabId ?
         getDescendants(openerTabId) :
@@ -326,10 +287,10 @@ const getChildrenOfId = openerTabId => get({ openerTabId });
 const HOUR = 1000 * 60 * 60;
 const DAY = HOUR * 24;
 
-/** @returns {Promise<Tab[]>} */ export const pastHour = () => getTabsAccessedWithinPeriod(HOUR);
-/** @returns {Promise<Tab[]>} */ export const past24Hours = () => getTabsAccessedWithinPeriod(DAY);
-/** @returns {Promise<Tab[]>} */ export const today = () => getTabsAccessedOnDay(0);
-/** @returns {Promise<Tab[]>} */ export const yesterday = () => getTabsAccessedOnDay(-1);
+/** @type {Targetless_NoNull_Getter} */ export const pastHour = () => getTabsAccessedWithinPeriod(HOUR);
+/** @type {Targetless_NoNull_Getter} */ export const past24Hours = () => getTabsAccessedWithinPeriod(DAY);
+/** @type {Targetless_NoNull_Getter} */ export const today = () => getTabsAccessedOnDay(0);
+/** @type {Targetless_NoNull_Getter} */ export const yesterday = () => getTabsAccessedOnDay(-1);
 
 /**
  * @param {number} period
@@ -365,16 +326,15 @@ async function getTabsAccessedOnDay(offset) {
 
 /* --- Miscellaneous commands --- */
 
-/** @returns {Promise<Tab[]>} */ export const all = () => get();
-/** @returns {Promise<Tab[]>} */ export const focused = () => get({ active: true }); // "Clear"
-/** @returns {Promise<Tab[]>} */ export const unselected = () => get({ highlighted: false }); // "Invert"
+/** @type {Targetless_NoNull_Getter} */ export const all = () => get();
+/** @type {Targetless_NoNull_Getter} */ export const focused = () => get({ active: true }); //// "Clear"
+/** @type {Targetless_NoNull_Getter} */ export const unselected = () => get({ highlighted: false }); // "Invert"
 
 
 /* --- Switch within selection commands --- */
 
 /**
- * @param {Tab} tab
- * @returns {Promise<Tab[]>}
+ * @type {Targeted_NoNull_Getter}
  * @modifies tab
  */
 export const switchToHere = async tab => setTabFocus(await selected(), tab);

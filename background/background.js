@@ -8,6 +8,7 @@ import * as Menu from './menu.js';
 Menu.populate();
 browser.menus.onClicked.addListener(onMenuClicked);
 browser.commands.onCommand.addListener(onKeyboardShortcut);
+browser.browserAction.onClicked.addListener(onButtonClicked);
 
 /**
  * @listens browser.menus.onClicked
@@ -24,4 +25,11 @@ function onMenuClicked(menuClickInfo, targetTab) {
  */
 async function onKeyboardShortcut(commandId) {
     selectTabs(Getters[commandId], (await Getters.focused())[0]);
+}
+
+/**
+ * @listens browser.browserAction.onClicked
+ */
+async function onButtonClicked() {
+    browser.runtime.openOptionsPage();
 }

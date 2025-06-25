@@ -15,6 +15,12 @@
   "background": {
     "page": "background/background.html"
   },
+  "browser_action": {
+    "default_icon": {
+      "48": "selecttabs.svg",
+      "96": "selecttabs.svg"
+    }
+  },
   "options_ui": {
     "page": "options/options.html"
   },

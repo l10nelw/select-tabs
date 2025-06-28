@@ -64,27 +64,35 @@ const LESS_PREFERRED_WORDS = new Set(['and', 'the', 'to', 'in']);
 function indicateAccessKey(title, accessKey) {
     if (!accessKey)
         return title;
+    // Find uppercase match
+    const ucAccessKey = accessKey.toUpperCase();
+    let index = title.indexOf(ucAccessKey);
+    if (index >= 0)
+        return insertAmpersand(title, index);
+    // Find match avoiding common words
     const words = title.split(' ');
     for (let i = 0, n = words.length; i < n; i++) {
         const word = words[i];
         const lcWord = word.toLowerCase();
         if (LESS_PREFERRED_WORDS.has(lcWord))
             continue;
-        const index = lcWord.indexOf(accessKey);
-        if (index !== -1) {
+        index = lcWord.indexOf(accessKey);
+        if (index >= 0) {
             words[i] = insertAmpersand(word, index);
             return words.join(' ');
         }
     }
-    const index = title.toLowerCase().indexOf(accessKey);
-    if (index !== -1)
+    // Find match anywhere
+    index = title.toLowerCase().indexOf(accessKey);
+    if (index >= 0)
         return insertAmpersand(title, index);
-    return `${title} (&${accessKey.toUpperCase()})`; // Display "title (key)"
+    // No match found
+    return `${title} (&${ucAccessKey})`; // Display "title (key)"
 }
 
 /**
- * @param {string} str
+ * @param {string} text
  * @param {number} index
  * @returns {string}
  */
-const insertAmpersand = (str, index) => str.slice(0, index) + '&' + str.slice(index);
+const insertAmpersand = (text, index) => text.slice(0, index) + '&' + text.slice(index);

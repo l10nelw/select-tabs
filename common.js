@@ -1,4 +1,5 @@
 /**
+ * @see {@link https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/Tab}
  * @typedef Tab
  * @property {boolean} active
  * @property {string} cookieStoreId
@@ -10,7 +11,6 @@
  * @property {number} [openerTabId]
  * @property {string} title
  * @property {string} url
- * @see {@link https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/Tab}
 */
 
 /**
@@ -19,14 +19,16 @@
  */
 
 /**
- * Superset of the menu item createProperties object. Extra properties indicated as "Select Tabs only".
+ * Superset of the menu item createProperties object.
+ * Extra properties used only by this extension are indicated as such.
  * @see {@link https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/menus/create#createproperties}
  * @typedef CommandInfo
  * @property {string[]} contexts
- * @property {string} [accessKey] - Added by Select Tabs
- * @property {string} [category] - Added by Select Tabs
+ * @property {string} [accessKey] - Extra property; save in storage
+ * @property {string} [category] - Extra property
  * @property {string} [parentId]
- * @property {string} [shortcut] - Added by Select Tabs
+ * @property {string} [shortcut] - Extra property
+ * @property {boolean} [showInTabMenu] - Extra property; save in storage
  * @property {string} [title]
  * @property {'separator'} [type]
  */
@@ -35,10 +37,16 @@
 
 /**
  * @typedef StoredData
+ * @property {object.<CommandId, { accessKey: string, showInTabMenu?: boolean }>} commands
  * @property {object.<string, any>} general
- * @property {CommandId[]} shownTabMenuItems
- * @property {object.<CommandId, string>} accessKeys
  */
+
+// Common constants and functions //
+
+export const MENU_ROOT = 'menuRoot';
+
+/** @type {string} */
+export const APP_NAME = browser.runtime.getManifest().name;
 
 /**
  * Check for OS name in browser's user agent string.

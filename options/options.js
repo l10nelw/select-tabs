@@ -1,5 +1,5 @@
 import { isOS } from '../common.js';
-import * as Commands from '../commands.js';
+import * as Storage from '../storage.js';
 
 /** @typedef {import('../common.js').StoredData} StoredData */
 /** @typedef {import('../common.js').CommandId} CommandId */
@@ -27,8 +27,8 @@ async function populate() {
     /** @type {HTMLTableRowElement} */ const $headingTemplate = $template.firstElementChild;
     /** @type {HTMLTableRowElement} */ const $rowTemplate = $template.lastElementChild;
 
-    /** @type {[{ general: object, commands: CommandDict, shownTabMenuItems: Set<CommandId> }, object[]]} */
-    const [{ general, commands, shownTabMenuItems }, shortcutableCommands] = await Promise.all([ Commands.getData(), browser.commands.getAll() ]);
+    /** @type {[{ commands: CommandDict, general: object.<string, any> }, { name: CommandId, shortcut: string }[]]} */
+    const [{ commands, general }, shortcutableCommands] = await Promise.all([ Storage.load(), browser.commands.getAll() ]);
 
     for (const { name, shortcut } of shortcutableCommands)
         commands[name].shortcut = shortcut || '—';
@@ -61,7 +61,7 @@ async function populate() {
      * @param {CommandInfo} info
      * @returns {HTMLTableRowElement}
      */
-    $commandTableBody.addRow = (id, { accessKey, contexts, parentId, shortcut, title }) => {
+    $commandTableBody.addRow = (id, { accessKey, contexts, parentId, showInTabMenu, shortcut, title }) => {
         /** @type {boolean} */
         const isTabMenuItem = parentId && contexts.includes('tab');
         if (!isTabMenuItem && !SUPPORTS_ACCESSKEYS)
@@ -89,7 +89,7 @@ async function populate() {
             /** @type {HTMLInputElement} */
             const $accessKey = $row.querySelector('.accessKey input');
             $accessKey.name = id;
-            $accessKey.value = accessKey;
+            $accessKey.value = accessKey ?? '';
             $accessKey.setAttribute('aria-label', `Access key for "${title}" command`);
         }
 
@@ -157,24 +157,22 @@ async function onFormInput(event) {
 async function onFormSubmit(event) {
     event.preventDefault();
 
+    /** @type {CommandDict} */
+    const commands = {};
+    for (const $input of $commandTableBody.querySelectorAll('.showInTabMenu input')) {
+        commands[$input.name] ??= {};
+        commands[$input.name].showInTabMenu = $input.checked;
+    }
+    for (const $input of $commandTableBody.querySelectorAll('.accessKey input')) {
+        commands[$input.name] ??= {};
+        commands[$input.name].accessKey = $input.value;
+    }
+
     /** @type {object.<string, any>} */
     const general = {};
     for (const $input of $form.querySelectorAll('#general input'))
-        if ($input.checked)
-            general[$input.name] = true;
+        general[$input.name] = $input.checked;
 
-    /** @type {string[]} */
-    const shownTabMenuItems = [];
-    for (const $input of $commandTableBody.querySelectorAll('.showInTabMenu input'))
-        if ($input.checked)
-            shownTabMenuItems.push($input.name);
-
-    /** @type {object.<CommandId, string>} */
-    const accessKeys = {};
-    for (const $input of $commandTableBody.querySelectorAll('.accessKey input'))
-        if ($input.value)
-            accessKeys[$input.name] = $input.value;
-
-    await browser.storage.sync.set(/** @type {StoredData} */ { general, shownTabMenuItems, accessKeys });
+    await Storage.save({ commands, general });
     browser.runtime.reload();
 }

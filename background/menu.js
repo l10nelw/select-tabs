@@ -1,5 +1,5 @@
-import * as Commands from '../commands.js';
-import { isOS } from '../common.js';
+import * as Storage from '../storage.js';
+import { MENU_ROOT as parentId, isOS } from '../common.js';
 
 /** @typedef {import('../common.js').CommandId} CommandId */
 /** @typedef {import('../common.js').CommandInfo} CommandInfo */
@@ -10,11 +10,8 @@ export async function populate() {
     browser.menus.removeAll();
 
     const SUPPORTS_ACCESSKEYS = !isOS('Mac OS'); // We want to avoid "title (key)" in MacOS
-    const parentId = 'menuRoot';
+    const { commands } = await Storage.load();
     const separatorInfo = { parentId, contexts: ['tab'], type: 'separator' };
-
-    /** @type {{ commands: CommandDict, shownTabMenuItems: Set<CommandId> }} */
-    const { commands, shownTabMenuItems } = await Commands.getData();
 
     /**
      * @param {CommandId?} id
@@ -35,7 +32,7 @@ export async function populate() {
     // Iterate through remaining commands
     let currentCategory = '';
     for (const [commandId, commandInfo] of Object.entries(commands)) {
-        if (shownTabMenuItems.has(commandId)) {
+        if (commandInfo.showInTabMenu) {
             // Add seperator at every change of category
             if (commandInfo.category !== currentCategory) {
                 if (currentCategory)

@@ -93,7 +93,7 @@ async function matchText(text) {
 
 /* --- URL-based commands --- */
 
-/** @type {Targeted_NoNull_Getter} */
+/** @type {Targeted_CanNull_Getter} */
 export async function duplicates({ url, isInReaderMode }) {
     if (isInReaderMode)
         url = getReaderUrl(url);
@@ -101,7 +101,9 @@ export async function duplicates({ url, isInReaderMode }) {
     url = (protocol === 'about:') ?
         protocol + pathname :
         `${protocol}//${hostname}${pathname}${search}`;
-    return get({ url });
+    const tabs = await get({ url });
+    if (tabs.length > 1)
+        return tabs;
 }
 
 /** @type {Targeted_NoNull_Getter} */

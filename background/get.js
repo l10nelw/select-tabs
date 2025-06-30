@@ -40,7 +40,7 @@
 export const get = properties => browser.tabs.query({ currentWindow: true, ...properties });
 
 /** @type {Targetless_NoNull_Getter} */
-const selected = () => get({ highlighted: true });
+export const selected = () => get({ highlighted: true });
 
 /**
  * Explicitly indicate the tab to focus among the tabs to select.

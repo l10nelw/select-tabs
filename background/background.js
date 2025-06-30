@@ -1,5 +1,5 @@
-import * as Getters from './get.js'; // Tab getters (menu commands)
-import selectTabs from './select.js'; // Selects tabs returned by getter
+import { active } from './get.js';
+import selectTabs from './select.js';
 import * as Menu from './menu.js';
 
 /** @typedef {import('../common.js').Tab} Tab */
@@ -13,10 +13,12 @@ browser.browserAction.onClicked.addListener(onButtonClicked);
 /**
  * @listens browser.menus.onClicked
  * @param {object} menuClickInfo
+ * @param {CommandId} menuClickInfo.menuItemId
+ * @param {string[]} menuClickInfo.modifiers
  * @param {Tab} targetTab
  */
 function onMenuClicked(menuClickInfo, targetTab) {
-    selectTabs(Getters[menuClickInfo.menuItemId], targetTab, menuClickInfo);
+    selectTabs(menuClickInfo.menuItemId, targetTab, menuClickInfo);
 }
 
 /**
@@ -24,7 +26,8 @@ function onMenuClicked(menuClickInfo, targetTab) {
  * @param {CommandId} commandId
  */
 async function onKeyboardShortcut(commandId) {
-    selectTabs(Getters[commandId], (await Getters.focused())[0]);
+    const activeTab = (await active())[0];
+    selectTabs(commandId, activeTab);
 }
 
 /**

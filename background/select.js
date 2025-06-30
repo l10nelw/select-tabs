@@ -1,32 +1,38 @@
+import * as Getter from './get.js';
+
 /** @typedef {import('../common.js').Tab} Tab */
-/** @typedef {import('./get.js').Getter} Getter */
+/** @typedef {import('../common.js').CommandId} CommandId */
 
 /**
- * @param {Getter} getter
+ * Commands that always include pinned tabs in output.
+ * @type {Set<CommandId>}
+ */
+const PIN_AGNOSTIC_COMMANDS = new Set([
+    'parent', 'parent__descendants',
+    'addLeft', 'addRight', 'trailLeft', 'trailRight',
+    'switchToHere', 'cycleForward', 'cycleBackward',
+]);
+
+/**
+ * @param {CommandId} commandId
  * @param {Tab} targetTab
  * @param {object} [menuClickInfo]
  * @param {string[]} menuClickInfo.modifiers
  */
-export default async function selectTabs(getter, targetTab, menuClickInfo) {
-    let tabsToSelect = await getter(targetTab, menuClickInfo);
+export default async function selectTabs(commandId, targetTab, menuClickInfo) {
+    /** @type {Tab[]?} */
+    let tabsToSelect = await Getter[commandId](targetTab, menuClickInfo);
     if (!tabsToSelect)
         return;
 
-    const getterName = getter.name;
     const unpinnedIndex = tabsToSelect.findIndex(tab => !tab.pinned);
 
     // Include pinned tabs if any of these conditions are met
     /** @type {boolean} */ const includePinned =
         targetTab.pinned ||
-        // Is parent getter
-        getterName.startsWith('parent') ||
-        // Is "switch within selection" command
-        getterName === 'switchToHere' || getterName.startsWith('cycle') ||
-        // Is "add/trail x" command
-        getterName.startsWith('add') || getterName.startsWith('trail') ||
+        PIN_AGNOSTIC_COMMANDS.has(commandId) ||
         // Is "invert selection" command, and we infer that the pre-command selection had at least one pinned tab
-        getterName === 'unselected' && (unpinnedIndex === 0 || unpinnedIndex > findMismatchedIndex(tabsToSelect));
-
+        commandId === 'unselected' && (unpinnedIndex === 0 || unpinnedIndex > findMismatchedIndex(tabsToSelect));
     if (!includePinned) {
         // Remove pinned tabs
         if (unpinnedIndex === -1)
@@ -34,11 +40,8 @@ export default async function selectTabs(getter, targetTab, menuClickInfo) {
         tabsToSelect = tabsToSelect.slice(unpinnedIndex);
     }
 
-    if (menuClickInfo?.modifiers.includes('Shift')) {
-        // Keep current selection, combine with new selection
-        const currentSelectedTabs = await browser.tabs.query({ currentWindow: true, highlighted: true });
-        tabsToSelect = tabsToSelect.concat(currentSelectedTabs);
-    }
+    if (menuClickInfo?.modifiers.includes('Shift'))
+        tabsToSelect.push(...await selected()); // Add current selection to the new selection
 
     const tabCount = tabsToSelect.length;
 

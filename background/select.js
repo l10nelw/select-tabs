@@ -48,16 +48,17 @@ export default async function selectTabs(commandId, targetTab, menuClickInfo) {
     if (!tabCount)
         return;
 
+    // Handle any any switch in active tab status
+    // Set up tabs for browser.tabs.highlight() shortly, which will activate the first tab in array
     if (tabCount >= 2) {
-        // Set up tabs for browser.tabs.highlight(), which will activate (put focus on) the first tab in array
-        const indexToFocus = (
+        const indexToActivate = (
             // Move any of these available tabs to the start of the array
             // +1 to found indexes so that -1 (not found) becomes 0 (falsey), allowing this OR-operation to work
-            tabsToSelect.findIndex(tab => tab.active) + 1 || // Currently focused tab
+            tabsToSelect.findIndex(tab => tab.active) + 1 || // Currently active tab
             findIdIndex(tabsToSelect, targetTab.id) + 1 // Target tab
         ) - 1; // Revert 0 to -1
-        if (indexToFocus >= 1) // If tab to focus is available and not already first in array
-            [ tabsToSelect[0], tabsToSelect[indexToFocus] ] = [ tabsToSelect[indexToFocus], tabsToSelect[0] ]; // Swap with first tab
+        if (indexToActivate > 0) // If tab to activate is available and not already first in array
+            [ tabsToSelect[0], tabsToSelect[indexToActivate] ] = [ tabsToSelect[indexToActivate], tabsToSelect[0] ]; // Swap with first tab
     }
 
     browser.tabs.highlight({ tabs: tabsToSelect.map(tab => tab.index), populate: false });

@@ -96,7 +96,7 @@
     "all": {
       "description": "Selection: All"
     },
-    "focused": {
+    "active": {
       "description": "Selection: Clear"
     },
     "unselected": {

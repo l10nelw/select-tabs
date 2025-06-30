@@ -43,17 +43,18 @@ export const get = properties => browser.tabs.query({ currentWindow: true, ...pr
 export const selected = () => get({ highlighted: true });
 
 /**
- * Explicitly indicate the tab to focus among the tabs to select.
+ * Explicitly indicate the tab to switch to among the tabs to select.
  * If the tab is not among the tabs to select, it will increase the selection set by that one tab.
  * @param {Tab[]} tabsToSelect
- * @param {Tab} tabToFocus
+ * @param {Tab} tabToActivate
  * @returns {Tab[]}
- * @modifies tabsToSelect, tabToFocus
+ * @modifies tabsToSelect
+ * @modifies tabToActivate
  */
-function setTabFocus(tabsToSelect, tabToFocus) {
-    tabToFocus.active = true;
-    if (tabToFocus.id !== tabsToSelect[0].id)
-        tabsToSelect.unshift(tabToFocus); // browser.tabs.highlight() will focus on the first tab in array
+function setActiveTab(tabsToSelect, tabToActivate) {
+    tabToActivate.active = true;
+    if (tabToActivate.id !== tabsToSelect[0].id)
+        tabsToSelect.unshift(tabToActivate); // browser.tabs.highlight() will activate the first tab in array
     return tabsToSelect;
 }
 
@@ -177,33 +178,33 @@ export async function addRight() {
 /** @type {Targetless_CanNull_Getter} */
 export async function trailLeft() {
     const tabsToSelect = await selected();
-    const focusedTabArrayIndex = tabsToSelect.findIndex(tab => tab.active);
-    const focusedTab = tabsToSelect[focusedTabArrayIndex];
-    const focusedTabIndex = focusedTab.index;
-    if (focusedTabIndex === 0)
+    const activeTabArrayIndex = tabsToSelect.findIndex(tab => tab.active);
+    const activeTab = tabsToSelect[activeTabArrayIndex];
+    const activeTabIndex = activeTab.index;
+    if (activeTabIndex === 0)
         return;
-    const rightTab = await getByIndex(focusedTabIndex + 1);
-    const leftTabIndex = focusedTabIndex - 1;
+    const rightTab = await getByIndex(activeTabIndex + 1);
+    const leftTabIndex = activeTabIndex - 1;
     const leftTab = tabsToSelect.find(tab => tab.index === leftTabIndex) || { index: leftTabIndex };
     if (leftTab.highlighted && !rightTab?.highlighted)
-        tabsToSelect.splice(focusedTabArrayIndex, 1); // Shrink trail by removing focusedTab from selection
-    return setTabFocus(tabsToSelect, leftTab); // Switch focus to leftTab; Adds to selection if not already included, which expands trail
+        tabsToSelect.splice(activeTabArrayIndex, 1); // Shrink trail by removing activeTab from selection
+    return setActiveTab(tabsToSelect, leftTab); // Activate leftTab; Adds to selection if not already included, which expands trail
 }
 
 /** @type {Targetless_CanNull_Getter} */
 export async function trailRight() {
     const tabsToSelect = await selected();
-    const focusedTabArrayIndex = tabsToSelect.findIndex(tab => tab.active);
-    const focusedTab = tabsToSelect[focusedTabArrayIndex];
-    const focusedTabIndex = focusedTab.index;
-    const rightTab = await getByIndex(focusedTabIndex + 1);
+    const activeTabArrayIndex = tabsToSelect.findIndex(tab => tab.active);
+    const activeTab = tabsToSelect[activeTabArrayIndex];
+    const activeTabIndex = activeTab.index;
+    const rightTab = await getByIndex(activeTabIndex + 1);
     if (!rightTab)
         return;
-    const leftTabIndex = focusedTabIndex - 1;
+    const leftTabIndex = activeTabIndex - 1;
     const leftTab = leftTabIndex >= 0 && tabsToSelect.find(tab => tab.index === leftTabIndex);
     if (rightTab.highlighted && !leftTab?.highlighted)
-        tabsToSelect.splice(focusedTabArrayIndex, 1); // Shrink trail by removing focusedTab from selection
-    return setTabFocus(tabsToSelect, rightTab); // Switch focus to rightTab; Adds to selection if not already included, which expands trail
+        tabsToSelect.splice(activeTabArrayIndex, 1); // Shrink trail by removing activeTab from selection
+    return setActiveTab(tabsToSelect, rightTab); // Activate rightTab; Adds to selection if not already included, which expands trail
 }
 
 /**
@@ -233,7 +234,7 @@ export async function parent__descendants(tab) {
     const { openerTabId } = tab;
     if (openerTabId) {
         const [parentTab, descendantTabs] = await Promise.all([ getById(openerTabId), getDescendants(openerTabId) ]);
-        return setTabFocus(descendantTabs, parentTab);
+        return setActiveTab(descendantTabs, parentTab);
     }
     return descendants(tab);
 }
@@ -329,13 +330,13 @@ async function getTabsAccessedOnDay(offset) {
 /* --- Selection commands --- */
 
 /** @type {Targetless_NoNull_Getter} */ export const all = () => get();
-/** @type {Targetless_NoNull_Getter} */ export const focused = () => get({ active: true }); // "Clear"
+/** @type {Targetless_NoNull_Getter} */ export const active = () => get({ active: true }); // "Clear"
 /** @type {Targetless_NoNull_Getter} */ export const unselected = () => get({ highlighted: false }); // "Invert"
 /** @type {Targeted_NoNull_Getter}   */ export const cluster = async tab => getCluster(await selected(), tab);
 
 /**
  * Given an array of tabs that may have continuity gaps in their indexes, return only the consecutive-indexes subarray that the targetTab is part of.
- * Meaning, return a bunch of tabs around the targetTab that must be adjacent to each other.
+ * Meaning, return the bunch of tabs around the targetTab that must be adjacent to each other.
  * @param {Tab[]} tabs
  * @param {Tab} targetTab
  * @returns {Tab[]}
@@ -362,7 +363,7 @@ function getCluster(tabs, targetTab) {
  * @type {Targeted_NoNull_Getter}
  * @modifies tab
  */
-export const switchToHere = async tab => setTabFocus(await selected(), tab);
+export const switchToHere = async tab => setActiveTab(await selected(), tab);
 
 /** @returns {Promise<Tab[]>} */ export const cycleForward = () => cycleInSelection(1);
 /** @returns {Promise<Tab[]>} */ export const cycleBackward = () => cycleInSelection(-1);
@@ -373,7 +374,7 @@ export const switchToHere = async tab => setTabFocus(await selected(), tab);
  */
 async function cycleInSelection(offset) {
     const selectedTabs = await selected();
-    const focusedTabArrayIndex = selectedTabs.findIndex(tab => tab.active);
-    const tab = selectedTabs.at(focusedTabArrayIndex + offset) ?? selectedTabs[0];
-    return setTabFocus(selectedTabs, tab);
+    const activeTabArrayIndex = selectedTabs.findIndex(tab => tab.active);
+    const tab = selectedTabs.at(activeTabArrayIndex + offset) ?? selectedTabs[0];
+    return setActiveTab(selectedTabs, tab);
 }

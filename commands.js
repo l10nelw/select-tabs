@@ -144,7 +144,7 @@ export default {
         parentId, contexts: ['tab'],
         showInTabMenu: true, accessKey: 'a',
     },
-    focused: { // Clear
+    active: { // Clear
         parentId, contexts: ['tab'],
         showInTabMenu: false,
     },

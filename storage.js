@@ -12,11 +12,11 @@ import COMMAND_DICT from '../commands.js';
  */
 export async function load() {
     /** @type {StoredData} */ const storedData = await browser.storage.sync.get();
-    /** @type {object.<string, any>} */ const general = storedData.general;
+    /** @type {object.<string, any>} */ const general = storedData.general ?? {};
     /** @type {CommandDict} */ const commands = {};
 
     for (const commandId in COMMAND_DICT)
-        commands[commandId] = { ...COMMAND_DICT[commandId], ...storedData.commands[commandId] };
+        commands[commandId] = { ...COMMAND_DICT[commandId], ...storedData.commands?.[commandId] };
 
     // Handle older v4.0.x storage format and convert to new format
     if ('accessKeys' in storedData) {

@@ -38,20 +38,18 @@ export async function load() {
     /** @type {{ vertical: boolean }} */
     const { vertical } = general;
 
-    for (const [commandId, commandInfo] of Object.entries(commands)) {
-        // If shortcut-able command, parse description for category and title
-        if (commandId in MANIFEST_DICT) {
-            const [category, title] = MANIFEST_DICT[commandId].description.split(': ');
-            commandInfo.category = category;
-            commandInfo.title = title;
-        }
+    // For shortcut-able commands, parse description for category and title
+    for (const name in MANIFEST_DICT) {
+        const commandInfo = commands[name];
+        const [category, title] = MANIFEST_DICT[name].description.split(': ');
+        commandInfo.category = category;
 
         // Parse title for any alternate title
-        const [title, altTitle] = commandInfo.title.split(' | ');
-        if (altTitle) {
-            commandInfo.title = vertical ? altTitle : title;
-            browser.commands.update({ name: commandId, description: `${commandInfo.category}: ${commandInfo.title}` });
-        }
+        const [defaultTitle, altTitle] = title.split(' | ');
+        commandInfo.title = (vertical && altTitle) ? altTitle : defaultTitle;
+
+        // Update all descriptions (rather than just ones with alternate titles) to ensure any changes made for a new release will take hold
+        browser.commands.update({ name, description: `${commandInfo.category}: ${commandInfo.title}` });
     }
 
     return { commands, general };

@@ -1,17 +1,16 @@
 /*
 To add a command:
 - manifest.json
-    - If command is shortcut-able, add entry in "commands" object. `description` format is "<category>: <title>".
+    - If command is shortcut-able, add entry in "commands" object: `<commandId>: { description }`. `description` format is "<category>: <title>".
         - If command has alternate title for vertical tabs, `description` format is "<category>: <title> | <alt title>".
 - commands.js (this file)
-    - Mandatory: Add command's base properties as entry in BASE_DICT.
-    - If command has no manifest.json entry, include `category` and `title` properties.
-    - If command has alternate title for vertical tabs, `title` format is "<title> | <alt title>".
+    - Mandatory: Add command entry: typically `<commandId>: { parentId, contexts: ['tab'] }`.
+    - If command has no manifest.json entry, include `category` and `title` properties. Alternate title for vertical tabs not supported.
     - Add command's default user-definable properties `showInTabMenu` and `accessKey`.
 - get.js
     - Mandatory: Add command implementation.
 - select.js
-    - Add command's `includePinned` condition if required.
+    - If applicable, add command to PIN_AGNOSTIC_COMMANDS.
 */
 
 import { APP_NAME, MENU_ROOT as parentId } from '../common.js';

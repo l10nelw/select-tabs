@@ -233,8 +233,8 @@ export async function parent({ openerTabId }) {
 export async function parent__descendants(tab) {
     const { openerTabId } = tab;
     if (openerTabId) {
-        const [parentTab, descendantTabs] = await Promise.all([ getById(openerTabId), getDescendants(openerTabId) ]);
-        return setActiveTab(descendantTabs, parentTab);
+        const [parentTab, familyTabs] = await Promise.all([ getById(openerTabId), getDescendants(openerTabId) ]);
+        return familyTabs.concat(parentTab);
     }
     return descendants(tab);
 }

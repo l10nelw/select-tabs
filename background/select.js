@@ -41,7 +41,7 @@ export default async function selectTabs(commandId, targetTab, menuClickInfo) {
     }
 
     if (menuClickInfo?.modifiers.includes('Shift'))
-        tabsToSelect.push(...await selected()); // Add current selection to the new selection
+        tabsToSelect.push(...await Getter.selected()); // Add current selection to the new selection
 
     const tabCount = tabsToSelect.length;
 

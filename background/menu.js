@@ -51,7 +51,7 @@ export async function populate() {
     }
 }
 
-const LESS_PREFERRED_WORDS = new Set(['and', 'the', 'to', 'in']);
+const LESS_PREFERRED_WORDS = new Set(['and', 'or', 'the', 'a', 'an', 'to', 'in', 'for']);
 
 /**
 * @param {string} title

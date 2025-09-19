@@ -357,7 +357,7 @@ function getCluster(tabs, targetTab) {
 }
 
 
-/* --- Switch within selection commands --- */
+/* --- Switch in Selection commands --- */
 
 /**
  * @type {Targeted_NoNull_Getter}

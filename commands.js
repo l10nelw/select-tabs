@@ -32,15 +32,15 @@ export default {
         accessKey: 's',
     },
 
-    // Text search
+    // Text Search
     matchLinkText: {
         parentId, contexts: ['link'],
-        category: 'Text search', title: `Link Text in Title or URL`,
+        category: 'Text Search', title: `Link Text in Title or URL`,
         accessKey: 't',
     },
     matchSelectionText: {
         parentId, contexts: ['selection'],
-        category: 'Text search', title: `Selected Text in Title or URL`,
+        category: 'Text Search', title: `Selected Text in Title or URL`,
         accessKey: 't',
     },
 
@@ -62,7 +62,7 @@ export default {
         showInTabMenu: true, accessKey: 'm',
     },
 
-    // Tab tree
+    // Tab Tree
     descendants: {
         parentId, contexts: ['tab'],
         showInTabMenu: true, accessKey: 'd',
@@ -73,7 +73,7 @@ export default {
     },
     parent__descendants: {
         parentId, contexts: ['tab'],
-        showInTabMenu: true, accessKey: 'n',
+        showInTabMenu: true, accessKey: 'f',
     },
     siblings: {
         parentId, contexts: ['tab'],
@@ -156,10 +156,10 @@ export default {
         showInTabMenu: true, accessKey: 'l',
     },
 
-    // Switch within selection
+    // Switch in Selection
     switchToHere: {
         parentId, contexts: ['tab'],
-        category: 'Switch within selection', title: `Switch to Here`,
+        category: 'Switch in Selection', title: `Switch to Here`,
         showInTabMenu: true, accessKey: 'h',
     },
     cycleForward: {

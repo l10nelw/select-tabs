@@ -43,19 +43,19 @@
       "description": "URL-based: Same Site and Descendants"
     },
     "descendants": {
-      "description": "Tab tree: Descendants"
+      "description": "Tab Tree: Descendants"
     },
     "parent": {
-      "description": "Tab tree: Parent"
+      "description": "Tab Tree: Parent"
     },
     "parent__descendants": {
-      "description": "Tab tree: Parent and Descendants"
+      "description": "Tab Tree: Parent and Descendants (Family)"
     },
     "siblings": {
-      "description": "Tab tree: Siblings"
+      "description": "Tab Tree: Siblings"
     },
     "siblings__descendants": {
-      "description": "Tab tree: Siblings and Descendants"
+      "description": "Tab Tree: Siblings and Descendants"
     },
     "sameTabGroup": {
       "description": "Membership: Same Tab Group"
@@ -97,22 +97,22 @@
       "description": "Selection: All"
     },
     "active": {
-      "description": "Selection: Clear"
+      "description": "Selection: Clear Selection"
     },
     "unselected": {
-      "description": "Selection: Invert"
+      "description": "Selection: Invert Selection"
     },
     "cluster": {
-      "description": "Selection: Cluster"
+      "description": "Selection: Selection Cluster"
     },
     "cycleForward": {
-      "description": "Switch within selection: Cycle Forward",
+      "description": "Switch in Selection: Cycle Forward",
       "suggested_key": {
         "default": "Ctrl+Period"
       }
     },
     "cycleBackward": {
-      "description": "Switch within selection: Cycle Backward",
+      "description": "Switch in Selection: Cycle Backward",
       "suggested_key": {
         "default": "Ctrl+Comma"
       }

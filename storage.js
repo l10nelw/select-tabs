@@ -18,20 +18,6 @@ export async function load() {
     for (const commandId in COMMAND_DICT)
         commands[commandId] = { ...COMMAND_DICT[commandId], ...storedData.commands?.[commandId] };
 
-    // Handle older v4.0.x storage format and convert to new format
-    if ('accessKeys' in storedData) {
-        /** @type {{ accessKeys: object.<CommandId, string>, shownTabMenuItems: CommandId[] }} */
-        const { accessKeys, shownTabMenuItems } = storedData;
-
-        for (const commandId in accessKeys)
-            commands[commandId].accessKey = accessKeys[commandId];
-        for (const commandId of shownTabMenuItems)
-            commands[commandId].showInTabMenu = true;
-
-        await browser.storage.sync.clear();
-        save({ commands, general });
-    }
-
     /** @type {object.<CommandId, { description: string }>} */
     const MANIFEST_DICT = browser.runtime.getManifest().commands;
 

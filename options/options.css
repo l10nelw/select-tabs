@@ -68,12 +68,4 @@ td.accessKey {
     text-align: center;
 }
 
-td.shortcut {
-    padding-left: 1.5rem;
-    font-style: italic;
-
-    &:not(:empty) {
-        color: var(--accent-color);
-        cursor: pointer;
-    }
-}
+.nowrap { white-space: nowrap; }

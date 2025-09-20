@@ -16,19 +16,13 @@ $form.addEventListener('input', onFormInput);
 $form.addEventListener('focusin', onFormFocus);
 $form.addEventListener('click', onFormClick);
 
-/**
- * @param {string} type
- * @returns {string}
- */
-const relevantProp = type => (type === 'checkbox') ? 'checked' : 'value';
-
 async function populate() {
     const $template = $form.querySelector('template').content;
     /** @type {HTMLTableRowElement} */ const $headingTemplate = $template.firstElementChild;
     /** @type {HTMLTableRowElement} */ const $rowTemplate = $template.lastElementChild;
 
-    /** @type {[{ commands: CommandDict, general: object.<string, any> }, { name: CommandId, shortcut: string }[]]} */
-    const [{ commands, general }, shortcutableCommands] = await Promise.all([ Storage.load(), browser.commands.getAll() ]);
+    /** @type {[StoredData, { name: CommandId, shortcut: string }[]]} */
+    const [{ commands }, shortcutableCommands] = await Promise.all([ Storage.load(), browser.commands.getAll() ]);
 
     for (const { name, shortcut } of shortcutableCommands)
         commands[name].shortcut = shortcut || '—';
@@ -111,13 +105,6 @@ async function populate() {
         }
         $commandTableBody.addRow(id, info);
     }
-
-    // General fields
-    for (const [key, value] of Object.entries(general)) {
-        /** @type {HTMLInputElement} */
-        const $field = $form[key];
-        $field[relevantProp($field.type)] = value;
-    }
 }
 
 /**
@@ -168,11 +155,6 @@ async function onFormSubmit(event) {
         commands[$input.name].accessKey = $input.value;
     }
 
-    /** @type {object.<string, any>} */
-    const general = {};
-    for (const $input of $form.querySelectorAll('#general input'))
-        general[$input.name] = $input.checked;
-
-    await Storage.save({ commands, general });
+    await Storage.save(/** @type {StoredData} */ ({ commands }));
     browser.runtime.reload();
 }

@@ -38,7 +38,6 @@
 /**
  * @typedef StoredData
  * @property {object.<CommandId, { accessKey: string, showInTabMenu?: boolean }>} commands
- * @property {object.<string, any>} general
  */
 
 // Common constants and functions //

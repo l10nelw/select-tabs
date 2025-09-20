@@ -9,6 +9,7 @@ Menu.populate();
 browser.menus.onClicked.addListener(onMenuClicked);
 browser.commands.onCommand.addListener(onKeyboardShortcut);
 browser.browserAction.onClicked.addListener(onButtonClicked);
+browser.browserSettings.verticalTabs.onChange.addListener(onVerticalTabsToggled);
 
 /**
  * @listens browser.menus.onClicked
@@ -35,4 +36,11 @@ async function onKeyboardShortcut(commandId) {
  */
 async function onButtonClicked() {
     browser.runtime.openOptionsPage();
+}
+
+/**
+ * @listens browser.browserSettings.verticalTabs.onChange
+ */
+function onVerticalTabsToggled() {
+    browser.runtime.reload();
 }

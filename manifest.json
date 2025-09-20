@@ -8,6 +8,7 @@
     "96": "selecttabs.svg"
   },
   "permissions": [
+    "browserSettings",
     "menus",
     "storage",
     "tabs"

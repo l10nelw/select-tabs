@@ -1,10 +1,7 @@
 import { isOS } from '../common.js';
 import * as Storage from '../storage.js';
 
-/** @typedef {import('../common.js').StoredData} StoredData */
-/** @typedef {import('../common.js').CommandId} CommandId */
-/** @typedef {import('../common.js').CommandInfo} CommandInfo */
-/** @typedef {import('../common.js').CommandDict} CommandDict */
+/** @import { CommandId, CommandInfo, CommandDict, StoredData } from '../common.js' */
 
 /** @type {boolean} */ const SUPPORTS_ACCESSKEYS = !isOS('Mac OS');
 /** @type {HTMLFormElement} */ const $form = document.body.querySelector('form');

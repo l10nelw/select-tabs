@@ -1,10 +1,6 @@
 import COMMAND_DICT from '../commands.js';
 
-/** @typedef {import('./common.js').StoredData} StoredData */
-/** @typedef {import('./common.js').CommandId} CommandId */
-/** @typedef {import('./common.js').CommandInfo} CommandInfo */
-/** @typedef {import('./common.js').CommandDict} CommandDict */
-
+/** @import { StoredData, CommandId, CommandDict } from './common.js' */
 
 /**
  * Retrieve stored user-editable data. Command data is processed to be throughly complete, pulling from commands.js and manifest.json.
@@ -35,7 +31,7 @@ export async function load() {
         const [defaultTitle, altTitle] = title.split(' | ');
         commandInfo.title = (isVertical && altTitle) ? altTitle : defaultTitle;
 
-        // Update all descriptions (rather than just ones with alternate titles) to ensure any changes made for a new release will take hold
+        // Update all descriptions (not just ones with alternate titles) to ensure any changes made for a new release will take hold
         browser.commands.update({ name, description: `${commandInfo.category}: ${commandInfo.title}` });
     }
 
@@ -45,7 +41,7 @@ export async function load() {
 /**
  * Store used-editable data.
  * @param {StoredData} data
- * @return {Promise<>}
+ * @return {Promise}
  */
 export function save(data) {
     // Save only user-editable properties: `accessKey`, `showInTabMenu` (for tab context commands)

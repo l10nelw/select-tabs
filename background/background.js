@@ -2,8 +2,7 @@ import { active } from './get.js';
 import selectTabs from './select.js';
 import * as Menu from './menu.js';
 
-/** @typedef {import('../common.js').Tab} Tab */
-/** @typedef {import('../common.js').CommandId} CommandId */
+/** @import { CommandId, Tab } from './common.js' */
 
 Menu.populate();
 browser.menus.onClicked.addListener(onMenuClicked);

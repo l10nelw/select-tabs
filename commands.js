@@ -15,7 +15,7 @@ To add a command:
 
 import { APP_NAME, MENU_ROOT as parentId } from '../common.js';
 
-/** @typedef {import('./common.js').CommandDict} CommandDict */
+/** @import { CommandDict } from './common.js' */
 
 /**
  * Base dict of commands. For each entry (a CommandInfo):

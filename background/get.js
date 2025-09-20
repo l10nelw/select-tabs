@@ -4,7 +4,8 @@
  * Returns either an array of tabs to be selected, or falsy (to abort selection).
  */
 
-/** @typedef {import('../common.js').Tab} Tab */
+/** @import { Tab } from '../common.js' */
+
 /**
  * @callback ContextMenuClick_Getter
  * @param {Tab} _

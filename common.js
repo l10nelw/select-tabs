@@ -24,11 +24,11 @@
  * @see {@link https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/menus/create#createproperties}
  * @typedef CommandInfo
  * @property {string[]} contexts
- * @property {string} [accessKey] - Extra property; save in storage
- * @property {string} [category] - Extra property
+ * @property {string} [accessKey] - Extra property: to save in storage
+ * @property {string} [category] - Extra property: for shortcut settings
  * @property {string} [parentId]
- * @property {string} [shortcut] - Extra property
- * @property {boolean} [showInTabMenu] - Extra property; save in storage
+ * @property {string} [shortcut] - Extra property: for shortcut settings
+ * @property {boolean} [showInTabMenu] - Extra property: to save in storage
  * @property {string} [title]
  * @property {'separator'} [type]
  */

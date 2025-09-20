@@ -1,10 +1,7 @@
 import * as Storage from '../storage.js';
 import { MENU_ROOT as parentId, isOS } from '../common.js';
 
-/** @typedef {import('../common.js').CommandId} CommandId */
-/** @typedef {import('../common.js').CommandInfo} CommandInfo */
-/** @typedef {import('../common.js').CommandDict} CommandDict */
-
+/** @import { CommandId, CommandInfo } from '../common.js' */
 
 export async function populate() {
     browser.menus.removeAll();
@@ -19,9 +16,9 @@ export async function populate() {
      */
     function addItem(id, { contexts, parentId, type, title, accessKey }) {
         const item = { id, contexts, parentId, type };
-        item.title = SUPPORTS_ACCESSKEYS ?
-            indicateAccessKey(title, accessKey) :
-            title;
+        item.title = SUPPORTS_ACCESSKEYS
+            ? indicateAccessKey(title, accessKey)
+            : title;
         browser.menus.create(item);
     }
 

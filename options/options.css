@@ -1,14 +1,17 @@
 :root {
     --accent-color: #0060df;
+    --hover-color: #eee;
+    font-size: .9em;
 }
 body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
     padding: 0 1em;
-    font-size: 1.2rem;
     accent-color: var(--accent-color);
 }
 @media (prefers-color-scheme: dark) {
     :root {
         --accent-color: #0df;
+        --hover-color: #334;
     }
     body {
         background-color: #23222b;
@@ -17,6 +20,9 @@ body {
 }
 a {
     color: var(--accent-color);
+}
+kbd {
+    font-style: italic;
 }
 
 fieldset {
@@ -37,35 +43,70 @@ button[type="submit"] {
     margin-bottom: 1rem;
     text-align: center;
     padding: .5rem 2rem;
-    font-size: 1.2rem;
-    font-weight: bold;
+    font-size: 1rem;
+}
+table {
+    border-collapse: collapse;
 }
 
-thead th {
+th {
+    text-align: start;
     vertical-align: bottom;
-    padding-right: 1rem;
-    color: gray;
-}
-tbody tr:first-child td {
-    padding-top: 1rem;
-    border-top: 2px solid gray;
+
+    thead & {
+        padding-right: 1rem;
+        padding-bottom: .25rem;
+        color: gray;
+        line-height: 1;
+    }
+
+    /* Heading underline */
+    tr.hr & {
+        border-top: 2px solid gray;
+        padding-top: .5rem;
+    }
+
 }
 
-.title label {
-    display: block;
-}
-.category ~ tr .title {
-    padding-left: 1.5rem;
+td {
+    &.title {
+        padding-right: 1rem;
+
+        label {
+            display: block;
+        }
+
+        tr.category ~ tr & {
+            padding-left: 1.5rem;
+        }
+    }
+
+    &.showInTabMenu {
+        width: 5rem;
+    }
+
+    &.accessKey {
+        width: 5.2rem;
+
+        input {
+            width: 2rem;
+            text-align: center;
+        }
+    }
+
+    &.shortcut {
+        font-style: italic;
+
+        &:not(:empty) {
+            color: var(--accent-color);
+            cursor: pointer;
+        }
+    }
 }
 
-td.showInTabMenu,
-td.accessKey {
-    width: 7rem;
-    padding-left: 1rem;
-}
-.accessKey input {
-    width: 2.5rem;
-    text-align: center;
+/* Row highlight */
+tbody tr:not(.category):is(:hover, :focus-within) {
+    background-color: var(--hover-color);
 }
 
 .nowrap { white-space: nowrap; }

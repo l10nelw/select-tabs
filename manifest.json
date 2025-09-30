@@ -1,5 +1,5 @@
 {
-  "manifest_version": 2,
+  "manifest_version": 3,
   "name": "Select Tabs",
   "description": "Select multiple tabs: same site, duplicates, descendants, to the left, to the right, seen today, seen yesterday... and many more.",
   "version": "4.1.1",
@@ -14,9 +14,10 @@
     "tabs"
   ],
   "background": {
-    "page": "background/background.html"
+    "scripts": ["background/background.js"],
+    "type": "module"
   },
-  "browser_action": {
+  "action": {
     "default_icon": {
       "48": "selecttabs.svg",
       "96": "selecttabs.svg"

@@ -33,7 +33,7 @@ export async function populate() {
             // Add seperator at every change of category
             if (commandInfo.category !== currentCategory) {
                 if (currentCategory)
-                    addItem(null, separatorInfo);
+                    addItem(`_${currentCategory}`, separatorInfo);
                 currentCategory = commandInfo.category;
             }
         } else {

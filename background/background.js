@@ -4,11 +4,18 @@ import * as Menu from './menu.js';
 
 /** @import { CommandId, Tab } from './common.js' */
 
-Menu.populate();
+browser.runtime.onInstalled.addListener(onAppInstalled);
 browser.menus.onClicked.addListener(onMenuClicked);
 browser.commands.onCommand.addListener(onKeyboardShortcut);
-browser.browserAction.onClicked.addListener(onButtonClicked);
+browser.action.onClicked.addListener(onButtonClicked);
 browser.browserSettings.verticalTabs.onChange.addListener(onVerticalTabsToggled);
+
+/**
+ * @listens browser.runtime.onInstalled
+ */
+function onAppInstalled() {
+    Menu.populate();
+}
 
 /**
  * @listens browser.menus.onClicked
@@ -31,7 +38,7 @@ async function onKeyboardShortcut(commandId) {
 }
 
 /**
- * @listens browser.browserAction.onClicked
+ * @listens browser.action.onClicked
  */
 async function onButtonClicked() {
     browser.runtime.openOptionsPage();

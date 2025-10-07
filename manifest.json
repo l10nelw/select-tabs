@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Select Tabs",
-  "description": "Select multiple tabs: same site, duplicates, descendants, to the left, to the right, seen today, seen yesterday... and many more.",
-  "version": "4.1.1",
+  "description": "Select multiple tabs within a window in various ways",
+  "version": "5.0.0",
   "icons": {
     "48": "selecttabs.svg",
     "96": "selecttabs.svg"
@@ -28,7 +28,10 @@
   },
   "browser_specific_settings": {
     "gecko": {
-      "id": "selecttabs@lionelw"
+      "id": "selecttabs@lionelw",
+      "data_collection_permissions": {
+        "required": ["none"]
+      }
     }
   },
   "commands": {

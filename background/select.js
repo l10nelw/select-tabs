@@ -20,30 +20,30 @@ const PIN_AGNOSTIC_COMMANDS = new Set([
  */
 export default async function selectTabs(commandId, targetTab, menuClickInfo) {
     /** @type {Tab[]?} */
-    let tabsToSelect = await Getter[commandId](targetTab, menuClickInfo);
+    const tabsToSelect = await Getter[commandId](targetTab, menuClickInfo);
     if (!tabsToSelect)
         return;
 
     const unpinnedIndex = tabsToSelect.findIndex(tab => !tab.pinned);
 
-    // Include pinned tabs if any of these conditions are met
-    /** @type {boolean} */ const includePinned =
-        targetTab.pinned ||
-        PIN_AGNOSTIC_COMMANDS.has(commandId) ||
-        // Is "invert selection" command, and we infer that the pre-command selection had at least one pinned tab
-        commandId === 'unselected' && (unpinnedIndex === 0 || unpinnedIndex > findMismatchedIndex(tabsToSelect));
+    /** Include pinned tabs if any of these conditions are met. @type {boolean} */
+    const includePinned =
+        targetTab.pinned
+        || PIN_AGNOSTIC_COMMANDS.has(commandId)
+        || (
+            // Is "invert selection" command, and we infer that the pre-command selection had at least one pinned tab
+            commandId === 'unselected' && (unpinnedIndex === 0 || unpinnedIndex > findMismatchedIndex(tabsToSelect))
+        );
     if (!includePinned) {
-        // Remove pinned tabs
         if (unpinnedIndex === -1)
             return; // Can't include pinned tabs, but no unpinned tabs, so do nothing
-        tabsToSelect = tabsToSelect.slice(unpinnedIndex);
+        tabsToSelect.splice(0, unpinnedIndex); // Remove pinned tabs
     }
 
     if (menuClickInfo?.modifiers.includes('Shift'))
         tabsToSelect.push(...await Getter.selected()); // Add current selection to the new selection
 
     const tabCount = tabsToSelect.length;
-
     if (!tabCount)
         return;
 

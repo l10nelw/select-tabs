@@ -294,7 +294,7 @@ const DAY = HOUR * 24;
 /** @type {Targetless_NoNull_Getter} */ export const pastHour = () => getTabsAccessedWithinPeriod(HOUR);
 /** @type {Targetless_NoNull_Getter} */ export const past24Hours = () => getTabsAccessedWithinPeriod(DAY);
 /** @type {Targetless_NoNull_Getter} */ export const today = () => getTabsAccessedOnDay(0);
-/** @type {Targetless_NoNull_Getter} */ export const yesterday = () => getTabsAccessedOnDay(-1);
+/** @type {Targetless_CanNull_Getter} */ export const yesterday = () => getTabsAccessedOnDay(-1);
 
 /**
  * @param {number} period
@@ -333,10 +333,10 @@ async function getTabsAccessedOnDay(offset) {
 /** @type {Targetless_NoNull_Getter} */ export const all = () => get();
 /** @type {Targetless_NoNull_Getter} */ export const active = () => get({ active: true }); // "Clear"
 /** @type {Targetless_NoNull_Getter} */ export const unselected = () => get({ highlighted: false }); // "Invert"
-/** @type {Targeted_NoNull_Getter}   */ export const cluster = async tab => getCluster(await selected(), tab);
+/** @type {Targeted_NoNull_Getter} */ export const cluster = async tab => getCluster(await selected(), tab);
 
 /**
- * Given an array of tabs that may have continuity gaps in their indexes, return only the consecutive-indexes subarray that the targetTab is part of.
+ * Given an array of tabs that may have continuity gaps in their indexes, return only the subarray of consecutive indexes that the targetTab is part of.
  * Meaning, return the bunch of tabs around the targetTab that must be adjacent to each other.
  * @param {Tab[]} tabs
  * @param {Tab} targetTab

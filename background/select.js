@@ -24,8 +24,10 @@ export default async function selectTabs(commandId, targetTab, menuClickInfo) {
     if (!tabsToSelect)
         return;
 
-    const unpinnedIndex = tabsToSelect.findIndex(tab => !tab.pinned);
+    const previousSelection = await Getter.selected();
+    browser.storage.session.set({ previousSelection });
 
+    const unpinnedIndex = tabsToSelect.findIndex(tab => !tab.pinned);
     /** Include pinned tabs if any of these conditions are met. @type {boolean} */
     const includePinned =
         targetTab.pinned
@@ -41,7 +43,7 @@ export default async function selectTabs(commandId, targetTab, menuClickInfo) {
     }
 
     if (menuClickInfo?.modifiers.includes('Shift'))
-        tabsToSelect.push(...await Getter.selected()); // Add current selection to the new selection
+        tabsToSelect.push(...previousSelection); // Add current selection to the new selection
 
     const tabCount = tabsToSelect.length;
     if (!tabCount)

@@ -159,6 +159,10 @@ export default {
         parentId, contexts: ['tab'],
         showInTabMenu: true, accessKey: 'l',
     },
+    previous: { // Undo
+        parentId, contexts: ['tab'],
+        showInTabMenu: true, accessKey: 'z',
+    },
 
     // Switch in Selection
     switchToHere: {

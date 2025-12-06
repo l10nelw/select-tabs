@@ -336,6 +336,7 @@ async function getTabsAccessedOnDay(offset) {
 /** @type {Targetless_NoNull_Getter} */ export const active = () => get({ active: true }); // "Clear"
 /** @type {Targetless_NoNull_Getter} */ export const unselected = () => get({ highlighted: false }); // "Invert"
 /** @type {Targeted_NoNull_Getter} */ export const cluster = async tab => getCluster(await selected(), tab);
+/** @type {Targetless_CanNull_Getter} */ export const previous = async () => (await browser.storage.session.get('previousSelection')).previousSelection; // "Undo"
 
 /**
  * Given an array of tabs that may have continuity gaps in their indexes, return only the subarray of consecutive indexes that the targetTab is part of.

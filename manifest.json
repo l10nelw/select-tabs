@@ -113,6 +113,9 @@
     "cluster": {
       "description": "Selection: Selection Cluster"
     },
+    "previous": {
+      "description": "Selection: Undo Last Command"
+    },
     "cycleForward": {
       "description": "Switch in Selection: Cycle Forward",
       "suggested_key": {

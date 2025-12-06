@@ -288,9 +288,11 @@ const isContainerId = cookieStoreId => !NON_CONTAINER_IDS.includes(cookieStoreId
 
 /* --- Temporal commands --- */
 
-const HOUR = 1000 * 60 * 60;
+const MINUTE = 1000 * 60;
+const HOUR = MINUTE * 60;
 const DAY = HOUR * 24;
 
+/** @type {Targetless_NoNull_Getter} */ export const past5Minutes = () => getTabsAccessedWithinPeriod(MINUTE * 5);
 /** @type {Targetless_NoNull_Getter} */ export const pastHour = () => getTabsAccessedWithinPeriod(HOUR);
 /** @type {Targetless_NoNull_Getter} */ export const past24Hours = () => getTabsAccessedWithinPeriod(DAY);
 /** @type {Targetless_NoNull_Getter} */ export const today = () => getTabsAccessedOnDay(0);

@@ -121,6 +121,10 @@ export default {
     },
 
     // Temporal
+    past5Minutes: {
+        parentId, contexts: ['tab'],
+        showInTabMenu: true, accessKey: '5',
+    },
     pastHour: {
         parentId, contexts: ['tab'],
         showInTabMenu: true, accessKey: '1',

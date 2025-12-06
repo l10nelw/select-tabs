@@ -86,6 +86,9 @@
     "trailRight": {
       "description": "Directional: Trail Right | Trail Down"
     },
+    "past5Minutes": {
+      "description": "Temporal: Accessed in the Past 5 Minutes"
+    },
     "pastHour": {
       "description": "Temporal: Accessed in the Past 1 Hour"
     },

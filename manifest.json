@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Select Tabs",
   "description": "Select multiple tabs within a window in various ways",
-  "version": "5.0.0",
+  "version": "5.1.0",
   "icons": {
     "48": "selecttabs.svg",
     "96": "selecttabs.svg"

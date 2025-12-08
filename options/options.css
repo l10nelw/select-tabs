@@ -104,6 +104,39 @@ td {
     }
 }
 
+/* Collapsible table */
+#commands legend {
+    button {
+        padding: 0;
+        border: none;
+        color: currentColor;
+        background-color: transparent;
+        font-weight: bold;
+        cursor: pointer;
+
+        &::before {
+            content: "⯈";
+            display: inline-block;
+            font-size: smaller;
+        }
+
+        &[aria-expanded="true"]::before {
+            rotate: 90deg;
+        }
+    }
+
+    &:has(button[aria-expanded="false"]) + table {
+        display: none;
+    }
+}
+#commands:has(legend button[aria-expanded="false"]) {
+    cursor: pointer;
+
+    &:hover {
+        background-color: var(--hover-color);
+    }
+}
+
 /* Row highlight */
 tbody tr:not(.category):is(:hover, :focus-within) {
     background-color: var(--hover-color);

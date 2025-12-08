@@ -109,8 +109,14 @@ async function populate() {
  * @param {Event} event
  */
 function onFormClick({ target }) {
+    if (target.matches('#commands legend button'))
+        return target.ariaExpanded = target.ariaExpanded === 'false';
+
+    if (target.matches('#commands:has(button[aria-expanded="false"])'))
+        return target.querySelector('legend button').ariaExpanded = true;
+
     if (target.matches('.shortcut') && target.textContent)
-        browser.commands.openShortcutSettings();
+        return browser.commands.openShortcutSettings();
 }
 
 /**

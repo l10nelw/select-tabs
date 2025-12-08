@@ -11,12 +11,14 @@
         <ul>
           <li>See the Details tab or the <a href="https://addons.mozilla.org/firefox/addon/select-tabs/">add-on page</a> for descriptions of each command.</li>
           <li>Holding <kbd>Shift</kbd> while clicking on a menu item command adds the generated selection to the existing one.</li>
-          <li>Some command titles change when vertical tabs is turned on or off (e.g. <span class="nowrap">Add Left ↔ Add Above</span>). If such changes are not in effect, restart Select Tabs.</li>
+          <li>Some command titles change when vertical tabs is turned on or off (e.g. <span class="nowrap">Add Left ↔ Add Above</span>). If such changes have not taken effect, restart Select Tabs.</li>
         </ul>
       </fieldset>
       <fieldset id="commands">
-        <legend>Commands</legend>
-        <table>
+        <legend>
+          <button type="button" aria-expanded="false" aria-controls="commands-table"> Commands</button>
+        </legend>
+        <table id="commands-table">
           <thead>
             <tr>
               <th class="title">Command</th>

@@ -9,6 +9,7 @@ import * as Getter from './get.js';
 const PIN_AGNOSTIC_COMMANDS = new Set([
     'parent', 'parent__descendants',
     'addLeft', 'addRight', 'trailLeft', 'trailRight',
+    'previous',
     'switchToHere', 'cycleForward', 'cycleBackward',
 ]);
 

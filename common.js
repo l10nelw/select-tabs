@@ -1,4 +1,9 @@
 /**
+ * Name of a command's implementation function in get.js, and id of its associated menu item.
+ * @typedef {string} CommandId
+ */
+
+/**
  * @see {@link https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/Tab}
  * @typedef Tab
  * @property {boolean} active
@@ -14,9 +19,13 @@
 */
 
 /**
- * Name of a command's implementation function in get.js, and id of its associated menu item.
- * @typedef {string} CommandId
- */
+ * @see {@link https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/menus/OnClickData}
+ * @typedef MenuClickInfo
+ * @property {string} [linkText]
+ * @property {CommandId} menuItemId
+ * @property {string[]} modifiers
+ * @property {string} [selectionText]
+*/
 
 /**
  * Superset of the menu item createProperties object.

@@ -1,6 +1,6 @@
-import * as Getter from './get.js';
+import * as GETTER from './get.js';
 
-/** @import { CommandId, Tab } from '../common.js' */
+/** @import { CommandId, MenuClickInfo, Tab } from '../common.js' */
 
 /**
  * Commands that always include pinned tabs in output.
@@ -16,17 +16,16 @@ const PIN_AGNOSTIC_COMMANDS = new Set([
 /**
  * @param {CommandId} commandId
  * @param {Tab} targetTab
- * @param {object} [menuClickInfo]
- * @param {string[]} menuClickInfo.modifiers
+ * @param {MenuClickInfo} [menuClickInfo]
  */
 export default async function selectTabs(commandId, targetTab, menuClickInfo) {
-    /** @type {Tab[]?} */
-    const tabsToSelect = await Getter[commandId](targetTab, menuClickInfo);
+    /** @type {Tab[]}  */ const currentSelectedTabs = await browser.tabs.query({ currentWindow: true, highlighted: true });
+    /** @type {Tab[]?} */ const tabsToSelect = await GETTER[commandId](targetTab, currentSelectedTabs, menuClickInfo);
     if (!tabsToSelect)
         return;
 
-    const previousSelection = await Getter.selected();
-    browser.storage.session.set({ previousSelection });
+    // For the "Undo" command
+    browser.storage.session.set({ previousSelectedTabs: currentSelectedTabs });
 
     const unpinnedIndex = tabsToSelect.findIndex(tab => !tab.pinned);
     /** Include pinned tabs if any of these conditions are met. @type {boolean} */
@@ -44,7 +43,7 @@ export default async function selectTabs(commandId, targetTab, menuClickInfo) {
     }
 
     if (menuClickInfo?.modifiers.includes('Shift'))
-        tabsToSelect.push(...previousSelection); // Add current selection to the new selection
+        tabsToSelect.push(...currentSelectedTabs); // Add current selection to the new selection
 
     const tabCount = tabsToSelect.length;
     if (!tabCount)

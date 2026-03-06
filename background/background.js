@@ -2,7 +2,7 @@ import { active } from './get.js';
 import selectTabs from './select.js';
 import * as Menu from './menu.js';
 
-/** @import { CommandId, Tab } from './common.js' */
+/** @import { CommandId, MenuClickInfo, Tab } from './common.js' */
 
 browser.runtime.onInstalled.addListener(onAppInstalled);
 browser.menus.onClicked.addListener(onMenuClicked);
@@ -19,9 +19,7 @@ function onAppInstalled() {
 
 /**
  * @listens browser.menus.onClicked
- * @param {object} menuClickInfo
- * @param {CommandId} menuClickInfo.menuItemId
- * @param {string[]} menuClickInfo.modifiers
+ * @param {MenuClickInfo} menuClickInfo
  * @param {Tab} targetTab
  */
 function onMenuClicked(menuClickInfo, targetTab) {

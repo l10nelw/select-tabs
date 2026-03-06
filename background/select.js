@@ -32,10 +32,7 @@ export default async function selectTabs(commandId, targetTab, menuClickInfo) {
     const includePinned =
         targetTab.pinned
         || PIN_AGNOSTIC_COMMANDS.has(commandId)
-        || (
-            // Is "invert selection" command, and we infer that the pre-command selection had at least one pinned tab
-            commandId === 'unselected' && (unpinnedIndex === 0 || unpinnedIndex > findMismatchedIndex(tabsToSelect))
-        );
+        || (commandId === 'unselected' && currentSelectedTabs[0].pinned); // Is "invert selection" command and the pre-command selection had at least one pinned tab
     if (!includePinned) {
         if (unpinnedIndex === -1)
             return; // Can't include pinned tabs, but no unpinned tabs, so do nothing
@@ -49,18 +46,11 @@ export default async function selectTabs(commandId, targetTab, menuClickInfo) {
     if (!tabCount)
         return;
 
-    // Set up tabs for `browser.tabs.highlight()` shortly, which will activate the first tab in array
     if (tabCount >= 2) {
-        // Move to the start of the array a suitable tab within `tabsToSelect`, which meets one of the criteria
-        // +1 to found indexes so that -1 (not found) becomes 0 (falsey), allowing this OR-chain to work
-        const arrayIndexToActivate = (
-            tabsToSelect.findIndex(tab => tab.active) // Active tab in `tabsToSelect`
-            + 1 ||
-            findIdIndex(tabsToSelect, targetTab.id) // Target tab in `tabsToSelect`
-            + 1 ||
-            tabsToSelect.indexOf(findClosestToTargetTab(tabsToSelect, targetTab)) // Closest to target tab among `tabsToSelect`
-            + 1
-        ) - 1; // Revert 0 to -1
+        // Move to the start of the array a suitable tab within `tabsToSelect`, since `browser.tabs.highlight()` will activate the first tab in array
+        let arrayIndexToActivate = tabsToSelect.findIndex(tab => tab.active); // The active tab
+        if (arrayIndexToActivate === -1)
+            arrayIndexToActivate = tabsToSelect.indexOf(findBestClosestToTargetTab(tabsToSelect, targetTab)); // Closest loaded tab, or otherwise any closest tab, to the target tab
         if (arrayIndexToActivate > 0) // If tab to activate is not already first in array
             [ tabsToSelect[0], tabsToSelect[arrayIndexToActivate] ] = [ tabsToSelect[arrayIndexToActivate], tabsToSelect[0] ]; // Swap with first tab
     }
@@ -69,46 +59,40 @@ export default async function selectTabs(commandId, targetTab, menuClickInfo) {
 }
 
 /**
- * @param {Tab[]} tabs
- * @returns {number}
- */
-const findMismatchedIndex = tabs => tabs.findIndex((tab, arrayIndex) => tab.index !== arrayIndex);
-
-/**
- * @param {Tab[]} tabs
- * @param {number} tabId
- * @returns {number}
- */
-const findIdIndex = (tabs, tabId) => tabs.findIndex(tab => tab.id === tabId);
-
-/**
- * Among candidiate `tabs` (sorted by `tab.index`), find the one positionally closest to the `targetTab`.
+ * Among `candidateTabs` (sorted by `tab.index`), find the one positionally closest to the `targetTab`, non-discarded (loaded) if possible.
  * Prefer the right in a tie between two tabs.
- * @param {Tab[]} tabs
+ * @param {Tab[]} candidateTabs
  * @param {Tab} targetTab
  * @returns {Tab}
  */
-function findClosestToTargetTab(tabs, targetTab) {
+function findBestClosestToTargetTab(candidateTabs, targetTab) {
     const targetTabIndex = targetTab.index;
-    /** @type {Tab} */ let closestTab = tabs.at(-1);
 
+    // If there are any non-discarded candidates, shortlist them
+    const loadedTabs = candidateTabs.filter(tab => !tab.discarded);
+    if (loadedTabs.length)
+        candidateTabs = loadedTabs;
+
+    let closestTab = candidateTabs[0];
+    if (targetTabIndex <= closestTab.index)
+        return closestTab;
+    closestTab = candidateTabs.at(-1);
     if (targetTabIndex >= closestTab.index)
         return closestTab;
 
     let smallestIndexGap = closestTab.index;
-    for (const tab of tabs) {
+    for (const tab of candidateTabs) {
         const tabIndex = tab.index;
         if (tabIndex === targetTabIndex) // Zero gap
             return targetTab;
         const indexGap = Math.abs(tabIndex - targetTabIndex);
-        if (indexGap === smallestIndexGap) // There are two candidiate tabs equally closest to target (target lies midway between them)
-            return tab; // Return the latter tab
+        if (indexGap === smallestIndexGap) // There are two candidates equally closest to target (target lies midway between them)
+            return tab; // Return the latter candidate
         if (indexGap > smallestIndexGap) // Gap has grown
-            break; // Therefore the closest candidiate tab was already found in the previous iteration
+            break; // Therefore the closest candidate was already found in the previous iteration
         // Gap is shrinking, so continue
         smallestIndexGap = indexGap;
         closestTab = tab;
     }
-
     return closestTab;
 }

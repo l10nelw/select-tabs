@@ -1,4 +1,3 @@
-import { active } from './get.js';
 import selectTabs from './select.js';
 import * as Menu from './menu.js';
 
@@ -29,9 +28,9 @@ function onMenuClicked(menuClickInfo, targetTab) {
 /**
  * @listens browser.commands.onCommand
  * @param {CommandId} commandId
+ * @param {Tab} activeTab
  */
-async function onKeyboardShortcut(commandId) {
-    const activeTab = (await active())[0];
+async function onKeyboardShortcut(commandId, activeTab) {
     selectTabs(commandId, activeTab);
 }
 

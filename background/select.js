@@ -15,12 +15,16 @@ const PIN_AGNOSTIC_COMMANDS = new Set([
 
 /**
  * @param {CommandId} commandId
- * @param {Tab} targetTab
+ * @param {Tab} [targetTab]
  * @param {MenuClickInfo} [menuClickInfo]
  */
 export default async function selectTabs(commandId, targetTab, menuClickInfo) {
-    /** @type {Tab[]}  */ const currentSelectedTabs = await browser.tabs.query({ currentWindow: true, highlighted: true });
-    /** @type {Tab[]?} */ const tabsToSelect = await GETTER[commandId](targetTab, currentSelectedTabs, menuClickInfo);
+    /** @type {Tab[]} */
+    const currentSelectedTabs = await browser.tabs.query({ currentWindow: true, highlighted: true });
+    targetTab ??= currentSelectedTabs.find(tab => tab.active);
+
+    /** @type {Tab[]?} */
+    const tabsToSelect = await GETTER[commandId](targetTab, currentSelectedTabs, menuClickInfo);
     if (!tabsToSelect)
         return;
 

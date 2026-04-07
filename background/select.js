@@ -1,17 +1,7 @@
 import * as GETTER from './get.js';
+import COMMAND_DICT from '../commands.js';
 
 /** @import { CommandId, MenuClickInfo, Tab } from '../common.js' */
-
-/**
- * Commands that always include pinned tabs in output.
- * @type {Set<CommandId>}
- */
-const PIN_AGNOSTIC_COMMANDS = new Set([
-    'parent', 'parent__descendants',
-    'addLeft', 'addRight', 'trailLeft', 'trailRight',
-    'previous',
-    'switchToHere', 'cycleForward', 'cycleBackward',
-]);
 
 /**
  * @param {CommandId} commandId
@@ -32,11 +22,12 @@ export default async function selectTabs(commandId, targetTab, menuClickInfo) {
     browser.storage.session.set({ previousSelectedTabs: currentSelectedTabs });
 
     const unpinnedIndex = tabsToSelect.findIndex(tab => !tab.pinned);
-    /** Include pinned tabs if any of these conditions are met. @type {boolean} */
-    const includePinned =
+    /** Include pinned tabs if any of these conditions are met. */
+    const includePinned = Boolean(
         targetTab.pinned
-        || PIN_AGNOSTIC_COMMANDS.has(commandId)
-        || (commandId === 'unselected' && currentSelectedTabs[0].pinned); // Is "invert selection" command and the pre-command selection had at least one pinned tab
+        || COMMAND_DICT[commandId].alwaysIncludePinned
+        || (commandId === 'unselected' && currentSelectedTabs[0].pinned) // Is "invert selection" command and the pre-command selection had at least one pinned tab
+    );
     if (!includePinned) {
         if (unpinnedIndex === -1)
             return; // Can't include pinned tabs, but no unpinned tabs, so do nothing

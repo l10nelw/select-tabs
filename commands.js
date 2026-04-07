@@ -6,11 +6,10 @@ To add a command:
 - commands.js (this file)
     - Mandatory: Add command entry: typically `<commandId>: { parentId, contexts: ['tab'] }`.
     - If command has no manifest.json entry, include `category` and `title` properties. Alternate title for vertical tabs not supported.
+    - If command unconditionally considers and includes pinned tabs in output, add `alwaysIncludePinned: true` property.
     - Add command's default user-definable properties `showInTabMenu` and `accessKey`.
 - get.js
-    - Mandatory: Add command implementation.
-- select.js
-    - If applicable, add command to PIN_AGNOSTIC_COMMANDS.
+    - (Mandatory) Add command implementation.
 */
 
 import { APP_NAME, MENU_ROOT as parentId } from '../common.js';
@@ -20,6 +19,7 @@ import { APP_NAME, MENU_ROOT as parentId } from '../common.js';
 /**
  * Base dict of commands. For each entry (a CommandInfo):
  * - `parentId` (except for the parentId entry itself) and `contexts` are required.
+ * - `alwaysIncludePinned` is optional.
  * - `category` and `title` will be derived from manifest.json if available, otherwise they should be defined here.
  * - `showInTabMenu` and `accessKey` are user-set properties, containing default values.
  * @type {CommandDict}
@@ -69,10 +69,12 @@ export default {
     },
     parent: {
         parentId, contexts: ['tab'],
+        alwaysIncludePinned: true,
         showInTabMenu: true, accessKey: 'p',
     },
     parent__descendants: {
         parentId, contexts: ['tab'],
+        alwaysIncludePinned: true,
         showInTabMenu: true, accessKey: 'f',
     },
     siblings: {
@@ -105,18 +107,22 @@ export default {
     },
     addLeft: {
         parentId, contexts: ['tab'],
+        alwaysIncludePinned: true,
         showInTabMenu: false,
     },
     addRight: {
         parentId, contexts: ['tab'],
+        alwaysIncludePinned: true,
         showInTabMenu: false,
     },
     trailLeft: {
         parentId, contexts: ['tab'],
+        alwaysIncludePinned: true,
         showInTabMenu: false,
     },
     trailRight: {
         parentId, contexts: ['tab'],
+        alwaysIncludePinned: true,
         showInTabMenu: false,
     },
 
@@ -161,21 +167,25 @@ export default {
     },
     previous: { // Undo
         parentId, contexts: ['tab'],
+        alwaysIncludePinned: true,
         showInTabMenu: true, accessKey: 'z',
     },
 
     // Switch in Selection
     switchToHere: {
         parentId, contexts: ['tab'],
+        alwaysIncludePinned: true,
         category: 'Switch in Selection', title: `Switch to Here`,
         showInTabMenu: true, accessKey: 'h',
     },
     cycleForward: {
         parentId, contexts: ['tab'],
+        alwaysIncludePinned: true,
         showInTabMenu: false,
     },
     cycleBackward: {
         parentId, contexts: ['tab'],
+        alwaysIncludePinned: true,
         showInTabMenu: false,
     },
 

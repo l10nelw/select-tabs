@@ -14,6 +14,7 @@
  * @property {boolean} isInReaderMode
  * @property {number} lastAccessed
  * @property {number} [openerTabId]
+ * @property {boolean} pinned
  * @property {string} title
  * @property {string} url
 */
@@ -35,6 +36,7 @@
  * @property {string[]} contexts
  * @property {string} [accessKey] - Extra property: to save in storage
  * @property {string} [category] - Extra property: for shortcut settings
+ * @property {boolean} [alwaysIncludePinned] - Extra property
  * @property {string} [parentId]
  * @property {string} [shortcut] - Extra property: for shortcut settings
  * @property {boolean} [showInTabMenu] - Extra property: to save in storage

@@ -1,17 +1,19 @@
-import * as Storage from '../storage.js';
 import { MENU_ROOT as parentId, isOS } from '../common.js';
 
-/** @import { CommandId, CommandInfo } from '../common.js' */
+/** @import { CommandId, CommandInfo, CommandDict } from '../common.js' */
 
-export async function populate() {
+/**
+ * @param {CommandDict} commandDict
+ */
+export function populate(commandDict) {
+    commandDict = { ...commandDict };
     browser.menus.removeAll();
 
     const SUPPORTS_ACCESSKEYS = !isOS('Mac OS'); // We want to avoid "title (key)" in MacOS
-    const { commands } = await Storage.load();
     const separatorInfo = { parentId, contexts: ['tab'], type: 'separator' };
 
     /**
-     * @param {CommandId?} id
+     * @param {CommandId} id
      * @param {CommandInfo} info
      */
     function addItem(id, { contexts, parentId, type, title, accessKey }) {
@@ -23,12 +25,14 @@ export async function populate() {
     }
 
     // Add parent menu item
-    addItem(parentId, commands[parentId]);
-    delete commands[parentId];
+    addItem(parentId, commandDict[parentId]);
+    delete commandDict[parentId];
 
     // Iterate through remaining commands
     let currentCategory = '';
-    for (const [commandId, commandInfo] of Object.entries(commands)) {
+    for (const commandId in commandDict) {
+        /** @type {CommandInfo} */
+        const commandInfo = commandDict[commandId];
         if (commandInfo.showInTabMenu) {
             // Add seperator at every change of category
             if (commandInfo.category !== currentCategory) {

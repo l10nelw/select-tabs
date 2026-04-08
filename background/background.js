@@ -1,3 +1,4 @@
+import * as Storage from '../storage.js';
 import selectTabs from './select.js';
 import * as Menu from './menu.js';
 
@@ -12,8 +13,9 @@ browser.browserSettings.verticalTabs.onChange.addListener(onVerticalTabsToggled)
 /**
  * @listens browser.runtime.onInstalled
  */
-function onAppInstalled() {
-    Menu.populate();
+async function onAppInstalled() {
+    const { commands } = await Storage.load();
+    Menu.populate(commands);
 }
 
 /**

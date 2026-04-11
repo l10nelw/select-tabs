@@ -1,0 +1,6 @@
+:root {
+    --accent-color: light-dark(#0060df, #0df);
+    --bg-hover-color: light-dark(#eee, #334);
+    color-scheme: light dark;
+    accent-color: var(--accent-color);
+}

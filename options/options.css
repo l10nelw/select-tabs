@@ -1,22 +1,9 @@
-:root {
-    --accent-color: #0060df;
-    --hover-color: #eee;
-    font-size: .9em;
-}
+@import "../base.css";
+
 body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
     padding: 0 1em;
-    accent-color: var(--accent-color);
-}
-@media (prefers-color-scheme: dark) {
-    :root {
-        --accent-color: #0df;
-        --hover-color: #334;
-    }
-    body {
-        background-color: #23222b;
-        color: white;
-    }
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    font-size: .9em;
 }
 a {
     color: var(--accent-color);
@@ -27,6 +14,10 @@ kbd {
 
 fieldset {
     margin-bottom: 1rem;
+
+    @media (prefers-color-scheme: dark) {
+        border-color: #444;
+    }
 }
 legend {
     font-weight: bold;
@@ -38,13 +29,7 @@ ul {
 li {
     margin: 0 0 .5rem;
 }
-button[type="submit"] {
-    width: 100%;
-    margin-bottom: 1rem;
-    text-align: center;
-    padding: .5rem 2rem;
-    font-size: 1rem;
-}
+
 table {
     border-collapse: collapse;
 }
@@ -82,7 +67,7 @@ td {
     }
 
     &.showInTabMenu {
-        width: 5rem;
+        width: 4.5rem;
     }
 
     &.accessKey {
@@ -98,7 +83,6 @@ td {
         font-style: italic;
 
         &:not(:empty) {
-            color: var(--accent-color);
             cursor: pointer;
         }
     }
@@ -132,14 +116,31 @@ td {
 #commands:has(legend button[aria-expanded="false"]) {
     cursor: pointer;
 
+    &::after {
+        content: "· · ·";
+        display: block;
+        text-align: center;
+        font-weight: bold;
+        opacity: .5;
+    }
+
     &:hover {
-        background-color: var(--hover-color);
+        background-color: var(--bg-hover-color);
     }
 }
 
 /* Row highlight */
 tbody tr:not(.category):is(:hover, :focus-within) {
-    background-color: var(--hover-color);
+    background-color: var(--bg-hover-color);
+}
+
+button[type="submit"] {
+    width: 100%;
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    text-align: center;
+    padding: .5rem 2rem;
+    font-size: 1rem;
 }
 
 .nowrap { white-space: nowrap; }

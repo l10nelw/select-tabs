@@ -1,9 +1,4 @@
 /**
- * Name of a command's implementation function in get.js, and id of its associated menu item.
- * @typedef {string} CommandId
- */
-
-/**
  * @see {@link https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/Tab}
  * @typedef Tab
  * @property {boolean} active
@@ -28,27 +23,33 @@
  * @property {string} [selectionText]
 */
 
+/** @typedef {string} CommandId - Name of a command's implementation function in get.js, and id of its associated menu item. */
+/** @typedef {object<CommandId, CommandInfo>} CommandDict */
+/** @typedef {_CommandInfo & CommandInfoStored} CommandInfo */
 /**
  * Superset of the menu item createProperties object.
- * Extra properties used only by this extension are indicated as such.
+ * Extra properties used only by this extension are indicated.
  * @see {@link https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/menus/create#createproperties}
- * @typedef CommandInfo
+ * @typedef _CommandInfo
  * @property {string[]} contexts
- * @property {string} [accessKey] - Extra property: to save in storage
- * @property {string} [category] - Extra property: for shortcut settings
  * @property {boolean} [alwaysIncludePinned] - Extra property
+ * @property {string} [category] - Extra property
  * @property {string} [parentId]
- * @property {string} [shortcut] - Extra property: for shortcut settings
- * @property {boolean} [showInTabMenu] - Extra property: to save in storage
+ * @property {string} [shortcut] - Extra property
  * @property {string} [title]
  * @property {'separator'} [type]
  */
-
-/** @typedef {object.<CommandId, CommandInfo>} CommandDict */
+/**
+ * Extra properties that are stored.
+ * @typedef CommandInfoStored
+ * @property {string} [accessKey]
+ * @property {boolean} [showInTabMenu]
+*/
 
 /**
+ * User-defined data, longterm storage.
  * @typedef StoredData
- * @property {object.<CommandId, { accessKey: string, showInTabMenu?: boolean }>} commands
+ * @property {object.<CommandId, CommandInfoStored>} commands
  */
 
 // Common constants and functions //

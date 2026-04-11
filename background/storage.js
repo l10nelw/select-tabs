@@ -1,9 +1,10 @@
 import COMMAND_DICT from '../commands.js';
 
-/** @import { StoredData, CommandId, CommandDict } from './common.js' */
+/** @import { StoredData, CommandId, CommandDict } from '../common.js' */
 
 /**
- * Retrieve stored user-editable data. Command data is processed to be throughly complete, pulling from commands.js and manifest.json.
+ * Retrieve stored user-editable data.
+ * Command data is populated to be complete and thorough, synthesising from stored data, commands.js (COMMAND_DICT) and manifest.json (MANIFEST_DICT) as sources.
  * @returns {Promise<{ commands: CommandDict }>}
  */
 export async function load() {
@@ -31,7 +32,7 @@ export async function load() {
         const [defaultTitle, altTitle] = title.split(' | ');
         commandInfo.title = (isVertical && altTitle) ? altTitle : defaultTitle;
 
-        // Update all descriptions (not just ones with alternate titles) to ensure any changes made for a new release will take hold
+        // Update every description (not just ones with alternate titles) to ensure any changes made for a new release takes hold
         browser.commands.update({ name, description: `${commandInfo.category}: ${commandInfo.title}` });
     }
 
@@ -39,18 +40,18 @@ export async function load() {
 }
 
 /**
- * Store used-editable data.
+ * Store user-defined data.
  * @param {StoredData} data
- * @return {Promise}
+ * @return {Promise<void>}
  */
 export function save(data) {
     // Save only user-editable properties: `accessKey`, `showInTabMenu` (for tab context commands)
     for (const commandId in data.commands) {
-        const minCommandInfo = {};
-        minCommandInfo.accessKey = data.commands[commandId].accessKey;
+        const minimalCommandInfo = {};
+        minimalCommandInfo.accessKey = data.commands[commandId].accessKey;
         if (COMMAND_DICT[commandId].contexts.includes('tab'))
-            minCommandInfo.showInTabMenu = data.commands[commandId].showInTabMenu;
-        data.commands[commandId] = minCommandInfo;
+            minimalCommandInfo.showInTabMenu = data.commands[commandId].showInTabMenu;
+        data.commands[commandId] = minimalCommandInfo;
     }
     return browser.storage.sync.set(data);
 }

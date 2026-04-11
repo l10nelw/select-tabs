@@ -1,7 +1,6 @@
 import { isOS } from '../common.js';
-import * as Storage from '../storage.js';
 
-/** @import { CommandId, CommandInfo, CommandDict, StoredData } from '../common.js' */
+/** @import { CommandId, CommandInfo, CommandInfoStored, CommandDict, StoredData } from '../common.js' */
 
 /** @type {boolean} */ const SUPPORTS_ACCESSKEYS = !isOS('Mac OS');
 /** @type {HTMLFormElement} */ const $form = document.body.querySelector('form');
@@ -19,10 +18,17 @@ async function populate() {
     /** @type {HTMLTableRowElement} */ const $rowTemplate = $template.lastElementChild;
 
     /** @type {[StoredData, { name: CommandId, shortcut: string }[]]} */
-    const [{ commands }, shortcutableCommands] = await Promise.all([ Storage.load(), browser.commands.getAll() ]);
+    const [{ commands }, shortcutableCommands] = await Promise.all([
+        browser.runtime.sendMessage({ type: 'loadOptions' }),
+        browser.commands.getAll(),
+    ]);
 
-    for (const { name, shortcut } of shortcutableCommands)
-        commands[name].shortcut = shortcut || '—';
+    for (const { name, shortcut } of shortcutableCommands) {
+        /** @type {CommandInfoStored & { shortcut?: string }} */
+        const command = commands[name];
+        if (command)
+            command.shortcut = shortcut || '—';
+    }
 
     if (!SUPPORTS_ACCESSKEYS) {
         // Remove accessKey column
@@ -158,6 +164,9 @@ async function onFormSubmit(event) {
         commands[$input.name].accessKey = $input.value;
     }
 
-    await Storage.save(/** @type {StoredData} */ ({ commands }));
+    /** @type {StoredData} */
+    const data = { commands };
+    await browser.runtime.sendMessage({ type: 'saveOptions', data }),
+
     browser.runtime.reload();
 }

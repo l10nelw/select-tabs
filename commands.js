@@ -12,7 +12,7 @@ To add a command:
     - (Mandatory) Add command implementation.
 */
 
-import { APP_NAME, MENU_ROOT as parentId } from '../common.js';
+import { APP_NAME, MENU_ROOT as parentId } from './common.js';
 
 /** @import { CommandDict } from './common.js' */
 
@@ -21,11 +21,10 @@ import { APP_NAME, MENU_ROOT as parentId } from '../common.js';
  * - `parentId` (except for the parentId entry itself) and `contexts` are required.
  * - `alwaysIncludePinned` is optional.
  * - `category` and `title` will be derived from manifest.json if available, otherwise they should be defined here.
- * - `showInTabMenu` and `accessKey` are user-set properties, containing default values.
+ * - `showInTabMenu` and `accessKey` contain default values of user-set properties.
  * @type {CommandDict}
  */
-export default {
-
+const COMMAND_DICT = {
     [parentId]: {
         contexts: ['tab', 'link', 'selection'],
         title: APP_NAME,
@@ -188,5 +187,5 @@ export default {
         alwaysIncludePinned: true,
         showInTabMenu: false,
     },
-
 }
+export default COMMAND_DICT;

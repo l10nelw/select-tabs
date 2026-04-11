@@ -1,13 +1,13 @@
-import * as Storage from '../storage.js';
-import selectTabs from './select.js';
+import * as Storage from './storage.js';
 import * as Menu from './menu.js';
+import selectTabs from './select.js';
 
-/** @import { CommandId, MenuClickInfo, Tab } from './common.js' */
+/** @import { CommandId, MenuClickInfo, StoredData, Tab } from '../common.js' */
 
 browser.runtime.onInstalled.addListener(onAppInstalled);
 browser.menus.onClicked.addListener(onMenuClicked);
 browser.commands.onCommand.addListener(onKeyboardShortcut);
-browser.action.onClicked.addListener(onButtonClicked);
+browser.runtime.onMessage.addListener(onMessage);
 browser.browserSettings.verticalTabs.onChange.addListener(onVerticalTabsToggled);
 
 /**
@@ -37,10 +37,16 @@ async function onKeyboardShortcut(commandId, activeTab) {
 }
 
 /**
- * @listens browser.action.onClicked
+ * @listens browser.runtime.onMessage
+ * @param {object} message
+ * @param {string} message.type
+ * @param {StoredData} [message.data]
  */
-async function onButtonClicked() {
-    browser.runtime.openOptionsPage();
+function onMessage(message) {
+    switch (message.type) {
+        case 'loadOptions': return Storage.load();
+        case 'saveOptions': return Storage.save(message.data);
+    }
 }
 
 /**

@@ -33,6 +33,9 @@ export function populate(commandDict) {
     for (const commandId in commandDict) {
         /** @type {CommandInfo} */
         const commandInfo = commandDict[commandId];
+        const contextSet = new Set(commandInfo.contexts);
+        contextSet.delete('popup'); // popup context doeesn't belong here, remove for all commands
+
         if (commandInfo.showInTabMenu) {
             // Add seperator at every change of category
             if (commandInfo.category !== currentCategory) {
@@ -42,12 +45,12 @@ export function populate(commandDict) {
             }
         } else {
             // Handle disabled tab context menu-items
-            const contexts = new Set(commandInfo.contexts);
-            contexts.delete('tab');
-            if (!contexts.size)
+            contextSet.delete('tab');
+            if (!contextSet.size)
                 continue; // Skip command if no contexts remain
-            commandInfo.contexts = [...contexts];
         }
+
+        commandInfo.contexts = [...contextSet];
         addItem(commandId, commandInfo);
     }
 }

@@ -40,6 +40,11 @@
  * @property {'separator'} [type]
  */
 /**
+ * One of the menu item ContextTypes, or the 'popup' ContextType which is used only by this extension.
+ * @see {@link https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/menus/ContextType}
+ * @typedef {'tab'|'link'|'selection'|'popup'} ContextType
+ */
+/**
  * Extra properties that are stored.
  * @typedef CommandInfoStored
  * @property {string} [accessKey]

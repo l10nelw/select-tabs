@@ -21,7 +21,8 @@
     "default_icon": {
       "48": "selecttabs.svg",
       "96": "selecttabs.svg"
-    }
+    },
+    "default_popup": "popup/popup.html"
   },
   "options_ui": {
     "page": "options/options.html"
@@ -35,6 +36,12 @@
     }
   },
   "commands": {
+    "_execute_action": {
+      "description": "Open Pop-up Panel",
+      "suggested_key": {
+        "default": "F8"
+      }
+    },
     "duplicates": {
       "description": "URL-based: Duplicates"
     },

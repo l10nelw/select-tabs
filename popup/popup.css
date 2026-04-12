@@ -1,0 +1,6 @@
+@import "../base.css";
+
+form {
+    display: flex;
+    flex-direction: column;
+}

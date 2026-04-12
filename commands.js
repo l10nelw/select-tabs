@@ -4,8 +4,9 @@ To add a command:
     - If command is shortcut-able, add entry in "commands" object: `<commandId>: { description }`. `description` format is "<category>: <title>".
         - If command has alternate title for vertical tabs, `description` format is "<category>: <title> | <alt title>".
 - commands.js (this file)
-    - Mandatory: Add command entry: typically `<commandId>: { parentId, contexts: ['tab'] }`.
-    - If command has no manifest.json entry, include `category` and `title` properties. Alternate title for vertical tabs not supported.
+    - (Mandatory) Add command entry: typically `<commandId>: { parentId, contexts: ['tab'] }`.
+        - If command should appear in popup, `contexts` array should include `'popup'` as the last element.
+    - If command has no manifest.json entry, include `category` and `title` properties. Alternate title for vertical tabs not supported/applicable.
     - If command unconditionally considers and includes pinned tabs in output, add `alwaysIncludePinned: true` property.
     - Add command's default user-definable properties `showInTabMenu` and `accessKey`.
 - get.js
@@ -33,157 +34,214 @@ const COMMAND_DICT = {
 
     // Text Search
     matchLinkText: {
-        parentId, contexts: ['link'],
-        category: 'Text Search', title: `Link Text in Title or URL`,
+        parentId,
+        contexts: ['link'],
+        category: 'Text Search',
+        title: `Link Text in Title or URL`,
         accessKey: 't',
     },
     matchSelectionText: {
-        parentId, contexts: ['selection'],
-        category: 'Text Search', title: `Selected Text in Title or URL`,
+        parentId,
+        contexts: ['selection'],
+        category: 'Text Search',
+        title: `Selected Text in Title or URL`,
         accessKey: 't',
     },
 
     // URL-based
     duplicates: {
-        parentId, contexts: ['tab', 'link'],
-        showInTabMenu: true, accessKey: 'u',
+        parentId,
+        contexts: ['tab', 'link', 'popup'],
+        showInTabMenu: true,
+        accessKey: 'u',
     },
     sameSite: {
-        parentId, contexts: ['tab', 'link'],
-        showInTabMenu: true, accessKey: 's',
+        parentId,
+        contexts: ['tab', 'link', 'popup'],
+        showInTabMenu: true,
+        accessKey: 's',
     },
     sameSite__cluster: {
-        parentId, contexts: ['tab'],
-        showInTabMenu: true, accessKey: 's',
+        parentId,
+        contexts: ['tab', 'popup'],
+        showInTabMenu: true,
+        accessKey: 's',
     },
     sameSite__descendants: {
-        parentId, contexts: ['tab'],
-        showInTabMenu: true, accessKey: 'm',
+        parentId,
+        contexts: ['tab', 'popup'],
+        showInTabMenu: true,
+        accessKey: 'm',
     },
 
     // Tab Tree
     descendants: {
-        parentId, contexts: ['tab'],
-        showInTabMenu: true, accessKey: 'd',
+        parentId,
+        contexts: ['tab', 'popup'],
+        showInTabMenu: true,
+        accessKey: 'd',
     },
     parent: {
-        parentId, contexts: ['tab'],
+        parentId,
+        contexts: ['tab', 'popup'],
         alwaysIncludePinned: true,
-        showInTabMenu: true, accessKey: 'p',
+        showInTabMenu: true,
+        accessKey: 'p',
     },
     parent__descendants: {
-        parentId, contexts: ['tab'],
+        parentId,
+        contexts: ['tab', 'popup'],
         alwaysIncludePinned: true,
-        showInTabMenu: true, accessKey: 'f',
+        showInTabMenu: true,
+        accessKey: 'f',
     },
     siblings: {
-        parentId, contexts: ['tab'],
+        parentId,
+        contexts: ['tab', 'popup'],
         showInTabMenu: false,
     },
     siblings__descendants: {
-        parentId, contexts: ['tab'],
+        parentId,
+        contexts: ['tab', 'popup'],
         showInTabMenu: false,
     },
 
     // Membership
     sameTabGroup: {
-        parentId, contexts: ['tab'],
-        showInTabMenu: true, accessKey: 'g',
+        parentId,
+        contexts: ['tab', 'popup'],
+        showInTabMenu: true,
+        accessKey: 'g',
     },
     sameContainer: {
-        parentId, contexts: ['tab'],
-        showInTabMenu: true, accessKey: 'c',
+        parentId,
+        contexts: ['tab', 'popup'],
+        showInTabMenu: true,
+        accessKey: 'c',
     },
 
     // Directional
     toStart: {
-        parentId, contexts: ['tab'],
-        showInTabMenu: true, accessKey: 'r',
+        parentId,
+        contexts: ['tab', 'popup'],
+        showInTabMenu: true,
+        accessKey: 'r',
     },
     toEnd: {
-        parentId, contexts: ['tab'],
-        showInTabMenu: true, accessKey: 'e',
+        parentId,
+        contexts: ['tab', 'popup'],
+        showInTabMenu: true,
+        accessKey: 'e',
     },
     addLeft: {
-        parentId, contexts: ['tab'],
+        parentId,
+        contexts: ['tab', 'popup'],
         alwaysIncludePinned: true,
         showInTabMenu: false,
     },
     addRight: {
-        parentId, contexts: ['tab'],
+        parentId,
+        contexts: ['tab', 'popup'],
         alwaysIncludePinned: true,
         showInTabMenu: false,
     },
     trailLeft: {
-        parentId, contexts: ['tab'],
+        parentId,
+        contexts: ['tab', 'popup'],
         alwaysIncludePinned: true,
         showInTabMenu: false,
     },
     trailRight: {
-        parentId, contexts: ['tab'],
+        parentId,
+        contexts: ['tab', 'popup'],
         alwaysIncludePinned: true,
         showInTabMenu: false,
     },
 
     // Temporal
     past5Minutes: {
-        parentId, contexts: ['tab'],
-        showInTabMenu: true, accessKey: '5',
+        parentId,
+        contexts: ['tab', 'popup'],
+        showInTabMenu: true,
+        accessKey: '5',
     },
     pastHour: {
-        parentId, contexts: ['tab'],
-        showInTabMenu: true, accessKey: '1',
+        parentId,
+        contexts: ['tab', 'popup'],
+        showInTabMenu: true,
+        accessKey: '1',
     },
     past24Hours: {
-        parentId, contexts: ['tab'],
-        showInTabMenu: true, accessKey: '2',
+        parentId,
+        contexts: ['tab', 'popup'],
+        showInTabMenu: true,
+        accessKey: '2',
     },
     today: {
-        parentId, contexts: ['tab'],
-        showInTabMenu: true, accessKey: 'o',
+        parentId,
+        contexts: ['tab', 'popup'],
+        showInTabMenu: true,
+        accessKey: 'o',
     },
     yesterday: {
-        parentId, contexts: ['tab'],
-        showInTabMenu: true, accessKey: 'y',
+        parentId,
+        contexts: ['tab', 'popup'],
+        showInTabMenu: true,
+        accessKey: 'y',
     },
 
     // Selection
     all: {
-        parentId, contexts: ['tab'],
-        showInTabMenu: true, accessKey: 'a',
+        parentId,
+        contexts: ['tab', 'popup'],
+        showInTabMenu: true,
+        accessKey: 'a',
     },
     active: { // Clear
-        parentId, contexts: ['tab'],
+        parentId,
+        contexts: ['tab', 'popup'],
         showInTabMenu: false,
+        accessKey: 'x',
     },
     unselected: { // Invert
-        parentId, contexts: ['tab'],
-        showInTabMenu: true, accessKey: 'v',
+        parentId,
+        contexts: ['tab', 'popup'],
+        showInTabMenu: true,
+        accessKey: 'v',
     },
     cluster: {
-        parentId, contexts: ['tab'],
-        showInTabMenu: true, accessKey: 'l',
+        parentId,
+        contexts: ['tab', 'popup'],
+        showInTabMenu: true,
+        accessKey: 'l',
     },
     previous: { // Undo
-        parentId, contexts: ['tab'],
+        parentId,
+        contexts: ['tab', 'popup'],
         alwaysIncludePinned: true,
-        showInTabMenu: true, accessKey: 'z',
+        showInTabMenu: true,
+        accessKey: 'z',
     },
 
     // Switch in Selection
     switchToHere: {
-        parentId, contexts: ['tab'],
+        parentId,
+        contexts: ['tab'],
         alwaysIncludePinned: true,
-        category: 'Switch in Selection', title: `Switch to Here`,
-        showInTabMenu: true, accessKey: 'h',
+        category: 'Switch in Selection',
+        title: `Switch to Here`,
+        showInTabMenu: true,
+        accessKey: 'h',
     },
     cycleForward: {
-        parentId, contexts: ['tab'],
+        parentId,
+        contexts: ['tab', 'popup'],
         alwaysIncludePinned: true,
         showInTabMenu: false,
     },
     cycleBackward: {
-        parentId, contexts: ['tab'],
+        parentId,
+        contexts: ['tab', 'popup'],
         alwaysIncludePinned: true,
         showInTabMenu: false,
     },

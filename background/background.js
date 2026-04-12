@@ -15,6 +15,7 @@ browser.browserSettings.verticalTabs.onChange.addListener(onVerticalTabsToggled)
  */
 async function onAppInstalled() {
     const { commands } = await Storage.load();
+    browser.storage.session.set({ commands }); // For popup to access
     Menu.populate(commands);
 }
 
@@ -40,10 +41,12 @@ async function onKeyboardShortcut(commandId, activeTab) {
  * @listens browser.runtime.onMessage
  * @param {object} message
  * @param {string} message.type
+ * @param {string} [message.commandId]
  * @param {StoredData} [message.data]
  */
 function onMessage(message) {
     switch (message.type) {
+        case 'selectTabs': return selectTabs(message.commandId);
         case 'loadOptions': return Storage.load();
         case 'saveOptions': return Storage.save(message.data);
     }

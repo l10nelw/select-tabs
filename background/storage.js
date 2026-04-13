@@ -14,26 +14,32 @@ export async function load() {
         browser.browserSettings.verticalTabs.get({}),
     ]);
 
-    /** @type {CommandDict} */
-    const commands = {};
-    for (const commandId in COMMAND_DICT)
-        commands[commandId] = { ...COMMAND_DICT[commandId], ...storedData.commands?.[commandId] };
-
-    /** @type {object.<CommandId, { description: string }>} */
+    /**
+     * Shortcut-able commands.
+     * @type {object.<CommandId, { description: string }>}
+     */
     const MANIFEST_DICT = browser.runtime.getManifest().commands;
 
-    // For shortcut-able commands, parse description for category and title
-    for (const name in MANIFEST_DICT) {
-        const commandInfo = commands[name];
-        const [category, title] = MANIFEST_DICT[name].description.split(': ');
-        commandInfo.category = category;
+    /** @type {CommandDict} */
+    const commands = {};
 
-        // Parse title for any alternate title (for vertical tabs)
+    for (const commandId in COMMAND_DICT) {
+        commands[commandId] = { ...COMMAND_DICT[commandId], ...storedData.commands?.[commandId] };
+
+        if (!(commandId in MANIFEST_DICT))
+            continue; // This command doesn't get category and title from manifest.json
+
+        /** @type {[string, string]} */
+        let [category, title] = MANIFEST_DICT[commandId].description.split(': ');
+
+        // Get alternate title for vertical tabs
         const [defaultTitle, altTitle] = title.split(' | ');
-        commandInfo.title = (isVertical && altTitle) ? altTitle : defaultTitle;
+        title = (isVertical && altTitle) ? altTitle : defaultTitle;
 
-        // Update every description (not just ones with alternate titles) to ensure any changes made for a new release takes hold
-        browser.commands.update({ name, description: `${commandInfo.category}: ${commandInfo.title}` });
+        // Update every shortcut description to ensure any changes in a new release - or in tab orientation - takes hold
+        browser.commands.update({ name: commandId, description: `${category}: ${title}` });
+
+        Object.assign(commands[commandId], { category, title });
     }
 
     return { commands };

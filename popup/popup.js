@@ -1,9 +1,13 @@
 /** @import { CommandInfo, CommandDict } from '../common.js' */
 
+const IGNORED_KEYDOWN_SET = new Set(['Enter', 'Tab', ' ', 'Alt', 'Control', 'Shift']);
+
 /** @type {HTMLSelectElement} */ const $commandList = document.getElementById('commandList');
 /** @type {HTMLFormElement} */ const $form = $commandList.form;
+/** @type {HTMLBodyElement} */ const $body = document.body;
 
 init();
+$body.addEventListener('keydown', onKeyDown);
 $form.addEventListener('submit', onSubmit);
 $commandList.addEventListener('dblclick', onDoubleClick);
 
@@ -50,7 +54,18 @@ async function init() {
         $optionGroup.appendChild($option);
     }
 
+    $commandList.options[0].selected = true;
     $commandList.focus();
+}
+
+/**
+ * @param {KeyboardEvent} event
+*/
+function onKeyDown(event) {
+    // Work around bug where sometimes $commandList isn't initially focused
+    // Upon pressing a character key, focus on $commandList if not already focused, allowing it to respond the key as expected
+    if (document.activeElement !== $commandList && !IGNORED_KEYDOWN_SET.has(event.key))
+        $commandList.focus();
 }
 
 /**

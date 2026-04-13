@@ -5,6 +5,7 @@
 
 init();
 $form.addEventListener('submit', onSubmit);
+$commandList.addEventListener('dblclick', onDoubleClick);
 
 /**
  * Load all popup-eligible commands and populate $commandList.
@@ -60,3 +61,10 @@ function onSubmit(event) {
     browser.runtime.sendMessage({ type: 'selectTabs', commandId: $commandList.value });
 }
 
+/**
+ * @param {MouseEvent} event
+ */
+function onDoubleClick(event) {
+    if (event.target.tagName === 'OPTION')
+        $form.requestSubmit();
+}

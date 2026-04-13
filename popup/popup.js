@@ -8,6 +8,7 @@ const IGNORED_KEYDOWN_SET = new Set(['Enter', 'Tab', ' ', 'Alt', 'Control', 'Shi
 
 init();
 $body.addEventListener('keydown', onKeyDown);
+$body.addEventListener('keyup', onKeyUp);
 $form.addEventListener('submit', onSubmit);
 $commandList.addEventListener('dblclick', onDoubleClick);
 
@@ -66,6 +67,14 @@ function onKeyDown(event) {
     // Upon pressing a character key, focus on $commandList if not already focused, allowing it to respond the key as expected
     if (document.activeElement !== $commandList && !IGNORED_KEYDOWN_SET.has(event.key))
         $commandList.focus();
+}
+
+/**
+ * @param {KeyboardEvent} event
+ */
+function onKeyUp(event) {
+    if (event.key === 'Enter')
+        $form.requestSubmit();
 }
 
 /**

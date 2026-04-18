@@ -11,6 +11,16 @@ a {
 kbd {
     font-style: italic;
 }
+ul {
+    margin: 0;
+    padding-left: 2rem;
+}
+li {
+    margin: 0 0 .5rem;
+}
+legend {
+    font-weight: bold;
+}
 
 fieldset {
     margin-bottom: 1rem;
@@ -18,16 +28,12 @@ fieldset {
     @media (prefers-color-scheme: dark) {
         border-color: #444;
     }
-}
-legend {
-    font-weight: bold;
-}
-ul {
-    margin: 0;
-    padding-left: 2rem;
-}
-li {
-    margin: 0 0 .5rem;
+
+    &:not(#commands) label {
+        display: flex;
+        align-items: flex-start;
+        gap: .3rem;
+    }
 }
 
 table {
@@ -67,7 +73,7 @@ td {
     }
 
     &.showInTabMenu {
-        width: 4.5rem;
+        width: 5.2rem;
     }
 
     &.accessKey {
@@ -95,6 +101,8 @@ td {
         border: none;
         color: currentColor;
         background-color: transparent;
+        font-family: inherit;
+        font-size: inherit;
         font-weight: bold;
         cursor: pointer;
 
@@ -141,6 +149,8 @@ button[type="submit"] {
     text-align: center;
     padding: .5rem 2rem;
     font-size: 1rem;
+    font-weight: bold;
 }
 
+.p1 { padding: 1rem; }
 .nowrap { white-space: nowrap; }

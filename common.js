@@ -1,4 +1,28 @@
 /**
+ * General options.
+ * (Command-specific options are defined in commands.js)
+ */
+export const SETTINGS = {
+  keep_popup_open_on_execute: false,
+  show_access_keys_in_popup: true,
+};
+
+export const MENU_ROOT = 'menuRoot';
+
+/** @type {string} */
+export const APP_NAME = browser.runtime.getManifest().name;
+
+/**
+ * Check for OS name in browser's user agent string.
+ * @param {string} osName
+ * @returns {boolean}
+ */
+export const isOS = osName => navigator.userAgent.includes(osName);
+
+
+/** Types **/
+
+/**
  * @see {@link https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/Tab}
  * @typedef Tab
  * @property {boolean} active
@@ -24,8 +48,8 @@
 */
 
 /** @typedef {string} CommandId - Name of a command's implementation function in get.js, and id of its associated menu item. */
-/** @typedef {object<CommandId, CommandInfo>} CommandDict */
-/** @typedef {_CommandInfo & CommandInfoStored} CommandInfo */
+/** @typedef {_CommandInfo & StoredCommandInfo} CommandInfo */
+/** @typedef {object.<CommandId, CommandInfo>} CommandDict */
 /**
  * Superset of the menu item createProperties object.
  * Extra properties used only by this extension are indicated.
@@ -46,27 +70,18 @@
  */
 /**
  * Extra properties that are stored.
- * @typedef CommandInfoStored
- * @property {string} [accessKey]
+ * @typedef StoredCommandInfo
+ * @property {string} accessKey
  * @property {boolean} [showInTabMenu]
 */
 
 /**
- * User-defined data, longterm storage.
  * @typedef StoredData
- * @property {object.<CommandId, CommandInfoStored>} commands
- */
-
-// Common constants and functions //
-
-export const MENU_ROOT = 'menuRoot';
-
-/** @type {string} */
-export const APP_NAME = browser.runtime.getManifest().name;
-
+ * @property {object.<CommandId, StoredCommandInfo>} commands
+ * @property {typeof SETTINGS} settings
+*/
 /**
- * Check for OS name in browser's user agent string.
- * @param {string} osName
- * @returns {boolean}
- */
-export const isOS = osName => navigator.userAgent.indexOf(osName) !== -1;
+ * @typedef LoadedData
+ * @property {CommandDict} commands
+ * @property {typeof SETTINGS} settings
+*/

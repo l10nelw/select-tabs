@@ -1,8 +1,9 @@
-import * as Storage from './storage.js';
+import { SETTINGS } from '../common.js';
+import COMMAND_DICT from '../commands.js';
 import * as Menu from './menu.js';
 import selectTabs from './select.js';
 
-/** @import { CommandId, MenuClickInfo, StoredData, Tab } from '../common.js' */
+/** @import { CommandDict, CommandId, MenuClickInfo, LoadedData, StoredData, Tab } from '../common.js' */
 
 browser.runtime.onInstalled.addListener(onAppInstalled);
 browser.menus.onClicked.addListener(onMenuClicked);
@@ -14,9 +15,9 @@ browser.browserSettings.verticalTabs.onChange.addListener(onVerticalTabsToggled)
  * @listens browser.runtime.onInstalled
  */
 async function onAppInstalled() {
-    const { commands } = await Storage.load();
-    browser.storage.session.set({ commands }); // For popup to access
-    Menu.populate(commands);
+    const loadedData = await loadData();
+    browser.storage.session.set(loadedData); // For popup and options to access
+    Menu.populate(loadedData.commands);
 }
 
 /**
@@ -42,13 +43,10 @@ async function onKeyboardShortcut(commandId, activeTab) {
  * @param {object} message
  * @param {string} message.type
  * @param {string} [message.commandId]
- * @param {StoredData} [message.data]
  */
-function onMessage(message) {
+async function onMessage(message) {
     switch (message.type) {
         case 'selectTabs': return selectTabs(message.commandId);
-        case 'loadOptions': return Storage.load();
-        case 'saveOptions': return Storage.save(message.data);
     }
 }
 
@@ -57,4 +55,44 @@ function onMessage(message) {
  */
 function onVerticalTabsToggled() {
     browser.runtime.reload();
+}
+
+/**
+ * Retrieve stored user-editable data from sync-storage.
+ * Command data is populated and hydrated from these sources: StoredData, commands.js (COMMAND_DICT), manifest.json (MANIFEST_DICT)
+ * @returns {Promise<LoadedData>}
+ */
+export async function loadData() {
+    /** @type {object.<CommandId, { description: string }>} */
+    const MANIFEST_DICT = browser.runtime.getManifest().commands; // Shortcut-able commands
+
+    /** @type {[StoredData, { value: boolean }]} */
+    const [storedData, { value: isVertical }] = await Promise.all([
+        browser.storage.sync.get(),
+        browser.browserSettings.verticalTabs.get({}),
+    ]);
+
+    const commands = /** @type {CommandDict} */ ({});
+    const settings = { ...SETTINGS, ...storedData.settings };
+
+    for (const commandId in COMMAND_DICT) {
+        commands[commandId] = { ...COMMAND_DICT[commandId], ...storedData.commands?.[commandId] };
+
+        if (!(commandId in MANIFEST_DICT))
+            continue; // This command doesn't get category and title from manifest.json
+
+        /** @type {[string, string]} */
+        let [category, title] = MANIFEST_DICT[commandId].description.split(': ');
+
+        // Get alternate title for vertical tabs
+        const [defaultTitle, altTitle] = title.split(' | ');
+        title = (isVertical && altTitle) ? altTitle : defaultTitle;
+
+        // Update every shortcut description to ensure any changes in a new release - or in tab orientation - takes hold
+        browser.commands.update({ name: commandId, description: `${category}: ${title}` });
+
+        Object.assign(commands[commandId], { category, title });
+    }
+
+    return { commands, settings };
 }

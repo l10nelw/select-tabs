@@ -7,16 +7,16 @@ import COMMAND_DICT from '../commands.js';
  * @param {CommandId} commandId
  * @param {Tab} [targetTab]
  * @param {MenuClickInfo} [menuClickInfo]
+ * @returns {Promise<Tab[]>}
  */
 export default async function selectTabs(commandId, targetTab, menuClickInfo) {
-    /** @type {Tab[]} */
-    const currentSelectedTabs = await browser.tabs.query({ currentWindow: true, highlighted: true });
+    const currentSelectedTabs = await getSelectedTabs();
     targetTab ??= currentSelectedTabs.find(tab => tab.active);
 
     /** @type {Tab[]?} */
     const tabsToSelect = await GETTER[commandId](targetTab, currentSelectedTabs, menuClickInfo);
     if (!tabsToSelect)
-        return;
+        return [];
 
     // For the "Undo" command
     browser.storage.session.set({ previousSelectedTabs: currentSelectedTabs });
@@ -30,7 +30,7 @@ export default async function selectTabs(commandId, targetTab, menuClickInfo) {
     );
     if (!includePinned) {
         if (unpinnedIndex === -1)
-            return; // Can't include pinned tabs, but no unpinned tabs, so do nothing
+            return []; // Can't include pinned tabs, but no unpinned tabs, so do nothing
         tabsToSelect.splice(0, unpinnedIndex); // Remove pinned tabs
     }
 
@@ -39,7 +39,7 @@ export default async function selectTabs(commandId, targetTab, menuClickInfo) {
 
     const tabCount = tabsToSelect.length;
     if (!tabCount)
-        return;
+        return [];
 
     if (tabCount >= 2) {
         // Move to the start of the array a suitable tab within `tabsToSelect`, since `browser.tabs.highlight()` will activate the first tab in array
@@ -50,7 +50,8 @@ export default async function selectTabs(commandId, targetTab, menuClickInfo) {
             [ tabsToSelect[0], tabsToSelect[arrayIndexToActivate] ] = [ tabsToSelect[arrayIndexToActivate], tabsToSelect[0] ]; // Swap with first tab
     }
 
-    browser.tabs.highlight({ tabs: tabsToSelect.map(tab => tab.index), populate: false });
+    await browser.tabs.highlight({ tabs: tabsToSelect.map(tab => tab.index), populate: false });
+    return getSelectedTabs();
 }
 
 /**
@@ -91,3 +92,8 @@ function findBestClosestToTargetTab(candidateTabs, targetTab) {
     }
     return closestTab;
 }
+
+/**
+ * @returns {Promise<Tab[]>}
+ */
+const getSelectedTabs = () => browser.tabs.query({ currentWindow: true, highlighted: true });

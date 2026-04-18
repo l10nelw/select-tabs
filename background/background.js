@@ -1,6 +1,7 @@
 import { SETTINGS } from '../common.js';
 import COMMAND_DICT from '../commands.js';
 import * as Menu from './menu.js';
+import * as Badge from './badge.js';
 import selectTabs from './select.js';
 
 /** @import { CommandDict, CommandId, MenuClickInfo, LoadedData, StoredData, Tab } from '../common.js' */
@@ -9,6 +10,7 @@ browser.runtime.onInstalled.addListener(onAppInstalled);
 browser.menus.onClicked.addListener(onMenuClicked);
 browser.commands.onCommand.addListener(onKeyboardShortcut);
 browser.runtime.onMessage.addListener(onMessage);
+browser.tabs.onHighlighted.addListener(onTabsSelected);
 browser.browserSettings.verticalTabs.onChange.addListener(onVerticalTabsToggled);
 
 /**
@@ -26,7 +28,7 @@ async function onAppInstalled() {
  * @param {Tab} targetTab
  */
 function onMenuClicked(menuClickInfo, targetTab) {
-    selectTabs(menuClickInfo.menuItemId, targetTab, menuClickInfo);
+    execute(menuClickInfo.menuItemId, targetTab, menuClickInfo);
 }
 
 /**
@@ -35,7 +37,7 @@ function onMenuClicked(menuClickInfo, targetTab) {
  * @param {Tab} activeTab
  */
 async function onKeyboardShortcut(commandId, activeTab) {
-    selectTabs(commandId, activeTab);
+    execute(commandId, activeTab);
 }
 
 /**
@@ -45,9 +47,15 @@ async function onKeyboardShortcut(commandId, activeTab) {
  * @param {string} [message.commandId]
  */
 async function onMessage(message) {
-    switch (message.type) {
-        case 'selectTabs': return selectTabs(message.commandId);
-    }
+    if (message.type === 'selectTabs')
+        execute(message.commandId);
+}
+
+/**
+ * @listens browser.tabs.onHighlighted
+ */
+function onTabsSelected() {
+    Badge.clear();
 }
 
 /**
@@ -95,4 +103,14 @@ export async function loadData() {
     }
 
     return { commands, settings };
+}
+
+/**
+ * @type {typeof selectTabs}
+ */
+async function execute(/* Same arguments as selectTabs() */) {
+    Badge.clear();
+    const selectedTabs = await selectTabs(...arguments);
+    Badge.update(selectedTabs);
+    return selectedTabs;
 }

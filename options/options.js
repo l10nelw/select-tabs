@@ -6,8 +6,10 @@ const SUPPORTS_MENU_ACCESSKEYS = !isOS('Mac OS');
 
 /** @type {HTMLFormElement} */ const $form = document.body.querySelector('form');
 /** @type {HTMLInputElement[]} */ const $settings = $form.querySelectorAll('.setting');
+/** @type {HTMLButtonElement} */ const $submitBtn = $form.querySelector('button[type="submit"]');
 
 init(); // Load options
+$form.addEventListener('change', onFormChange);
 $form.addEventListener('click', onFormClick);
 $form.addEventListener('focusin', onFormFocus);
 $form.addEventListener('input', onFormInput);
@@ -58,14 +60,14 @@ async function init() {
             $showInTabMenu.id = id;
             $showInTabMenu.name = id;
             isTabMenuItem
-                ? $showInTabMenu.checked = showInTabMenu
+                ? $showInTabMenu.dataset.initial = $showInTabMenu.checked = showInTabMenu
                 : $showInTabMenu.remove();
 
             // accessKey
             /** @type {HTMLInputElement} */
             const $accessKey = $row.querySelector('.accessKey input');
             $accessKey.name = id;
-            $accessKey.value = accessKey ?? '';
+            $accessKey.dataset.initial = $accessKey.value = accessKey ?? '';
             $accessKey.setAttribute('aria-label', `Access key for "${title}" command`);
 
             // shortcut
@@ -85,7 +87,7 @@ async function init() {
 
     // General settings
     for (const $setting of $settings)
-        $setting.checked = settings[$setting.name];
+        $setting.dataset.initial = $setting.checked = settings[$setting.name];
 
     // Table rows for commands and categories
     let currentCategory = '';
@@ -97,6 +99,14 @@ async function init() {
         }
         $commandTableBody.addRow(id, info);
     }
+}
+
+/**
+ * @listens Event#change
+ * @param {Event & { target: HTMLInputElement }} event
+ */
+async function onFormChange({ target }) {
+    indicateModifiedField(target);
 }
 
 /**
@@ -132,6 +142,7 @@ async function onFormInput({ target }) {
     // Make text inside accessKey field always lowercased
     if (target.matches('.accessKey input'))
         target.value = target.value.toLowerCase();
+    indicateModifiedField(target);
 }
 
 /**
@@ -207,4 +218,21 @@ async function saveData() {
 
     await browser.storage.sync.clear();
     await browser.storage.sync.set({ commands, settings });
+}
+
+/**
+ * Mark $field if its value has changed and needs saving.
+ * Also mark $submitBtn if a save is needed.
+ * @param {HTMLInputElement} $field
+ */
+function indicateModifiedField($field) {
+    if (!('initial' in $field.dataset))
+        return;
+
+    const isModified = ($field.type === 'checkbox') ?
+        $field.checked !== ($field.dataset.initial === 'true') :
+        $field.value !== $field.dataset.initial;
+
+    $field.parentElement.classList.toggle('modified', isModified);
+    $submitBtn.classList.toggle('modified', $form.querySelector('.modified > input'));
 }

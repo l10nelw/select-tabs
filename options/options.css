@@ -142,6 +142,24 @@ tbody tr:not(.category):is(:hover, :focus-within) {
     background-color: var(--bg-hover-color);
 }
 
+.modified {
+    --dot-size: 6px;
+    position: relative;
+
+    &::before {
+        content: "";
+        position: absolute;
+        display: block;
+        top: 0;
+        left: 0;
+        width: var(--dot-size);
+        height: var(--dot-size);
+        background-color: var(--accent-color);
+        outline: 1px solid var(--bg-hover-color);
+        border-radius: 50%;
+    }
+}
+
 button[type="submit"] {
     width: 100%;
     margin-top: 1.5rem;

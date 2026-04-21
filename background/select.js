@@ -10,23 +10,23 @@ import COMMAND_DICT from '../commands.js';
  * @returns {Promise<Tab[]>}
  */
 export default async function selectTabs(commandId, targetTab, menuClickInfo) {
-    const currentSelectedTabs = await getSelectedTabs();
-    targetTab ??= currentSelectedTabs.find(tab => tab.active);
+    const preSelection = await getSelectedTabs();
+    targetTab ??= preSelection.find(tab => tab.active);
 
     /** @type {Tab[]?} */
-    const tabsToSelect = await GETTER[commandId](targetTab, currentSelectedTabs, menuClickInfo);
+    const tabsToSelect = await GETTER[commandId](targetTab, preSelection, menuClickInfo);
     if (!tabsToSelect)
         return [];
 
     // For the "Undo" command
-    browser.storage.session.set({ previousSelectedTabs: currentSelectedTabs });
+    browser.storage.session.set({ preSelection });
 
     const unpinnedIndex = tabsToSelect.findIndex(tab => !tab.pinned);
     /** Include pinned tabs if any of these conditions are met. */
     const includePinned = Boolean(
         targetTab.pinned
         || COMMAND_DICT[commandId].alwaysIncludePinned
-        || (commandId === 'unselected' && currentSelectedTabs[0].pinned) // Is "invert selection" command and the pre-command selection had at least one pinned tab
+        || (commandId === 'unselected' && preSelection[0].pinned) // Is "invert selection" command and the pre-command selection had at least one pinned tab
     );
     if (!includePinned) {
         if (unpinnedIndex === -1)
@@ -35,7 +35,7 @@ export default async function selectTabs(commandId, targetTab, menuClickInfo) {
     }
 
     if (menuClickInfo?.modifiers.includes('Shift'))
-        tabsToSelect.push(...currentSelectedTabs); // Add current selection to the new selection
+        tabsToSelect.push(...preSelection); // Add current selection to the new selection
 
     const tabCount = tabsToSelect.length;
     if (!tabCount)

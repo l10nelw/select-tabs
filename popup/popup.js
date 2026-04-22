@@ -5,7 +5,8 @@ const IGNORED_KEYDOWN_SET = new Set(['Enter', 'Tab', ' ', 'Alt', 'Control', 'Shi
 /** @type {HTMLBodyElement} */ const $body = document.body;
 /** @type {HTMLSelectElement} */ const $commandList = document.getElementById('commandList');
 /** @type {HTMLFormElement} */ const $form = $commandList.form;
-/** @type {HTMLButtonElement} */ const $submit = document.getElementById('submit');
+/** @type {HTMLButtonElement} */ const $submitBtn = document.getElementById('submit');
+/** @type {HTMLButtonElement} */ const $optionsBtn = document.getElementById('options');
 
 let keep_popup_open_on_execute = false;
 
@@ -13,7 +14,8 @@ init();
 $body.addEventListener('keydown', onKeyDown);
 $body.addEventListener('keyup', onKeyUp);
 $form.addEventListener('submit', onSubmit);
-$commandList.addEventListener('dblclick', onDoubleClick);
+$commandList.addEventListener('dblclick', onCommandDoubleClick);
+$optionsBtn.addEventListener('click', onOptionsBtnClick);
 
 /**
  * Load all popup-eligible commands and populate $commandList.
@@ -63,6 +65,11 @@ async function init() {
     $commandList.focus();
 }
 
+function onOptionsBtnClick() {
+    browser.runtime.openOptionsPage();
+    window.close();
+}
+
 /**
  * @param {KeyboardEvent} event
 */
@@ -77,14 +84,14 @@ function onKeyDown(event) {
  * @param {KeyboardEvent} event
  */
 function onKeyUp(event) {
-    if (event.key === 'Enter')
+    if (event.key === 'Enter' && event.target !== $optionsBtn)
         $form.requestSubmit();
 }
 
 /**
  * @param {MouseEvent} event
  */
-function onDoubleClick(event) {
+function onCommandDoubleClick(event) {
     if (event.target.tagName === 'OPTION')
         $form.requestSubmit();
 }
@@ -98,6 +105,6 @@ function onSubmit(event) {
 
     if (!keep_popup_open_on_execute)
         return window.close();
-    $submit.classList.add('highlight');
-    setTimeout(() => $submit.classList.remove('highlight'), 100);
+    $submitBtn.classList.add('highlight');
+    setTimeout(() => $submitBtn.classList.remove('highlight'), 100);
 }

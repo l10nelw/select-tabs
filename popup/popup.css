@@ -5,6 +5,14 @@ form {
     flex-direction: column;
 }
 
-button.highlight {
-    filter: invert(100%);
+footer {
+    display: flex;
+}
+
+#submit {
+    flex-grow: 1;
+
+    &.highlight {
+        filter: invert(100%);
+    }
 }

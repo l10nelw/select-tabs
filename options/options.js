@@ -1,6 +1,6 @@
 import { isOS, MENU_ROOT } from '../common.js';
 
-/** @import { CommandId, CommandInfo, StoredCommandInfo, ContextType, LoadedData, StoredData } from '../common.js' */
+/** @import { CommandId, CommandInfo, ContextType, LoadedData, StoredData } from '../common.js' */
 
 const SUPPORTS_MENU_ACCESSKEYS = !isOS('Mac OS');
 
@@ -99,6 +99,9 @@ async function init() {
         }
         $commandTableBody.addRow(id, info);
     }
+
+    if (!SUPPORTS_MENU_ACCESSKEYS)
+        $commandTableBody.querySelector(`td.accessKey input[name="${MENU_ROOT}"]`).remove();
 }
 
 /**
@@ -168,15 +171,12 @@ async function getData() {
     ]);
     const commands = data.commands;
 
-    for (const { name, shortcut } of shortcutableCommands) {
-        /** @type {StoredCommandInfo & { shortcut?: string }} */
-        const command = commands[name];
-        if (command)
-            command.shortcut = shortcut || '—';
-    }
+    // Populate shortcuts
+    commands[MENU_ROOT].shortcut = shortcutableCommands.shift().shortcut; // _execute_action (open popup)
+    for (const { name, shortcut } of shortcutableCommands)
+        commands[name].shortcut = shortcut || '—';
 
     if (!SUPPORTS_MENU_ACCESSKEYS) {
-        delete commands[MENU_ROOT];
         for (const commandId in commands) {
             // If command is neither used in tab nor popup contexts, it is not configurable (cannot disable + no access keys)
             // So exclude it from the table

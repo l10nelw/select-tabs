@@ -1,4 +1,5 @@
 import { isOS, MENU_ROOT } from '../common.js';
+import loadData from '../load.js';
 
 /** @import { CommandId, CommandInfo, ContextType, LoadedData, StoredData } from '../common.js' */
 
@@ -165,10 +166,7 @@ async function onFormSubmit(event) {
  */
 async function getData() {
     /** @type {[LoadedData, { name: CommandId, shortcut: string }[]]} */
-    const [data, shortcutableCommands] = await Promise.all([
-        browser.storage.session.get(['commands', 'settings']),
-        browser.commands.getAll(),
-    ]);
+    const [data, shortcutableCommands] = await Promise.all([ loadData(), browser.commands.getAll() ]);
     const commands = data.commands;
 
     // Populate shortcuts

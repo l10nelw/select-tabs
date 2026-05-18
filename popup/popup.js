@@ -1,4 +1,6 @@
-/** @import { CommandInfo, CommandDict, LoadedData, SETTINGS } from '../common.js' */
+import loadData from '../load.js';
+
+/** @import { CommandInfo, LoadedData } from '../common.js' */
 
 const IGNORED_KEYDOWN_SET = new Set(['Enter', 'Tab', ' ', 'Alt', 'Control', 'Shift']);
 
@@ -21,6 +23,11 @@ $optionsBtn.addEventListener('click', onOptionsBtnClick);
  * Load all popup-eligible commands and populate $commandList.
  */
 async function init() {
+    /** @type {LoadedData} */
+    const { commands, settings } = await loadData();
+    const { show_access_keys_in_popup } = settings;
+    ({ keep_popup_open_on_execute } = settings);
+
     /**
      * @param {CommandInfo} commandInfo
      * @returns {boolean}
@@ -37,11 +44,6 @@ async function init() {
         $commandList.appendChild($optionGroup);
         return $optionGroup;
     };
-
-    /** @type {LoadedData} */
-    const { commands, settings } = await browser.storage.session.get(['commands', 'settings']);
-    const { show_access_keys_in_popup } = settings;
-    ({ keep_popup_open_on_execute } = settings);
 
     /** @type {Map<string, HTMLOptGroupElement>} */
     const categoryMap = new Map();

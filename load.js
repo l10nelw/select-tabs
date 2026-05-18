@@ -4,11 +4,27 @@ import COMMAND_DICT from './commands.js';
 /** @import { CommandDict, CommandId, LoadedData, StoredData } from './common.js' */
 
 /**
- * Retrieve stored user-editable data from sync-storage.
- * Command data is populated and hydrated from these sources: StoredData, commands.js (COMMAND_DICT), manifest.json (MANIFEST_DICT)
+ * Return user-editable data from (non-persistent) session-storage.
+ * If datav not present, retrieve from (persistent) sync-storage to remedy.
  * @returns {Promise<LoadedData>}
  */
 export default async function loadData() {
+    /** @type {{} | LoadedData} */
+    const loadedData = await browser.storage.session.get();
+    if (loadedData.commands)
+        return loadedData;
+
+    Object.assign(loadedData, await retrieveAndConsolidateData());
+    await browser.storage.session.set(loadedData);
+    return loadedData;
+}
+
+/**
+ * Command data from: StoredData, commands.js (COMMAND_DICT), manifest.json (MANIFEST_DICT).
+ * Settings data from: StoredData, common.js (SETTINGS).
+ * @returns {Promise<LoadedData>}
+ */
+async function retrieveAndConsolidateData() {
     /** @type {object.<CommandId, { description: string }>} */
     const MANIFEST_DICT = browser.runtime.getManifest().commands; // Shortcut-able commands
 

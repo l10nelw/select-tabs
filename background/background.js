@@ -17,7 +17,6 @@ browser.browserSettings.verticalTabs.onChange.addListener(onVerticalTabsToggled)
  */
 async function onAppInstalled() {
     const loadedData = await loadData();
-    browser.storage.session.set(loadedData); // For popup and options to access
     Menu.populate(loadedData.commands);
 }
 
